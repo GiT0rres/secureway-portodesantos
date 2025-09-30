@@ -44,12 +44,12 @@ body, html {
 
 /* Caminhão na frente */
 .truck {
-  width: 200px;
+  width: 20px;
   height: auto;
   position: absolute;
   bottom: 0;
   left: 10px;
-  z-index: 1; /* na frente do sol */
+  z-index: 3; /* na frente do sol */
   animation: drive 3s infinite linear;
 }
 
