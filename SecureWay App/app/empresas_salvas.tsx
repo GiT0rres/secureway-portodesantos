@@ -5,8 +5,7 @@ import {
   TouchableOpacity, 
   StyleSheet, 
   StatusBar,
-  ScrollView,
-  FlatList
+  ScrollView
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import BottomNav from '@/components/BottomNav';
@@ -20,7 +19,6 @@ interface Empresa {
 export default function EmpresasSalvas() {
   const router = useRouter();
   
-  // Dados de exemplo - você pode substituir por dados reais
   const [empresas, setEmpresas] = useState<Empresa[]>([
     { id: '1', nome: 'Empresa 1', endereco: 'Endereço da empresa 1' },
     { id: '2', nome: 'Empresa 2', endereco: 'Endereço da empresa 2' },
@@ -30,77 +28,75 @@ export default function EmpresasSalvas() {
 
   const [filtroAtivo, setFiltroAtivo] = useState<'empresa' | 'contato'>('empresa');
 
-  const renderEmpresa = ({ item }: { item: Empresa }) => (
-    <TouchableOpacity style={styles.empresaCard} activeOpacity={0.7}>
-      <View style={styles.empresaContent}>
-        <Text style={styles.empresaNome}>{item.nome}</Text>
-        <Text style={styles.empresaEndereco}>{item.endereco}</Text>
-      </View>
-    </TouchableOpacity>
-  );
-
   return (
     <View style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="#0a3d3d" />
-      
-      {/* Header */}
-      <View style={styles.header}>
-        <Text style={styles.title}>Empresas Salvas</Text>
-        
-        {/* Filtros */}
-        <View style={styles.filtros}>
-          <TouchableOpacity 
-            style={[
-              styles.filtroButton, 
-              filtroAtivo === 'empresa' && styles.filtroButtonActive
-            ]}
-            onPress={() => setFiltroAtivo('empresa')}
-          >
-            <Text style={[
-              styles.filtroText,
-              filtroAtivo === 'empresa' && styles.filtroTextActive
-            ]}>
-              Empresa tal endereço
-            </Text>
-          </TouchableOpacity>
-          
-          <TouchableOpacity 
-            style={[
-              styles.filtroButton,
-              filtroAtivo === 'contato' && styles.filtroButtonActive
-            ]}
-            onPress={() => setFiltroAtivo('contato')}
-          >
-            <Text style={[
-              styles.filtroText,
-              filtroAtivo === 'contato' && styles.filtroTextActive
-            ]}>
-              contato
-            </Text>
-          </TouchableOpacity>
-        </View>
-      </View>
 
-      {/* Lista de empresas */}
-      <View style={styles.content}>
-        {empresas.length === 0 ? (
-          <View style={styles.emptyState}>
-            <Text style={styles.emptyText}>Nenhuma empresa salva ainda</Text>
+      <ScrollView 
+        style={styles.scrollContainer} 
+        contentContainerStyle={{ paddingBottom: 100 }}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* Header */}
+        <View style={styles.header}>
+          <Text style={styles.title}>Empresas Salvas</Text>
+          
+          {/* Filtros */}
+          <View style={styles.filtros}>
+            <TouchableOpacity 
+              style={[
+                styles.filtroButton, 
+                filtroAtivo === 'empresa' && styles.filtroButtonActive
+              ]}
+              onPress={() => setFiltroAtivo('empresa')}
+            >
+              <Text style={[
+                styles.filtroText,
+                filtroAtivo === 'empresa' && styles.filtroTextActive
+              ]}>
+                Empresa tal endereço
+              </Text>
+            </TouchableOpacity>
+            
+            <TouchableOpacity 
+              style={[
+                styles.filtroButton,
+                filtroAtivo === 'contato' && styles.filtroButtonActive
+              ]}
+              onPress={() => setFiltroAtivo('contato')}
+            >
+              <Text style={[
+                styles.filtroText,
+                filtroAtivo === 'contato' && styles.filtroTextActive
+              ]}>
+                contato
+              </Text>
+            </TouchableOpacity>
           </View>
-        ) : (
-          <FlatList
-            data={empresas}
-            renderItem={renderEmpresa}
-            keyExtractor={(item) => item.id}
-            contentContainerStyle={styles.listContainer}
-            showsVerticalScrollIndicator={false}
-          />
-        )}
-      </View>
+        </View>
+
+        {/* Lista de empresas */}
+        <View style={styles.content}>
+          {empresas.length === 0 ? (
+            <View style={styles.emptyState}>
+              <Text style={styles.emptyText}>Nenhuma empresa salva ainda</Text>
+            </View>
+          ) : (
+            empresas.map((item) => (
+              <TouchableOpacity key={item.id} style={styles.empresaCard} activeOpacity={0.7}>
+                <View style={styles.empresaContent}>
+                  <Text style={styles.empresaNome}>{item.nome}</Text>
+                  <Text style={styles.empresaEndereco}>{item.endereco}</Text>
+                </View>
+              </TouchableOpacity>
+            ))
+          )}
+        </View>
+      </ScrollView>
 
       {/* Barra de navegação inferior */}
-     <BottomNav />
-      </View>
+      <BottomNav />
+    </View>
   );
 }
 
@@ -109,17 +105,22 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#001f2d',
   },
+  scrollContainer: {
+    flex: 1,
+  },
   header: {
-    backgroundColor: '#0a3d3d',
-    paddingTop: 40,
+    backgroundColor: '#001f2d',
+    paddingTop: 60, // aumentei o espaço do topo
     paddingHorizontal: 20,
-    paddingBottom: 16,
+    paddingBottom: 20,
+    borderBottomColor: '#145f82ff',
+    borderBottomWidth: 2,
   },
   title: {
-    fontSize: 24,
+    fontSize: 26,
     fontWeight: 'bold',
     color: '#ffffff',
-    marginBottom: 16,
+    marginBottom: 20,
   },
   filtros: {
     flexDirection: 'row',
@@ -143,17 +144,12 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   content: {
-    flex: 1,
-    backgroundColor: '#0a3d3d',
-  },
-  listContainer: {
     padding: 12,
-    paddingBottom: 80,
   },
   empresaCard: {
     backgroundColor: '#5a7a7a',
     borderRadius: 8,
-    marginBottom: 12,
+    marginBottom: 14,
     overflow: 'hidden',
     minHeight: 100,
   },
@@ -175,35 +171,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 40,
+    paddingVertical: 100,
   },
   emptyText: {
     fontSize: 16,
     color: '#5a8a8a',
     textAlign: 'center',
-  },
-  bottomNav: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    backgroundColor: '#0a3d3d',
-    paddingVertical: 16,
-    borderTopWidth: 1,
-    borderTopColor: '#1a5c5c',
-  },
-  navButton: {
-    padding: 8,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  navIcon: {
-    fontSize: 24,
-    color: '#5a8a8a',
-  },
-  navIconActive: {
-    fontSize: 24,
-    color: '#ffffff',
   },
 });

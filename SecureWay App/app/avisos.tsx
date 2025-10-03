@@ -2,7 +2,6 @@ import React from "react";
 import {
   View,
   Text,
-  TouchableOpacity,
   StyleSheet,
   StatusBar,
   FlatList,
@@ -22,16 +21,17 @@ const Avisos = () => {
     <View style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="#0a3d3d" />
 
-      {/* Header */}
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>Avisos</Text>
-      </View>
-
-      {/* Lista de avisos */}
+      {/* Lista de avisos com header incluso no scroll */}
       <FlatList
         data={avisosData}
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.listContainer}
+        showsVerticalScrollIndicator={false}
+        ListHeaderComponent={() => (
+          <View style={styles.header}>
+            <Text style={styles.headerTitle}>Avisos</Text>
+          </View>
+        )}
         renderItem={({ item }) => (
           <View style={styles.card}>
             <Text style={styles.cardText}>
@@ -43,9 +43,8 @@ const Avisos = () => {
       />
 
       {/* Bottom Navigation */}
-
-       <BottomNav />
-      </View>
+      <BottomNav />
+    </View>
   );
 };
 
@@ -55,19 +54,22 @@ const styles = StyleSheet.create({
     backgroundColor: "#001f2d",
   },
   header: {
-    paddingTop: 50,
-    paddingBottom: 20,
+    paddingTop: 60, // espaço maior no topo
+    paddingBottom: 24,
     alignItems: "center",
-    backgroundColor: "#0a3d3d",
+    backgroundColor: "#001f2d",
+    borderBottomColor: "#145f82ff",
+    borderBottomWidth: 2,
+    marginBottom: 16, // separação do primeiro card
   },
   headerTitle: {
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: "bold",
     color: "#ffffff",
   },
   listContainer: {
     paddingHorizontal: 20,
-    paddingBottom: 80,
+    paddingBottom: 100, // espaço antes da bottom nav
   },
   card: {
     flexDirection: "row",
@@ -76,7 +78,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#4d6666",
     borderRadius: 6,
     padding: 16,
-    marginBottom: 12,
+    marginBottom: 14,
   },
   cardText: {
     color: "#ffffff",
@@ -84,18 +86,6 @@ const styles = StyleSheet.create({
   },
   alertIcon: {
     fontSize: 20,
-    color: "#ffffff",
-  },
-  navButton: {
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  navIcon: {
-    fontSize: 24,
-    color: "#5a8a8a",
-  },
-  navIconActive: {
-    fontSize: 24,
     color: "#ffffff",
   },
 });
