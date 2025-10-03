@@ -43,6 +43,7 @@ export default function Cadastro() {
   };
 
   return (
+    <>
     <View style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="#0a3d3d" />
       
@@ -120,18 +121,22 @@ export default function Cadastro() {
 
               <Text style={styles.footer}>Cadastre-se!</Text>
             </View>
-            <BottomNav />
+           
           </View>
-        </ScrollView>
+        </ScrollView> 
       </KeyboardAvoidingView>
     </View>
+    <View>
+      <BottomNav />
+    </View>
+    </>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0a3d3d',
+    backgroundColor: '#001f2d',
   },
   keyboardView: {
     flex: 1,
@@ -143,7 +148,7 @@ const styles = StyleSheet.create({
     paddingVertical: 40,
   },
   card: {
-    backgroundColor: '#0f4a4a',
+    backgroundColor: '#001f2d',
     borderRadius: 20,
     padding: 28,
     shadowColor: '#000',
@@ -151,6 +156,8 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 8,
     elevation: 8,
+    borderWidth: 1,
+    borderColor: '#1590a5ff',
   },
   title: {
     fontSize: 28,

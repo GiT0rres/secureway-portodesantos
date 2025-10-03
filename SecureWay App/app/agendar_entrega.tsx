@@ -192,7 +192,7 @@ export default function AgendarEntrega() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0a3d3d',
+    backgroundColor: '#001f2d',
   },
   header: {
     paddingTop: 40,

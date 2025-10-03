@@ -93,7 +93,7 @@ export default function Index() {
 
             <View style={styles.signupContainer}>
               <Text style={styles.signupText}>Não tem uma conta? </Text>
-             <TouchableOpacity onPress={() => router.push('/empresas_salvas' as const) }>
+             <TouchableOpacity onPress={() => router.push('/cadastro' as const) }>
   <Text style={styles.signupLink}>Cadastre-se</Text>
 </TouchableOpacity>
             </View>
@@ -110,7 +110,7 @@ export default function Index() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0a3d3d',
+    backgroundColor: '#001f2d',
   },
   keyboardView: {
     flex: 1,

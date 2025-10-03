@@ -129,7 +129,7 @@ export default function CadastroVeiculo() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0a3d3d',
+    backgroundColor: '#001f2d',
   },
   keyboardView: {
     flex: 1,

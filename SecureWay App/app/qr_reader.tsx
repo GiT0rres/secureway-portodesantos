@@ -66,9 +66,6 @@ export default function QrScanner() {
         </TouchableOpacity>
       )}
     </View>
-    <View>
-        <BottomNav />
-    </View>
     </>
   );
 }

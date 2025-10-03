@@ -90,7 +90,7 @@ export default function PerfilMotorista() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0a3d3d',
+    backgroundColor: '#001f2d',
   },
   scrollContent: {
     flexGrow: 1,
@@ -141,10 +141,12 @@ const styles = StyleSheet.create({
   },
   tabs: {
     flexDirection: 'row',
-    backgroundColor: '#0a3d3d',
+    backgroundColor: '#001f2d',
     paddingHorizontal: 24,
     paddingTop: 16,
     gap: 8,
+    borderBottomWidth:2,
+    borderBottomColor: '#1590a5ff',
   },
   tab: {
     flex: 1,

@@ -71,6 +71,8 @@ const styles = StyleSheet.create({
     justifyContent: "space-around",
     alignItems: "center",
     paddingVertical: 12,
+     borderTopWidth: 2,
+    borderTopColor: "#204950"
   },
   navButton: {
     padding: 10,

@@ -53,7 +53,7 @@ const styles = StyleSheet.create({
   
   container: {
     flex: 1,
-    backgroundColor: '#0a3d3d',
+    backgroundColor: '#001f2d',
   },
   header: {
     paddingTop: 40,
@@ -79,10 +79,13 @@ const styles = StyleSheet.create({
     paddingTop: 20,
   },
   appointmentCard: {
-    backgroundColor: '#134949',
+    backgroundColor: '#001f2d',
     borderRadius: 8,
     padding: 16,
     marginBottom: 12,
+     borderColor: '#1590a5ff',
+  borderWidth: 2, // ✅ correto
+
   },
   cardContent: {
     flexDirection: 'column',
