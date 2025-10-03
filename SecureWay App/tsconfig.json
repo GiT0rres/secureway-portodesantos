@@ -4,8 +4,8 @@
     "strict": true,
     "forceConsistentCasingInFileNames": true,   // <--- adiciona essa linha
     "jsx": "react-native",
-    "module": "esnext",                // 👈 força sobrescrever preserve
-    "moduleResolution": "node16",      // 👈 força sobrescrever node10
+    "module": "Node16",
+    "moduleResolution": "Node16",    // 👈 força sobrescrever node10
     "paths": {
       "@/*": ["./*"]
     }
