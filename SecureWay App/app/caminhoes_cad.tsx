@@ -5,17 +5,18 @@ import {
   StyleSheet,
   StatusBar,
   ScrollView,
+  TouchableOpacity,
 } from "react-native";
 import BottomNav from "@/components/BottomNav";
 
-export default function Avisos() {
-  // Mock de avisos (depois pode puxar do banco de dados)
-  const avisos = [
-    { id: 1, text: "Entrega feita com sucesso" },
-    { id: 2, text: "Problema de acesso" },
-    { id: 3, text: "" },
-    { id: 4, text: "" },
-    { id: 5, text: "" },
+export default function CaminhoesCadastrados() {
+  // Mock de caminhões (depois você pode puxar do banco de dados)
+  const caminhoes = [
+    { id: 1, modelo: "Volvo FH 540", detalhe: "Placa: ABC-1234" },
+    { id: 2, modelo: "Scania R450", detalhe: "Placa: XYZ-5678" },
+    { id: 3, modelo: "Mercedes Actros", detalhe: "Placa: JKL-9988" },
+    { id: 4, modelo: "Iveco Daily", detalhe: "Placa: TUV-4321" },
+    { id: 5, modelo: "Volkswagen Constellation", detalhe: "Placa: MNO-1111" },
   ];
 
   return (
@@ -25,21 +26,19 @@ export default function Avisos() {
 
         {/* Header */}
         <View style={styles.header}>
-          <Text style={styles.headerTitle}>Avisos</Text>
+          <Text style={styles.headerTitle}>Caminhões Cadastrados</Text>
         </View>
 
-        {/* Lista de Avisos */}
+        {/* Lista de Caminhões */}
         <ScrollView
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
         >
-          {avisos.map((item) => (
-            <View key={item.id} style={styles.card}>
-              <Text style={styles.cardText}>
-                {item.text || "Mensagem de aviso"}
-              </Text>
-              <Text style={styles.alertIcon}>⚠️</Text>
-            </View>
+          {caminhoes.map((caminhao) => (
+            <TouchableOpacity key={caminhao.id} style={styles.card}>
+              <Text style={styles.cardNome}>{caminhao.modelo}</Text>
+              <Text style={styles.cardDetalhe}>{caminhao.detalhe}</Text>
+            </TouchableOpacity>
           ))}
         </ScrollView>
       </View>
@@ -73,20 +72,19 @@ const styles = StyleSheet.create({
     paddingBottom: 100,
   },
   card: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    backgroundColor: "#4d6666",
-    borderRadius: 8,
+    backgroundColor: "#3c5656",
+    borderRadius: 12,
     padding: 16,
     marginBottom: 12,
   },
-  cardText: {
+  cardNome: {
     color: "#ffffff",
-    fontSize: 15,
+    fontSize: 16,
+    fontWeight: "bold",
   },
-  alertIcon: {
-    fontSize: 20,
-    color: "#ffffff",
+  cardDetalhe: {
+    color: "#d4e4e4",
+    fontSize: 14,
+    marginTop: 4,
   },
 });

@@ -9,7 +9,7 @@ import {
 import BottomNav from "@/components/BottomNav";
 
 export default function Avisos() {
-  // Mock de avisos (depois pode puxar do banco de dados)
+  // Mock de avisos (pode puxar do banco depois)
   const avisos = [
     { id: 1, text: "Entrega feita com sucesso" },
     { id: 2, text: "Problema de acesso" },

@@ -9,21 +9,8 @@ import {
 } from "react-native";
 import BottomNav from "@/components/BottomNav";
 
-export default function Empresas() {
-  const [abaAtiva, setAbaAtiva] = useState("Sedes");
-
-  // Mock de dados
-  const sedes = [
-    { id: 1, nome: "Unidade Centro", endereco: "Rua A, 123 - Centro" },
-    { id: 2, nome: "Unidade Norte", endereco: "Av. Central, 456 - Norte" },
-    { id: 3, nome: "Unidade Sul", endereco: "Rua das Flores, 789 - Sul" },
-  ];
-
-  const horarios = [
-    { id: 1, dia: "Segunda a Sexta", horas: "08:00 - 20:00" },
-    { id: 2, dia: "Sábado", horas: "09:00 - 14:00" },
-    { id: 3, dia: "Domingo", horas: "Fechado" },
-  ];
+const Empresas = () => {
+  const [abaAtiva, setAbaAtiva] = useState("Caminhões");
 
   return (
     <>
@@ -34,12 +21,12 @@ export default function Empresas() {
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
         >
-          {/* Header */}
+          {/* Header estilo perfil */}
           <View style={styles.header}>
             <View style={styles.avatar} />
-            <Text style={styles.nome}>SecureWay</Text>
+            <Text style={styles.nome}>Sérgio Andrade</Text>
             <View style={styles.funcaoBox}>
-              <Text style={styles.funcao}>Empresa</Text>
+              <Text style={styles.funcao}>Motorista</Text>
             </View>
           </View>
 
@@ -47,58 +34,43 @@ export default function Empresas() {
           <View style={styles.tabs}>
             <TouchableOpacity
               style={styles.tabItem}
-              onPress={() => setAbaAtiva("Sedes")}
+              onPress={() => setAbaAtiva("Caminhões")}
             >
               <Text
                 style={[
                   styles.tabText,
-                  abaAtiva === "Sedes" && styles.tabTextAtivo,
+                  abaAtiva === "Caminhões" && styles.tabTextAtivo,
                 ]}
               >
-                Sedes
+                Caminhões
               </Text>
-              {abaAtiva === "Sedes" && <View style={styles.tabUnderline} />}
+              {abaAtiva === "Caminhões" && <View style={styles.tabUnderline} />}
             </TouchableOpacity>
 
             <TouchableOpacity
               style={styles.tabItem}
-              onPress={() => setAbaAtiva("Horários")}
+              onPress={() => setAbaAtiva("Histórico")}
             >
               <Text
                 style={[
                   styles.tabText,
-                  abaAtiva === "Horários" && styles.tabTextAtivo,
+                  abaAtiva === "Histórico" && styles.tabTextAtivo,
                 ]}
               >
-                Horários
+                Histórico
               </Text>
-              {abaAtiva === "Horários" && <View style={styles.tabUnderline} />}
+              {abaAtiva === "Histórico" && <View style={styles.tabUnderline} />}
             </TouchableOpacity>
           </View>
 
-          {/* Conteúdo condicional */}
+          {/* Conteúdo de cada aba */}
           <View style={styles.content}>
-            {abaAtiva === "Sedes" &&
-              sedes.map((sede) => (
-                <View key={sede.id} style={styles.card}>
-                  <Text style={styles.cardTitle}>{sede.nome}</Text>
-                  <Text style={styles.cardText}>{sede.endereco}</Text>
-                </View>
-              ))}
-
-            {abaAtiva === "Horários" &&
-              horarios.map((horario) => (
-                <View key={horario.id} style={styles.card}>
-                  <Text style={styles.cardTitle}>{horario.dia}</Text>
-                  <Text style={styles.cardText}>{horario.horas}</Text>
-                </View>
-              ))}
+            {abaAtiva === "Caminhões" ? (
+              <Text style={styles.contentText}>Lista de caminhões...</Text>
+            ) : (
+              <Text style={styles.contentText}>Histórico de viagens...</Text>
+            )}
           </View>
-
-          {/* Botão de chat flutuante */}
-          <TouchableOpacity style={styles.chatButton}>
-            <Text style={styles.chatIcon}>💬</Text>
-          </TouchableOpacity>
         </ScrollView>
       </View>
 
@@ -108,7 +80,7 @@ export default function Empresas() {
       </View>
     </>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -127,10 +99,10 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 20,
   },
   avatar: {
-    width: 120,
-    height: 80,
+    width: 90,
+    height: 90,
+    borderRadius: 45,
     backgroundColor: "#3c5656",
-    borderRadius: 8,
     marginBottom: 12,
   },
   nome: {
@@ -142,7 +114,7 @@ const styles = StyleSheet.create({
   funcaoBox: {
     backgroundColor: "#d4e4e4",
     borderRadius: 20,
-    paddingHorizontal: 45,
+    paddingHorizontal: 20,
     paddingVertical: 6,
   },
   funcao: {
@@ -179,38 +151,14 @@ const styles = StyleSheet.create({
   content: {
     marginTop: 20,
     padding: 16,
-    gap: 12,
-  },
-  card: {
     backgroundColor: "#0f4a4a",
     borderRadius: 12,
-    padding: 16,
-    marginBottom: 12,
+    marginHorizontal: 16,
   },
-  cardTitle: {
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "bold",
-    marginBottom: 6,
-  },
-  cardText: {
-    color: "#d4e4e4",
+  contentText: {
+    color: "#ffffff",
     fontSize: 14,
   },
-  chatButton: {
-    position: "absolute",
-    bottom: 90,
-    left: 20,
-    backgroundColor: "#fff",
-    borderRadius: 30,
-    padding: 14,
-    elevation: 4,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
-  },
-  chatIcon: {
-    fontSize: 22,
-  },
 });
+
+export default Empresas;
