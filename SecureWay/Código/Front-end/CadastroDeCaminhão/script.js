@@ -46,7 +46,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const btnEnviar = formCadastro.querySelector('.btn-enviar');
             const textoOriginal = btnEnviar.textContent;
             
-            btnEnviar.textContent = 'Enviado!';
+            btnEnviar.textContent = '✓ Enviado!';
             btnEnviar.style.background = 'rgba(93, 213, 213, 0.7)';
             
             // Limpa o formulário após 1.5 segundos
@@ -56,15 +56,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 btnEnviar.style.background = '';
                 
                 // Opcionalmente, redireciona para outra página
-                // window.location.href = 'sucesso.html';
+                // window.location.href = '../home/index.html';
             }, 1500);
         });
     }
     
-    // Botão Home - volta para index.html
+    // Botão Home - volta para a página principal
     if (btnHome) {
         btnHome.addEventListener('click', function() {
-            window.location.href = 'index.html';
+            window.location.href = '../home/index.html';
         });
     }
     
