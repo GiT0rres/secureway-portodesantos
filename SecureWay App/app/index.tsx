@@ -1,38 +1,47 @@
-import React, { useState } from 'react';
-import { 
-  View, 
-  Text, 
-  TextInput, 
-  TouchableOpacity, 
-  StyleSheet, 
+import React, { useState } from "react";
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
   StatusBar,
   KeyboardAvoidingView,
   Platform,
-  ScrollView
-} from 'react-native';
-import { useRouter } from 'expo-router';
+  ScrollView,
+} from "react-native";
+import { useRouter } from "expo-router";
 import BottomNav from "../components/BottomNav";
+import SplashScreen from "../components/loading"; // ✅ splash animado
 
 export default function Index() {
   const router = useRouter();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
+  // controle do splash
+  const [loading, setLoading] = useState(true);
+
   const handleLogin = () => {
-    console.log('Login:', { email, password });
-    // Adicione sua lógica de autenticação aqui
+    console.log("Login:", { email, password });
+    // lógica de autenticação aqui
   };
+
+  // Se ainda está no splash, exibe ele
+  if (loading) {
+    return <SplashScreen onFinish={() => setLoading(false)} />;
+  }
 
   return (
     <View style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="#0a3d3d" />
-      
-      <KeyboardAvoidingView 
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={styles.keyboardView}
       >
-        <ScrollView 
+        <ScrollView
           contentContainerStyle={styles.scrollContent}
           keyboardShouldPersistTaps="handled"
         >
@@ -68,22 +77,18 @@ export default function Index() {
                   secureTextEntry={!isPasswordVisible}
                   autoCapitalize="none"
                 />
-                <TouchableOpacity 
+                <TouchableOpacity
                   onPress={() => setIsPasswordVisible(!isPasswordVisible)}
                   style={styles.eyeButton}
                 >
                   <Text style={styles.eyeIcon}>
-                    {isPasswordVisible ? '👁️' : '👁️‍🗨️'}
+                    {isPasswordVisible ? "👁️" : "👁️‍🗨️"}
                   </Text>
                 </TouchableOpacity>
               </View>
             </View>
 
-            <TouchableOpacity style={styles.forgotPassword}>
-              <Text style={styles.forgotPasswordText}>Esqueceu a senha?</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity 
+            <TouchableOpacity
               style={styles.loginButton}
               onPress={handleLogin}
               activeOpacity={0.8}
@@ -93,135 +98,95 @@ export default function Index() {
 
             <View style={styles.signupContainer}>
               <Text style={styles.signupText}>Não tem uma conta? </Text>
-             <TouchableOpacity onPress={() => router.push('/cadastro' as const) }>
-  <Text style={styles.signupLink}>Cadastre-se</Text>
-</TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => router.push("/cadastro" as const)}
+              >
+                <Text style={styles.signupLink}>Cadastre-se</Text>
+              </TouchableOpacity>
             </View>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
 
       <BottomNav />
-   
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#001f2d',
-  },
-  keyboardView: {
-    flex: 1,
-  },
+  container: { flex: 1, backgroundColor: "#001f2d" },
+  keyboardView: { flex: 1 },
   scrollContent: {
     flexGrow: 1,
-    justifyContent: 'center',
+    justifyContent: "center",
     paddingHorizontal: 24,
     paddingBottom: 80,
   },
-  header: {
-    marginBottom: 40,
-    alignItems: 'center',
+  textoPag:{
+    color: '#ffffff',
+    textAlign: 'center',
   },
+  linkPag:{
+    color: '#3694AD',
+    textAlign: 'center'
+  },
+  header: { marginBottom: 40, alignItems: "center" },
   title: {
     fontSize: 32,
-    fontWeight: 'bold',
-    color: '#ffffff',
+    fontWeight: "bold",
+    color: "#ffffff",
     marginBottom: 8,
   },
-  subtitle: {
-    fontSize: 16,
-    color: '#a0c4c4',
-  },
-  form: {
-    width: '100%',
-  },
-  inputContainer: {
-    marginBottom: 20,
-  },
+  subtitle: { fontSize: 16, color: "#a0c4c4" },
+  form: { width: "100%" },
+  inputContainer: { marginBottom: 20 },
   label: {
     fontSize: 14,
-    color: '#a0c4c4',
+    color: "#a0c4c4",
     marginBottom: 8,
-    fontWeight: '500',
+    fontWeight: "500",
   },
   input: {
-    backgroundColor: '#134949',
+    backgroundColor: "#134949",
     borderRadius: 12,
     padding: 16,
     fontSize: 16,
-    color: '#ffffff',
+    color: "#ffffff",
     borderWidth: 1,
-    borderColor: '#1a5c5c',
+    borderColor: "#1a5c5c",
   },
   passwordContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#134949',
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#134949",
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: '#1a5c5c',
+    borderColor: "#1a5c5c",
   },
-  passwordInput: {
-    flex: 1,
-    padding: 16,
-    fontSize: 16,
-    color: '#ffffff',
-  },
-  eyeButton: {
-    padding: 12,
-  },
-  eyeIcon: {
-    fontSize: 20,
-  },
-  forgotPassword: {
-    alignSelf: 'flex-end',
-    marginBottom: 24,
-  },
-  forgotPasswordText: {
-    color: '#6eb5b5',
-    fontSize: 14,
-  },
+  passwordInput: { flex: 1, padding: 16, fontSize: 16, color: "#ffffff" },
+  eyeButton: { padding: 12 },
+  eyeIcon: { fontSize: 20 },
+  forgotPassword: { alignSelf: "flex-end", marginBottom: 24 },
+  forgotPasswordText: { color: "#6eb5b5", fontSize: 14 },
   loginButton: {
-    backgroundColor: '#1a7070',
+    backgroundColor: "#1a7070",
     borderRadius: 12,
     padding: 18,
-    alignItems: 'center',
+    alignItems: "center",
     marginBottom: 24,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
     elevation: 5,
+    marginTop: 25
   },
-  loginButtonText: {
-    color: '#ffffff',
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
+  loginButtonText: { color: "#ffffff", fontSize: 18, fontWeight: "bold" },
   signupContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
   },
-  signupText: {
-    color: '#a0c4c4',
-    fontSize: 14,
-  },
-  signupLink: {
-    color: '#6eb5b5',
-    fontSize: 14,
-    fontWeight: 'bold',
-  },
-  navButton: {
-    padding: 8,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  navIcon: {
-    fontSize: 24,
-    color: '#a0c4c4',
-  },
+  signupText: { color: "#a0c4c4", fontSize: 14 },
+  signupLink: { color: "#6eb5b5", fontSize: 14, fontWeight: "bold" },
 });

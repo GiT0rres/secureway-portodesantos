@@ -1,5 +1,5 @@
-import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import React, { useEffect, useRef, useState } from "react";
+import { View, Text, StyleSheet, TouchableOpacity, Animated } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 
@@ -10,11 +10,33 @@ interface Props {
 
 export default function SideMenu({ visible, onClose }: Props) {
   const router = useRouter();
-  if (!visible) return null;
+  const slideAnim = useRef(new Animated.Value(-300)).current; // começa fora (esquerda)
+  const [isMounted, setIsMounted] = useState(visible); // controla montagem
+
+  useEffect(() => {
+    if (visible) {
+      setIsMounted(true); // mantém montado
+      Animated.timing(slideAnim, {
+        toValue: 0, // posição final
+        duration: 300,
+        useNativeDriver: true,
+      }).start();
+    } else {
+      Animated.timing(slideAnim, {
+        toValue: -300, // volta pra fora
+        duration: 300,
+        useNativeDriver: true,
+      }).start(() => {
+        setIsMounted(false); // desmonta só depois da animação
+      });
+    }
+  }, [visible]);
+
+  if (!isMounted) return null;
 
   return (
     <View style={styles.overlay}>
-      <View style={styles.menu}>
+      <Animated.View style={[styles.menu, { transform: [{ translateX: slideAnim }] }]}>
         {/* Header */}
         <View style={styles.header}>
           <View style={styles.avatar} />
@@ -61,15 +83,35 @@ export default function SideMenu({ visible, onClose }: Props) {
         <TouchableOpacity onPress={onClose} style={styles.closeBtn}>
           <Ionicons name="close" size={24} color="#fff" />
         </TouchableOpacity>
-      </View>
+      </Animated.View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  overlay: { position: "absolute", top: 0, left: 0, bottom: 0, right: 0, backgroundColor: "rgba(0,0,0,0.4)", flexDirection: "row" },
-  menu: { width: "70%", backgroundColor: "#083044", padding: 20 },
-  header: { flexDirection: "row", alignItems: "center", marginBottom: 20, borderBottomWidth: 1, borderBottomColor: "#00e0ff33", paddingBottom: 10 },
+  overlay: {
+    position: "absolute",
+    top: 0,
+    left: 0, // encostado na esquerda
+    bottom: 0,
+    right: 0,
+    backgroundColor: "rgba(0,0,0,0.4)",
+    flexDirection: "row",
+  },
+  menu: {
+    width: "70%",
+    backgroundColor: "#083044",
+    padding: 20,
+    height: "100%",
+  },
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: "#00e0ff33",
+    paddingBottom: 10,
+  },
   avatar: { width: 40, height: 40, borderRadius: 20, backgroundColor: "#00e0ff55", marginRight: 12 },
   name: { color: "#fff", fontWeight: "bold", fontSize: 16 },
   subtitle: { color: "#aaa", fontSize: 12 },

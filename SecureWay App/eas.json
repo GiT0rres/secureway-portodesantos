@@ -1,0 +1,32 @@
+{
+  "cli": {
+    "version": ">= 3.19.0",
+    "appVersionSource": "local"
+  },
+  "build": {
+    "preview": {
+      "distribution": "internal",
+      "android": {
+        "buildType": "apk"
+      },
+      "env": {
+        "EAS_BUILD_RUNNER": "eas-build",
+        "EXPO_USE_METRO_WORKER_POOL": "1",
+        "EXPO_NO_TELEMETRY": "1"
+      }
+    },
+    "production": {
+      "distribution": "store",
+      "android": {
+        "buildType": "app-bundle"
+      },
+      "env": {
+        "EXPO_USE_METRO_WORKER_POOL": "1",
+        "EXPO_NO_TELEMETRY": "1"
+      }
+    }
+  },
+  "submit": {
+    "production": {}
+  }
+}

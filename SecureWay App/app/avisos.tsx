@@ -4,49 +4,51 @@ import {
   Text,
   StyleSheet,
   StatusBar,
-  FlatList,
+  ScrollView,
 } from "react-native";
 import BottomNav from "@/components/BottomNav";
 
-const avisosData = [
-  { id: "1", text: "Entrega feita com sucesso" },
-  { id: "2", text: "Problema de acesso" },
-  { id: "3", text: "" },
-  { id: "4", text: "" },
-  { id: "5", text: "" },
-];
+export default function Avisos() {
+  // Mock de avisos (depois pode puxar do banco de dados)
+  const avisos = [
+    { id: 1, text: "Entrega feita com sucesso" },
+    { id: 2, text: "Problema de acesso" },
+    { id: 3, text: "" },
+    { id: 4, text: "" },
+    { id: 5, text: "" },
+  ];
 
-const Avisos = () => {
   return (
-    <View style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#0a3d3d" />
+    <>
+      <View style={styles.container}>
+        <StatusBar barStyle="light-content" backgroundColor="#0a3d3d" />
 
-      {/* Lista de avisos com header incluso no scroll */}
-      <FlatList
-        data={avisosData}
-        keyExtractor={(item) => item.id}
-        contentContainerStyle={styles.listContainer}
-        showsVerticalScrollIndicator={false}
-        ListHeaderComponent={() => (
-          <View style={styles.header}>
-            <Text style={styles.headerTitle}>Avisos</Text>
-          </View>
-        )}
-        renderItem={({ item }) => (
-          <View style={styles.card}>
-            <Text style={styles.cardText}>
-              {item.text || "Mensagem de aviso"}
-            </Text>
-            <Text style={styles.alertIcon}>⚠️</Text>
-          </View>
-        )}
-      />
+        {/* Header */}
+        <View style={styles.header}>
+          <Text style={styles.headerTitle}>Avisos</Text>
+        </View>
 
-      {/* Bottom Navigation */}
+        {/* Lista de Avisos */}
+        <ScrollView
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+        >
+          {avisos.map((item) => (
+            <View key={item.id} style={styles.card}>
+              <Text style={styles.cardText}>
+                {item.text || "Mensagem de aviso"}
+              </Text>
+              <Text style={styles.alertIcon}>⚠️</Text>
+            </View>
+          ))}
+        </ScrollView>
+      </View>
+
+      {/* Bottom Navigation fixo */}
       <BottomNav />
-    </View>
+    </>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -54,40 +56,37 @@ const styles = StyleSheet.create({
     backgroundColor: "#001f2d",
   },
   header: {
-    paddingTop: 60, // espaço maior no topo
-    paddingBottom: 24,
+    paddingTop: 50,
+    paddingBottom: 20,
     alignItems: "center",
-    backgroundColor: "#001f2d",
-    borderBottomColor: "#145f82ff",
-    borderBottomWidth: 2,
-    marginBottom: 16, // separação do primeiro card
+    backgroundColor: "#00323c",
+    borderBottomWidth: 1,
+    borderBottomColor: "#1a5c5c",
   },
   headerTitle: {
-    fontSize: 22,
-    fontWeight: "bold",
     color: "#ffffff",
+    fontSize: 20,
+    fontWeight: "bold",
   },
-  listContainer: {
-    paddingHorizontal: 20,
-    paddingBottom: 100, // espaço antes da bottom nav
+  scrollContent: {
+    padding: 16,
+    paddingBottom: 100,
   },
   card: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
     backgroundColor: "#4d6666",
-    borderRadius: 6,
+    borderRadius: 8,
     padding: 16,
-    marginBottom: 14,
+    marginBottom: 12,
   },
   cardText: {
     color: "#ffffff",
-    fontSize: 16,
+    fontSize: 15,
   },
   alertIcon: {
     fontSize: 20,
     color: "#ffffff",
   },
 });
-
-export default Avisos;

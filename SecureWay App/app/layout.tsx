@@ -19,6 +19,12 @@ export default function Layout() {
       <Stack.Screen name="Avisos" />
       <Stack.Screen name="display_qr" />
       <Stack.Screen name="Home" />
+      <Stack.Screen name="cad_empresa" />
+      <Stack.Screen name="vizualizar_motorista" />
+      <Stack.Screen name="motoristas_cad" />
+      <Stack.Screen name="caminhoes_cad" />
+      <Stack.Screen name="agendamentos_feitos" />
+      <Stack.Screen name="avisos_empresa" />
     </Stack>
   );
 }
