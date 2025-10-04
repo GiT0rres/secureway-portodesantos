@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SecureWay - Empresas</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="content">
+            <!-- Logo/Imagem da Empresa -->
+            <div class="company-logo">
+                <!-- Imagem da empresa aqui -->
+            </div>
+
+            <!-- Nome da Empresa -->
+            <div class="company-header">
+                <h1 class="company-title">SecureWay</h1>
+                <div class="company-name-badge">Empresa</div>
+            </div>
+
+            <!-- Tabs -->
+            <div class="tabs">
+                <button class="tab active" id="tabSedes" data-tab="sedes">Sedes</button>
+                <button class="tab" id="tabHorarios" data-tab="horarios">Horários</button>
+            </div>
+
+            <!-- Conteúdo das Tabs -->
+            <div class="tab-content">
+                <!-- Conteúdo Sedes -->
+                <div class="tab-pane active" id="contentSedes">
+                    <div class="content-area">
+                        <!-- Conteúdo de sedes será exibido aqui -->
+                    </div>
+                </div>
+
+                <!-- Conteúdo Horários -->
+                <div class="tab-pane" id="contentHorarios">
+                    <div class="content-area">
+                        <!-- Conteúdo de horários será exibido aqui -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Botão de Chat -->
+        <button class="chat-btn" id="chatBtn">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+            </svg>
+        </button>
+        
+        <nav class="bottom-nav">
+            <button class="nav-button">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                </svg>
+            </button>
+            <button class="nav-button" id="btnHome">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                </svg>
+            </button>
+            <button class="nav-button">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+            </button>
+        </nav>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>
