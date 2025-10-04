@@ -67,7 +67,7 @@ export default function SplashScreen({ onFinish }: SplashScreenProps) {
     <Animated.View style={[styles.container, { opacity: fadeAnim }]}>
       <View style={styles.circle} />
       <Animated.Image
-        source={require("../assets/images/android-icon-foreground.png")}
+        source={require("../assets/images/truck.png")}
         style={[
           styles.image,
           {
