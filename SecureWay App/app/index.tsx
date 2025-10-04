@@ -88,11 +88,6 @@ export default function Index() {
               </View>
             </View>
 
-            <TouchableOpacity >
-              <Text style={styles.textoPag}>Ainda não possuí uma conta?</Text>
-              <Text style={styles.linkPag}>Cadastre-se Já</Text>
-            </TouchableOpacity>
-
             <TouchableOpacity
               style={styles.loginButton}
               onPress={handleLogin}
