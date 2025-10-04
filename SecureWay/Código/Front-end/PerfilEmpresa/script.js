@@ -1,13 +1,6 @@
 // Aguarda o carregamento completo do DOM
 document.addEventListener('DOMContentLoaded', function() {
     
-    // Elementos
-    const tabs = document.querySelectorAll('.tab');
-    const tabPanes = document.querySelectorAll('.tab-pane');
-    const btnHome = document.getElementById('btnHome');
-    const chatBtn = document.getElementById('chatBtn');
-    const navBtns = document.querySelectorAll('.nav-button');
-    
     // Dados de exemplo para Sedes
     const sedesData = [
         {
@@ -24,95 +17,82 @@ document.addEventListener('DOMContentLoaded', function() {
             nome: 'Filial Belo Horizonte',
             endereco: 'Av. Afonso Pena, 1500 - Belo Horizonte, MG',
             telefone: '(31) 3000-0000'
+        },
+        {
+            nome: 'Filial Curitiba',
+            endereco: 'Rua XV de Novembro, 800 - Curitiba, PR',
+            telefone: '(41) 3000-0000'
+        },
+        {
+            nome: 'Filial Porto Alegre',
+            endereco: 'Av. Borges de Medeiros, 1200 - Porto Alegre, RS',
+            telefone: '(51) 3000-0000'
+        },
+        {
+            nome: 'Filial Salvador',
+            endereco: 'Av. Tancredo Neves, 900 - Salvador, BA',
+            telefone: '(71) 3000-0000'
         }
     ];
     
-    // Dados de exemplo para Horários
-    const horariosData = {
-        semana: 'Segunda a Sexta: 08:00 - 18:00',
-        sabado: 'Sábado: 08:00 - 12:00',
-        domingo: 'Domingo: Fechado',
-        observacao: 'Horário de almoço: 12:00 - 13:00'
-    };
-    
-    // Função para trocar de tab
-    function switchTab(tabName) {
-        // Remove active de todas as tabs e panes
-        tabs.forEach(tab => tab.classList.remove('active'));
-        tabPanes.forEach(pane => pane.classList.remove('active'));
-        
-        // Adiciona active na tab e pane selecionadas
-        const selectedTab = document.querySelector(`[data-tab="${tabName}"]`);
-        const selectedPane = document.getElementById(`content${capitalize(tabName)}`);
-        
-        if (selectedTab && selectedPane) {
-            selectedTab.classList.add('active');
-            selectedPane.classList.add('active');
-            
-            // Carrega conteúdo da tab
-            loadTabContent(tabName);
-        }
-    }
-    
-    // Função para carregar conteúdo da tab
-    function loadTabContent(tabName) {
-        const contentArea = document.querySelector(`#content${capitalize(tabName)} .content-area`);
-        
-        if (tabName === 'sedes') {
-            contentArea.innerHTML = generateSedesContent();
-        } else if (tabName === 'horarios') {
-            contentArea.innerHTML = generateHorariosContent();
-        }
-    }
-    
-    // Gera conteúdo de Sedes
+    // Função para gerar conteúdo de sedes
     function generateSedesContent() {
-        return `
-            <div style="display: flex; flex-direction: column; gap: 16px;">
-                ${sedesData.map(sede => `
-                    <div style="background: rgba(255, 255, 255, 0.2); padding: 16px; border-radius: 12px;">
-                        <h3 style="font-size: 1.1rem; font-weight: 600; margin-bottom: 8px; color: #0a2832;">${sede.nome}</h3>
-                        <p style="font-size: 0.95rem; color: #0a2832; margin-bottom: 4px;">${sede.endereco}</p>
-                        <p style="font-size: 0.9rem; color: #1a4050; font-weight: 500;">${sede.telefone}</p>
-                    </div>
-                `).join('')}
+        const content = sedesData.map(sede => `
+            <div class="card">
+                <h3>${sede.nome}</h3>
+                <p><strong>Endereço:</strong> ${sede.endereco}</p>
+                <p><strong>Telefone:</strong> ${sede.telefone}</p>
             </div>
-        `;
+        `).join('');
+        document.getElementById('sedesContent').innerHTML = content;
     }
     
-    // Gera conteúdo de Horários
+    // Função para gerar conteúdo de horários
     function generateHorariosContent() {
-        return `
-            <div style="display: flex; flex-direction: column; gap: 16px;">
-                <div style="background: rgba(255, 255, 255, 0.2); padding: 16px; border-radius: 12px;">
-                    <h3 style="font-size: 1.1rem; font-weight: 600; margin-bottom: 12px; color: #0a2832;">Horário de Funcionamento</h3>
-                    <div style="display: flex; flex-direction: column; gap: 8px;">
-                        <p style="font-size: 0.95rem; color: #0a2832;"><strong>Segunda a Sexta:</strong> 08:00 - 18:00</p>
-                        <p style="font-size: 0.95rem; color: #0a2832;"><strong>Sábado:</strong> 08:00 - 12:00</p>
-                        <p style="font-size: 0.95rem; color: #0a2832;"><strong>Domingo:</strong> Fechado</p>
+        const content = `
+            <div class="schedule-card">
+                <h3>Horário de Funcionamento</h3>
+                <div class="schedule-items">
+                    <div class="schedule-item">
+                        <strong>Segunda a Sexta</strong>
+                        <span>08:00 - 18:00</span>
+                    </div>
+                    <div class="schedule-item">
+                        <strong>Sábado</strong>
+                        <span>08:00 - 12:00</span>
+                    </div>
+                    <div class="schedule-item">
+                        <strong>Domingo</strong>
+                        <span>Fechado</span>
                     </div>
                 </div>
-                <div style="background: rgba(255, 255, 255, 0.15); padding: 14px; border-radius: 12px;">
-                    <p style="font-size: 0.9rem; color: #0a2832; font-style: italic;"><strong>Obs:</strong> Horário de almoço: 12:00 - 13:00</p>
+                <div class="schedule-note">
+                    <p><strong>Observação:</strong> Horário de almoço: 12:00 - 13:00</p>
                 </div>
             </div>
         `;
+        document.getElementById('horariosContent').innerHTML = content;
     }
     
-    // Função auxiliar para capitalizar
-    function capitalize(str) {
-        return str.charAt(0).toUpperCase() + str.slice(1);
-    }
-    
-    // Event listeners para as tabs
+    // Gerenciamento de tabs
+    const tabs = document.querySelectorAll('.tab');
     tabs.forEach(tab => {
         tab.addEventListener('click', () => {
             const tabName = tab.dataset.tab;
-            switchTab(tabName);
+            
+            // Remove active de todas as tabs
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+            
+            // Adiciona active na tab selecionada
+            tab.classList.add('active');
+            const contentId = `content${tabName.charAt(0).toUpperCase() + tabName.slice(1)}`;
+            document.getElementById(contentId).classList.add('active');
         });
     });
     
-    // Botão de Chat
+    // Chat button
+    const chatBtn = document.getElementById('chatBtn');
     if (chatBtn) {
         chatBtn.addEventListener('click', () => {
             console.log('Abrindo chat...');
@@ -120,26 +100,17 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // Botão Home
+    // Home button
+    const btnHome = document.getElementById('btnHome');
     if (btnHome) {
         btnHome.addEventListener('click', () => {
             window.location.href = 'index.html';
         });
     }
     
-    // Navegação inferior
-    navBtns.forEach((btn, index) => {
-        btn.addEventListener('click', () => {
-            if (btn.id !== 'btnHome') {
-                navBtns.forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                console.log('Navegação alterada:', index);
-            }
-        });
-    });
+    // Carregar conteúdo inicial
+    generateSedesContent();
+    generateHorariosContent();
     
-    // Carrega conteúdo inicial (Sedes)
-    loadTabContent('sedes');
-    
-    console.log('SecureWay - Empresas carregada com sucesso!');
+    console.log('SecureWay - Site Desktop carregado com sucesso!');
 });

@@ -6,86 +6,192 @@
 
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-    background: #0a1f28;
+    background: linear-gradient(135deg, #0a1f28 0%, #0d3d4d 100%);
     min-height: 100vh;
+    color: #333;
+}
+
+/* Header */
+.header {
+    background: linear-gradient(90deg, #0d3d4d 0%, #1a4f5f 100%);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.header-content {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.logo-section {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.company-logo {
+    width: 60px;
+    height: 60px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
+    font-size: 1.5rem;
     color: white;
+    font-weight: bold;
 }
 
-.container {
-    width: 100%;
-    max-width: 375px;
-    height: 100vh;
-    background: linear-gradient(180deg, #0d3d4d 0%, #0a2832 100%);
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
-}
-
-.content {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    padding: 30px 20px;
-    overflow-y: auto;
-}
-
-.title {
+.company-info h1 {
     font-size: 1.8rem;
-    font-weight: 600;
     color: white;
-    margin-bottom: 25px;
+    margin-bottom: 4px;
+}
+
+.company-badge {
+    display: inline-block;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 4px 16px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    color: #0a2832;
+    font-weight: 500;
+}
+
+.header-nav {
+    display: flex;
+    gap: 10px;
+}
+
+.nav-btn {
+    background: rgba(255, 255, 255, 0.15);
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.95rem;
+}
+
+.nav-btn:hover {
+    background: rgba(255, 255, 255, 0.25);
+    transform: translateY(-2px);
+}
+
+/* Main Container */
+.container {
+    max-width: 1400px;
+    margin: 40px auto;
+    padding: 0 40px;
+}
+
+.page-header {
+    margin-bottom: 40px;
     text-align: center;
     animation: fadeIn 0.6s ease;
 }
 
+.page-title {
+    font-size: 2.5rem;
+    color: white;
+    font-weight: 600;
+    margin-bottom: 12px;
+}
+
+.page-subtitle {
+    font-size: 1.1rem;
+    color: rgba(255, 255, 255, 0.7);
+}
+
 /* Lista de Agendamentos */
 .appointments-list {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(450px, 1fr));
+    gap: 24px;
     animation: slideUp 0.6s ease;
 }
 
 .appointment-card {
-    background: rgba(102, 124, 133, 0.6);
-    border-radius: 8px;
-    padding: 18px 20px;
+    background: linear-gradient(135deg, rgba(102, 124, 133, 0.5) 0%, rgba(122, 144, 153, 0.4) 100%);
+    border-radius: 16px;
+    padding: 24px 28px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    min-height: 70px;
+    min-height: 100px;
     transition: all 0.3s ease;
-    position: relative;
     backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+.appointment-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: linear-gradient(180deg, #4a9eff 0%, #2d7dd2 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.appointment-card:hover::before {
+    opacity: 1;
 }
 
 .appointment-card:hover {
-    background: rgba(102, 124, 133, 0.7);
-    transform: translateX(4px);
+    background: linear-gradient(135deg, rgba(102, 124, 133, 0.6) 0%, rgba(122, 144, 153, 0.5) 100%);
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
 }
 
 .appointment-info {
     flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 10px;
 }
 
 .company-name {
-    font-size: 1rem;
+    font-size: 1.3rem;
     font-weight: 600;
     color: white;
+    margin-bottom: 4px;
 }
 
 .appointment-details {
     display: flex;
-    gap: 12px;
-    font-size: 0.9rem;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.detail-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.95rem;
     color: rgba(255, 255, 255, 0.85);
+}
+
+.detail-row svg {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+    opacity: 0.7;
 }
 
 .address, .datetime {
@@ -93,85 +199,55 @@ body {
 }
 
 .location-btn {
-    background: none;
-    border: none;
+    background: rgba(74, 158, 255, 0.2);
+    border: 2px solid rgba(74, 158, 255, 0.4);
     color: white;
     cursor: pointer;
-    padding: 8px;
+    padding: 14px;
     display: flex;
     align-items: center;
     justify-content: center;
     transition: all 0.3s ease;
-    border-radius: 8px;
+    border-radius: 12px;
     flex-shrink: 0;
+    width: 50px;
+    height: 50px;
 }
 
 .location-btn:hover {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(74, 158, 255, 0.3);
+    border-color: rgba(74, 158, 255, 0.6);
     transform: scale(1.1);
+    box-shadow: 0 0 20px rgba(74, 158, 255, 0.3);
 }
 
 .location-btn svg {
-    width: 20px;
-    height: 20px;
-}
-
-/* Bottom Navigation */
-.bottom-nav {
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    padding: 18px 20px;
-    background: #0a1f28;
-    border-top: 1px solid rgba(0, 0, 0, 0.2);
-    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3);
-}
-
-.nav-button {
-    background: transparent;
-    border: none;
-    color: rgba(255, 255, 255, 0.5);
-    cursor: pointer;
-    padding: 12px;
-    border-radius: 12px;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.nav-button:hover {
-    background: rgba(255, 255, 255, 0.1);
-    color: white;
-}
-
-.nav-button.active {
-    color: white;
-    background: rgba(255, 255, 255, 0.15);
-}
-
-.nav-button svg {
     width: 24px;
     height: 24px;
 }
 
-/* Scrollbar */
-.content::-webkit-scrollbar {
-    width: 6px;
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: rgba(255, 255, 255, 0.6);
 }
 
-.content::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 10px;
+.empty-state svg {
+    width: 80px;
+    height: 80px;
+    margin-bottom: 20px;
+    opacity: 0.3;
 }
 
-.content::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.2);
-    border-radius: 10px;
+.empty-state h3 {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+    color: rgba(255, 255, 255, 0.7);
 }
 
-.content::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 255, 255, 0.3);
+.empty-state p {
+    font-size: 1rem;
 }
 
 /* Animations */
@@ -197,26 +273,82 @@ body {
     }
 }
 
-/* Responsividade */
-@media (max-width: 375px) {
-    .content {
-        padding: 25px 16px;
+@keyframes cardAppear {
+    from {
+        opacity: 0;
+        transform: translateY(20px) scale(0.95);
     }
-    
-    .title {
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.appointment-card {
+    animation: cardAppear 0.5s ease forwards;
+    opacity: 0;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .appointments-list {
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    }
+}
+
+@media (max-width: 768px) {
+    .header-content {
+        flex-direction: column;
+        gap: 20px;
+        padding: 20px;
+    }
+
+    .container {
+        padding: 0 20px;
+    }
+
+    .page-title {
+        font-size: 2rem;
+    }
+
+    .page-subtitle {
+        font-size: 1rem;
+    }
+
+    .appointments-list {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
+    .appointment-card {
+        padding: 20px;
+        min-height: 90px;
+    }
+
+    .company-name {
+        font-size: 1.1rem;
+    }
+
+    .detail-row {
+        font-size: 0.9rem;
+    }
+
+    .location-btn {
+        width: 45px;
+        height: 45px;
+    }
+}
+
+@media (max-width: 480px) {
+    .page-title {
         font-size: 1.6rem;
     }
-    
+
     .appointment-card {
-        padding: 16px 18px;
-        min-height: 65px;
+        padding: 18px;
     }
-    
+
     .company-name {
-        font-size: 0.95rem;
-    }
-    
-    .appointment-details {
-        font-size: 0.85rem;
+        font-size: 1rem;
     }
 }

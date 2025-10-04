@@ -8,7 +8,7 @@ window.addEventListener("load", () => {
         setTimeout(() => {
             document.getElementById("content").classList.add("fade-in");
         }, 50);
-    }, 3000); // 3 segundos de carregamento
+    }, 300); // 3 segundos de carregamento
 });
 
 // ========== ELEMENTOS DO DOM ==========
