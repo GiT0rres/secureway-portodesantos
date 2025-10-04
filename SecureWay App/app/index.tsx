@@ -93,7 +93,7 @@ export default function Index() {
 
             <View style={styles.signupContainer}>
               <Text style={styles.signupText}>Não tem uma conta? </Text>
-             <TouchableOpacity onPress={() => router.push('/avisos_empresa' as const) }>
+             <TouchableOpacity onPress={() => router.push('/cadastro' as const) }>
   <Text style={styles.signupLink}>Cadastre-se</Text>
 </TouchableOpacity>
             </View>
