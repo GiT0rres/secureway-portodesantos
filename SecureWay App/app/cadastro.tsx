@@ -56,7 +56,7 @@ export default function Cadastro() {
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
-          <View style={styles.card}>
+          <View>
             <Text style={styles.title}>Cadastro</Text>
             
             <View style={styles.form}>
@@ -113,13 +113,16 @@ export default function Cadastro() {
               </TouchableOpacity>
 
               <View style={styles.loginContainer}>
-                <Text style={styles.loginText}>Já possui uma conta? </Text>
+                <Text style={styles.loginText}>Já possui uma conta? Faça o </Text>
                 <TouchableOpacity onPress={() => router.push('/')}>
-                  <Text style={styles.loginLink}>Login</Text>
+                  <Text style={styles.corlink}>Login.</Text>
                 </TouchableOpacity>
               </View>
 
-              <Text style={styles.footer}>Cadastre-se!</Text>
+              
+              <TouchableOpacity onPress={() => router.push('/cad_empresa')}>
+                <Text style={styles.footer}>Cadastre sua <Text style={styles.corlink}>Empresa.</Text></Text>
+              </TouchableOpacity>
             </View>
            
           </View>
@@ -146,18 +149,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingHorizontal: 24,
     paddingVertical: 40,
-  },
-  card: {
-    backgroundColor: '#001f2d',
-    borderRadius: 20,
-    padding: 28,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 8,
-    borderWidth: 1,
-    borderColor: '#1590a5ff',
   },
   title: {
     fontSize: 28,
@@ -196,6 +187,9 @@ const styles = StyleSheet.create({
     color: '#0f4a4a',
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  corlink:{
+    color: '#3694AD'
   },
   loginContainer: {
     flexDirection: 'row',
