@@ -6,99 +6,266 @@
 
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-    background: #0a1f28;
+    background: linear-gradient(135deg, #0a1f28 0%, #0d3d4d 50%, #0a2832 100%);
     min-height: 100vh;
     display: flex;
-    align-items: center;
-    justify-content: center;
+    flex-direction: column;
     color: white;
 }
 
-.container {
-    width: 100%;
-    max-width: 375px;
-    height: 100vh;
-    background: linear-gradient(180deg, #0d3d4d 0%, #0a2832 100%);
-    position: relative;
+/* Header */
+.header {
+    background: rgba(13, 61, 77, 0.8);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 15px 40px;
     display: flex;
-    flex-direction: column;
-    box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
+    justify-content: space-between;
+    align-items: center;
 }
 
-.content {
+.logo-container {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.logo-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #3bbebe, #2a8a8a);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1.2rem;
+    letter-spacing: 1px;
+}
+
+.logo-text h1 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: white;
+    margin-bottom: 2px;
+}
+
+.logo-text p {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.7);
+    font-weight: 400;
+}
+
+.nav-buttons {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.nav-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 20px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    color: rgba(255, 255, 255, 0.8);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.95rem;
+    font-weight: 500;
+    font-family: inherit;
+    white-space: nowrap;
+}
+
+.nav-btn:hover {
+    background: rgba(255, 255, 255, 0.15);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.nav-btn.active {
+    background: rgba(59, 190, 190, 0.25);
+    border-color: rgba(59, 190, 190, 0.5);
+    color: #3bbebe;
+    box-shadow: 0 0 20px rgba(59, 190, 190, 0.3);
+}
+
+.nav-btn svg {
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+}
+
+.nav-btn span {
+    font-size: 0.95rem;
+}
+
+/* Main Content */
+.main-content {
     flex: 1;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 20px;
+    padding: 50px;
 }
 
-.title {
-    font-size: 2rem;
-    font-weight: 400;
+.content-area {
+    width: 100%;
+    max-width: 700px;
+}
+
+.welcome-card {
+    background: rgba(13, 61, 77, 0.4);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 24px;
+    padding: 80px 100px;
     text-align: center;
-    letter-spacing: 0.5px;
-    opacity: 0;
-    transition: opacity 0.5s ease;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+    animation: fadeIn 0.8s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.welcome-title {
+    font-size: 3rem;
+    font-weight: 300;
+    margin-bottom: 30px;
+    letter-spacing: 1px;
 }
 
 .login-link {
-    cursor: pointer;
+    color: #B5C9CF;
+    text-decoration: none;
     font-weight: 600;
     transition: all 0.3s ease;
-    display: inline-block;
-    color: #B5C9CF;
+    position: relative;
 }
 
 .login-link:hover {
     color: #3bbebe;
-    transform: scale(1.05);
-    text-shadow: 0 0 10px rgba(93, 213, 213, 0.5);
+    text-shadow: 0 0 10px rgba(59, 190, 190, 0.5);
 }
 
-.login-link:active {
-    transform: scale(0.98);
-}
-.bottom-nav {
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    padding: 18px 20px;
-    background: #0a1f28;
-    border-top: 1px solid rgba(0, 0, 0, 0.2);
-    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3);
-}
-
-.nav-button {
-    background: transparent;
-    border: none;
-    color: rgba(255, 255, 255, 0.5);
-    cursor: pointer;
-    padding: 12px;
+.login-button {
+    display: inline-block;
+    padding: 18px 50px;
+    background: linear-gradient(135deg, #3bbebe, #2a8a8a);
+    color: white;
+    text-decoration: none;
     border-radius: 12px;
+    font-size: 1.2rem;
+    font-weight: 500;
     transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    cursor: pointer;
+    border: none;
+    box-shadow: 0 10px 30px rgba(59, 190, 190, 0.3);
+    margin-top: 20px;
 }
 
-.nav-button:hover {
-    background: rgba(255, 255, 255, 0.1);
-    color: white;
+.login-button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 40px rgba(59, 190, 190, 0.5);
+    background: linear-gradient(135deg, #4dd4d4, #3bbebe);
 }
 
-.nav-button.active {
-    color: white;
-    background: rgba(255, 255, 255, 0.15);
+.login-button:active {
+    transform: translateY(-1px);
 }
 
-.nav-button svg {
-    width: 24px;
-    height: 24px;
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .header {
+        padding: 15px 30px;
+    }
+
+    .welcome-card {
+        padding: 60px 50px;
+    }
+
+    .welcome-title {
+        font-size: 2.5rem;
+    }
 }
 
-@media (max-width: 375px) {
-    .title {
+@media (max-width: 768px) {
+    .header {
+        flex-direction: column;
+        gap: 20px;
+        padding: 20px;
+    }
+
+    .nav-buttons {
+        width: 100%;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .nav-btn {
+        flex: 1;
+        min-width: 100px;
+    }
+
+    .main-content {
+        padding: 30px 20px;
+    }
+
+    .welcome-card {
+        padding: 40px 30px;
+    }
+
+    .welcome-title {
+        font-size: 2rem;
+    }
+
+    .login-button {
+        padding: 15px 40px;
+        font-size: 1.1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .logo-text h1 {
+        font-size: 1.2rem;
+    }
+
+    .logo-text p {
+        font-size: 0.75rem;
+    }
+
+    .logo-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
+    }
+
+    .nav-btn span {
+        font-size: 0.85rem;
+    }
+
+    .nav-btn {
+        padding: 10px 15px;
+        gap: 6px;
+    }
+
+    .welcome-title {
         font-size: 1.75rem;
+    }
+
+    .welcome-card {
+        padding: 30px 20px;
     }
 }
