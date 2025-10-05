@@ -1,0 +1,321 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background: linear-gradient(135deg, #0a1f28 0%, #0d3d4d 100%);
+    min-height: 100vh;
+    color: #333;
+}
+
+/* Header */
+.header {
+    background: linear-gradient(90deg, #0d3d4d 0%, #1a4f5f 100%);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.header-content {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.logo-section {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.company-logo {
+    width: 60px;
+    height: 60px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: white;
+    font-weight: bold;
+}
+
+.company-info h1 {
+    font-size: 1.8rem;
+    color: white;
+    margin-bottom: 4px;
+}
+
+.company-badge {
+    display: inline-block;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 4px 16px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    color: #0a2832;
+    font-weight: 500;
+}
+
+.header-nav {
+    display: flex;
+    gap: 10px;
+}
+
+.nav-btn {
+    background: rgba(255, 255, 255, 0.15);
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.95rem;
+    font-family: inherit;
+}
+
+.nav-btn:hover {
+    background: rgba(255, 255, 255, 0.25);
+    transform: translateY(-2px);
+}
+
+.nav-btn.active {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+/* Main Container */
+.container {
+    min-height: calc(100vh - 100px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+}
+
+.login-wrapper {
+    width: 100%;
+    max-width: 450px;
+    animation: fadeIn 0.6s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.login-container {
+    background: linear-gradient(135deg, rgba(13, 61, 77, 0.95) 0%, rgba(26, 79, 95, 0.9) 100%);
+    border-radius: 24px;
+    padding: 60px 50px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    animation: slideUp 0.6s ease;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.login-title {
+    font-size: 2.8rem;
+    color: white;
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 45px;
+    letter-spacing: 0.5px;
+}
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.form-group label {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: white;
+    padding-left: 4px;
+}
+
+.form-group input {
+    background: rgba(181, 201, 207, 0.9);
+    border: 2px solid transparent;
+    border-radius: 12px;
+    padding: 18px 22px;
+    font-size: 1.05rem;
+    color: #0a2832;
+    font-weight: 500;
+    outline: none;
+    transition: all 0.3s ease;
+    font-family: inherit;
+}
+
+.form-group input::placeholder {
+    color: rgba(10, 40, 50, 0.5);
+    font-weight: 400;
+}
+
+.form-group input:hover {
+    background: rgba(181, 201, 207, 0.95);
+}
+
+.form-group input:focus {
+    background: rgba(181, 201, 207, 1);
+    border-color: rgba(74, 158, 255, 0.5);
+    box-shadow: 0 0 0 4px rgba(74, 158, 255, 0.15);
+    transform: translateY(-2px);
+}
+
+.form-group input.valid {
+    border-color: #28a745;
+    border-left: 4px solid #28a745;
+}
+
+.form-group input.error {
+    border-color: #dc3545;
+    border-left: 4px solid #dc3545;
+    animation: shake 0.5s ease;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-10px); }
+    75% { transform: translateX(10px); }
+}
+
+.login-footer {
+    text-align: center;
+    margin-top: 10px;
+}
+
+.cadastro-text {
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.85);
+}
+
+.link-cadastro {
+    color: #4a9eff;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.link-cadastro::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: #4a9eff;
+    transition: width 0.3s ease;
+}
+
+.link-cadastro:hover::after {
+    width: 100%;
+}
+
+.link-cadastro:hover {
+    color: #6bb3ff;
+    text-shadow: 0 0 10px rgba(74, 158, 255, 0.5);
+}
+
+.btn-login {
+    width: 100%;
+    padding: 18px;
+    background: rgba(181, 201, 207, 0.9);
+    border: none;
+    border-radius: 12px;
+    color: #0d323e;
+    font-size: 1.15rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 15px;
+    font-family: inherit;
+}
+
+.btn-login:hover {
+    background: rgba(181, 201, 207, 1);
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(181, 201, 207, 0.4);
+}
+
+.btn-login:active {
+    transform: translateY(-1px);
+}
+
+.btn-login:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .header-content {
+        flex-direction: column;
+        gap: 20px;
+        padding: 20px;
+    }
+
+    .container {
+        padding: 30px 20px;
+    }
+
+    .login-container {
+        padding: 50px 40px;
+    }
+
+    .login-title {
+        font-size: 2.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .login-container {
+        padding: 40px 30px;
+    }
+
+    .login-title {
+        font-size: 2.2rem;
+        margin-bottom: 35px;
+    }
+
+    .form-group input {
+        padding: 16px 20px;
+        font-size: 1rem;
+    }
+}
