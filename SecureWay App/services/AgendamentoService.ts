@@ -169,7 +169,7 @@ export const agendamentoService = {
     try {
       const q = query(
         collection(db, 'usuarios'),
-        where('tipo', '==', 'motorista')
+        where('tipo', '==', 'caminhoneiro')
       );
       
       const snapshot = await getDocs(q);
