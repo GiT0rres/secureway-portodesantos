@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { 
   View, 
   Text, 
@@ -14,6 +14,7 @@ import BottomNav from '@/components/BottomNav';
 import { auth, db } from '../services/firebase.config';
 import { doc, getDoc } from 'firebase/firestore';
 import { signOut } from 'firebase/auth';
+import { useAgendamentos } from '../hooks/useAgendamentos';
 
 interface UserData {
   nomeCompleto: string;
@@ -31,7 +32,8 @@ export default function PerfilMotorista() {
   const router = useRouter();
   const [userData, setUserData] = useState<UserData | null>(null);
   const [loading, setLoading] = useState(true);
-  const [selectedTab, setSelectedTab] = useState<'caminhos' | 'historico'>('caminhos'); // ✅ novo estado
+  const [selectedTab, setSelectedTab] = useState<'caminhos' | 'historico'>('caminhos');
+  const { agendamentosPassados, loading: loadingAgendamentos } = useAgendamentos('motorista');
 
   useFocusEffect(
     React.useCallback(() => {
@@ -265,18 +267,41 @@ export default function PerfilMotorista() {
         ) : (
           <>
             {/* Conteúdo da aba Histórico */}
-            <View style={styles.cardsContainer}>
-              <View style={styles.sectionTitle}>
-                <Text style={styles.sectionTitleText}>Histórico de Caminhos</Text>
-              </View>
+            {loadingAgendamentos ? (
+              <ActivityIndicator size="large" color="#5a8a8a" style={{ marginTop: 20 }} />
+            ) : agendamentosPassados().length === 0 ? (
               <View style={styles.emptyVehicleContainer}>
                 <Text style={styles.emptyVehicleIcon}>📜</Text>
                 <Text style={styles.emptyVehicleText}>Nenhum histórico encontrado</Text>
                 <Text style={styles.emptyVehicleSubtext}>
-                  Suas viagens aparecerão aqui
+                  Suas entregas finalizadas aparecerão aqui
                 </Text>
               </View>
-            </View>
+            ) : (
+              agendamentosPassados().map((ag) => (
+                <View key={ag.id} style={styles.historicoCard}>
+                  <View style={styles.historicoHeader}>
+                    <Text style={styles.historicoEmpresa}>{ag.empresaNome}</Text>
+                    <Text
+                      style={[
+                        styles.historicoStatus,
+                        ag.status === 'concluido'
+                          ? styles.statusConcluido
+                          : styles.statusCancelado,
+                      ]}
+                    >
+                      {ag.status === 'concluido' ? '✅ Concluído' : '❌ Cancelado'}
+                    </Text>
+                  </View>
+
+                  <Text style={styles.historicoInfo}>
+                    📅 {new Date(ag.data).toLocaleDateString('pt-BR')}
+                  </Text>
+                  <Text style={styles.historicoInfo}>⏰ {ag.horario}</Text>
+                  <Text style={styles.historicoInfo}>🏢 {ag.endereco}</Text>
+                </View>
+              ))
+            )}
           </>
         )}
       </ScrollView>
@@ -477,5 +502,45 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#ffffff',
     fontWeight: '500',
+  },
+  historicoCard: {
+    backgroundColor: '#134949',
+    borderRadius: 10,
+    padding: 14,
+    marginHorizontal: 20,
+    marginVertical: 8,
+    borderLeftWidth: 4,
+    borderLeftColor: '#3694AD',
+    shadowColor: '#000',
+    shadowOpacity: 0.3,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 3,
+    elevation: 3,
+  },
+  historicoHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 6,
+  },
+  historicoEmpresa: {
+    fontSize: 16,
+    color: '#fff',
+    fontWeight: 'bold',
+  },
+  historicoStatus: {
+    fontSize: 13,
+    fontWeight: '600',
+  },
+  statusConcluido: {
+    color: '#4CAF50',
+  },
+  statusCancelado: {
+    color: '#F44336',
+  },
+  historicoInfo: {
+    color: '#a0c4c4',
+    fontSize: 13,
+    marginTop: 2,
   },
 });

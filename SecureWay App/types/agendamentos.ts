@@ -1,4 +1,5 @@
 // types/agendamento.ts
+
 export interface Agendamento {
   id: string;
   motoristaId: string;

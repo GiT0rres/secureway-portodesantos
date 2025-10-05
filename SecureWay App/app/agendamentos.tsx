@@ -1,58 +1,47 @@
 import React, { useEffect, useState } from 'react';
 import { 
-  View, 
-  Text, 
-  TouchableOpacity, 
-  StyleSheet, 
-  StatusBar, 
-  ScrollView, 
-  ActivityIndicator, 
-  Alert 
+  View, Text, TouchableOpacity, StyleSheet, StatusBar, 
+  ScrollView, ActivityIndicator, Alert 
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import BottomNav from '../components/BottomNav';
-import { auth, db } from '../services/firebase.config';
-import { collection, query, where, getDocs } from 'firebase/firestore';
 import { Ionicons } from '@expo/vector-icons';
+import { updateDoc, doc } from 'firebase/firestore';
+import { db } from '../services/firebase.config';
+import { useAgendamentos } from '../hooks/useAgendamentos';
 
 export default function Agendamentos() {
   const router = useRouter();
-  const [agendamentos, setAgendamentos] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { agendamentosAtivos, loading } = useAgendamentos('motorista');
 
-  useEffect(() => {
-    carregarAgendamentos();
-  }, []);
-
-  const carregarAgendamentos = async () => {
-    try {
-      const user = auth.currentUser;
-      if (!user) {
-        router.replace('/');
-        return;
-      }
-
-      const q = query(collection(db, 'agendamentos'), where('motoristaId', '==', user.uid));
-      const querySnapshot = await getDocs(q);
-      const lista: any[] = [];
-      querySnapshot.forEach((doc) => {
-        lista.push({ id: doc.id, ...doc.data() });
-      });
-
-      setAgendamentos(lista);
-    } catch (error) {
-      console.error('Erro ao carregar agendamentos:', error);
-      Alert.alert('Erro', 'Não foi possível carregar os agendamentos');
-    } finally {
-      setLoading(false);
-    }
+  const finalizarAgendamento = async (id: string) => {
+    Alert.alert(
+      'Finalizar Agendamento',
+      'Deseja marcar este agendamento como concluído?',
+      [
+        { text: 'Cancelar', style: 'cancel' },
+        {
+          text: 'Concluir',
+          onPress: async () => {
+            try {
+              await updateDoc(doc(db, 'agendamentos', id), {
+                status: 'concluido',
+              });
+              Alert.alert('Sucesso', 'Agendamento marcado como concluído.');
+            } catch (error) {
+              console.error('Erro ao finalizar:', error);
+              Alert.alert('Erro', 'Não foi possível atualizar o status.');
+            }
+          },
+        },
+      ]
+    );
   };
 
   return (
     <View style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="#0a3d3d" />
 
-      {/* Header */}
       <View style={styles.header}>
         <Text style={styles.title}>SecureWay</Text>
         <Text style={styles.subtitle}>Meus Agendamentos</Text>
@@ -63,10 +52,10 @@ export default function Agendamentos() {
           <ActivityIndicator size="large" color="#5a8a8a" />
           <Text style={styles.loadingText}>Carregando...</Text>
         </View>
-      ) : agendamentos.length === 0 ? (
+      ) : agendamentosAtivos().length === 0 ? (
         <View style={styles.emptyContainer}>
           <Text style={styles.emptyIcon}>📋</Text>
-          <Text style={styles.emptyText}>Nenhum agendamento encontrado</Text>
+          <Text style={styles.emptyText}>Nenhum agendamento ativo</Text>
           <TouchableOpacity
             style={styles.agendarButton}
             onPress={() => router.push('/agendar_entrega')}
@@ -77,33 +66,49 @@ export default function Agendamentos() {
       ) : (
         <ScrollView contentContainerStyle={styles.scrollContent}>
           <View style={styles.content}>
-            {agendamentos.map((item) => (
-              <TouchableOpacity 
-                key={item.id} 
-                style={styles.appointmentCard}
-                onPress={() => Alert.alert(item.empresaNome, `Endereço: ${item.endereco}\nData: ${new Date(item.data).toLocaleDateString('pt-BR')}\nHorário: ${item.horario}`)}
-              >
+            {agendamentosAtivos().map((item) => (
+              <View key={item.id} style={styles.appointmentCard}>
                 <View style={styles.cardContent}>
                   <Text style={styles.company}>{item.empresaNome}</Text>
                   <Text style={styles.address}>{item.endereco}</Text>
-                  <Text style={styles.location}>📅 {new Date(item.data).toLocaleDateString('pt-BR')} - ⏰ {item.horario}</Text>
+                  <Text style={styles.location}>
+                    📅 {new Date(item.data).toLocaleDateString('pt-BR')} - ⏰ {item.horario}
+                  </Text>
                 </View>
-              </TouchableOpacity>
+
+                <View style={styles.cardButtons}>
+                  <TouchableOpacity
+                    style={styles.detailsButton}
+                    onPress={() =>
+                      Alert.alert(
+                        item.empresaNome,
+                        `Endereço: ${item.endereco}\nData: ${new Date(item.data).toLocaleDateString('pt-BR')}\nHorário: ${item.horario}`
+                      )
+                    }
+                  >
+                    <Text style={styles.detailsButtonText}>Detalhes</Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    style={styles.finalizarButton}
+                    onPress={() => finalizarAgendamento(item.id)}
+                  >
+                    <Text style={styles.finalizarButtonText}>Concluir</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
             ))}
           </View>
         </ScrollView>
       )}
 
-      {/* Botão Flutuante ➕ */}
       <TouchableOpacity
         style={styles.fab}
         onPress={() => router.push('/agendar_entrega')}
-        activeOpacity={0.8}
       >
         <Ionicons name="add" size={32} color="#fff" />
       </TouchableOpacity>
 
-      {/* Barra inferior */}
       <BottomNav />
     </View>
   );
@@ -117,17 +122,21 @@ const styles = StyleSheet.create({
   scrollContent: { flexGrow: 1, paddingBottom: 80 },
   content: { paddingHorizontal: 20, paddingTop: 20 },
   appointmentCard: {
-    backgroundColor: '#001f2d',
+    backgroundColor: '#B5C9CF',
     borderRadius: 8,
     padding: 16,
     marginBottom: 12,
-    borderColor: '#1590a5ff',
     borderWidth: 2,
   },
-  cardContent: { flexDirection: 'column' },
-  company: { fontSize: 16, color: '#ffffff', fontWeight: '500', marginBottom: 4 },
-  address: { fontSize: 14, color: '#a0c4c4', marginBottom: 4 },
-  location: { fontSize: 14, color: '#ffffff' },
+  cardContent: { flexDirection: 'column', marginBottom: 12 },
+  company: { fontSize: 16, color: '#001f2d', fontWeight: '500', marginBottom: 4 },
+  address: { fontSize: 14, color: '#001f2d', marginBottom: 4 },
+  location: { fontSize: 14, color: '#001f2d' },
+  cardButtons: { flexDirection: 'row', justifyContent: 'space-between' },
+  detailsButton: { backgroundColor: '#4F9D9D', padding: 8, borderRadius: 6 },
+  detailsButtonText: { color: '#fff', fontWeight: 'bold' },
+  finalizarButton: { backgroundColor: '#E85C5C', padding: 8, borderRadius: 6 },
+  finalizarButtonText: { color: '#fff', fontWeight: 'bold' },
   loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
   loadingText: { color: '#5a8a8a', marginTop: 10 },
   emptyContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
@@ -140,23 +149,15 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   agendarButtonText: { color: '#ffffff', fontWeight: 'bold', fontSize: 16 },
-
-  // 🔹 Estilo do botão flutuante
- fab: {
-  position: 'absolute',
-  bottom: 150, // ⬆️ subimos o botão um pouco mais no eixo Y
-  right: 25,
-  backgroundColor: '#3694AD',
-  width: 60,
-  height: 60,
-  borderRadius: 30,
-  justifyContent: 'center',
-  alignItems: 'center',
-  elevation: 10,
-  shadowColor: '#000',
-  shadowOffset: { width: 0, height: 4 },
-  shadowOpacity: 0.4,
-  shadowRadius: 4,
-  zIndex: 999,
-},
+  fab: {
+    position: 'absolute',
+    bottom: 150,
+    right: 25,
+    backgroundColor: '#3694AD',
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
 });

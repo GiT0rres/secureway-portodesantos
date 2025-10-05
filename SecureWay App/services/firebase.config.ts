@@ -13,7 +13,7 @@ const firebaseConfig = {
   measurementId: "G-4956QKDXG2"
 };
 
-const app = initializeApp(firebaseConfig);
+const app = initializeApp(firebaseConfig,{});
 const auth = getAuth(app); // Persistência automática!
 const db = getFirestore(app);
 
