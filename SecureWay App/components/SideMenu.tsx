@@ -6,33 +6,42 @@ import { useRouter } from "expo-router";
 interface Props {
   visible: boolean;
   onClose: () => void;
+  nome?: string;
+  tipo?: "empresa" | "motorista" | "admin" | string;
 }
 
-export default function SideMenu({ visible, onClose }: Props) {
+export default function SideMenu({ visible, onClose, nome, tipo }: Props) {
   const router = useRouter();
-  const slideAnim = useRef(new Animated.Value(-300)).current; // começa fora (esquerda)
-  const [isMounted, setIsMounted] = useState(visible); // controla montagem
+  const slideAnim = useRef(new Animated.Value(-300)).current;
+  const [isMounted, setIsMounted] = useState(visible);
 
   useEffect(() => {
     if (visible) {
-      setIsMounted(true); // mantém montado
+      setIsMounted(true);
       Animated.timing(slideAnim, {
-        toValue: 0, // posição final
+        toValue: 0,
         duration: 300,
         useNativeDriver: true,
       }).start();
     } else {
       Animated.timing(slideAnim, {
-        toValue: -300, // volta pra fora
+        toValue: -300,
         duration: 300,
         useNativeDriver: true,
-      }).start(() => {
-        setIsMounted(false); // desmonta só depois da animação
-      });
+      }).start(() => setIsMounted(false));
     }
   }, [visible]);
 
   if (!isMounted) return null;
+
+  const handlePerfil = () => {
+    onClose();
+    if (tipo === "empresa") {
+      router.push("/perfil_empresa");
+    } else {
+      router.push("/perfil_caminhoneiro");
+    }
+  };
 
   return (
     <View style={styles.overlay}>
@@ -41,40 +50,69 @@ export default function SideMenu({ visible, onClose }: Props) {
         <View style={styles.header}>
           <View style={styles.avatar} />
           <View>
-            <Text style={styles.name}>Sérgio Andrade</Text>
-            <TouchableOpacity
-              onPress={() => {
-                onClose();
-                router.push("/perfil_caminhoneiro");
-              }}
-            >
-              <Text style={styles.subtitle}>Ver perfil</Text>
+            <Text style={styles.name}>{nome || "Usuário"}</Text>
+            <TouchableOpacity onPress={handlePerfil}>
+              <Text style={styles.subtitle}>
+                {tipo === "empresa" ? "Ver perfil da empresa" : "Ver perfil do motorista"}
+              </Text>
             </TouchableOpacity>
           </View>
         </View>
 
         {/* Itens */}
-        <TouchableOpacity style={styles.item} onPress={() => { onClose(); router.push("/Home"); }}>
+        <TouchableOpacity
+          style={styles.item}
+          onPress={() => {
+            onClose();
+            router.push("/Home");
+          }}
+        >
           <Ionicons name="home-outline" size={20} color="#fff" />
           <Text style={styles.itemText}>Home</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.item} onPress={() => { onClose(); router.push("/agendamentos"); }}>
+        <TouchableOpacity
+          style={styles.item}
+          onPress={() => {
+            onClose();
+            router.push("/agendamentos");
+          }}
+        >
           <Ionicons name="calendar-outline" size={20} color="#fff" />
           <Text style={styles.itemText}>Agendamentos</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.item} onPress={() => { onClose(); router.push("/display_qr"); }}>
+        <TouchableOpacity
+          style={styles.item}
+          onPress={() => {
+            onClose();
+            router.push("/display_qr");
+          }}
+        >
           <Ionicons name="qr-code-outline" size={20} color="#fff" />
           <Text style={styles.itemText}>Leitor de QR Code</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.item} onPress={() => { onClose(); router.push("/empresas_salvas"); }}>
-          <Ionicons name="bookmark-outline" size={20} color="#fff" />
-          <Text style={styles.itemText}>Empresas Salvas</Text>
-        </TouchableOpacity>
+        {tipo === "motorista" && (
+          <TouchableOpacity
+            style={styles.item}
+            onPress={() => {
+              onClose();
+              router.push("/empresas_salvas");
+            }}
+          >
+            <Ionicons name="bookmark-outline" size={20} color="#fff" />
+            <Text style={styles.itemText}>Empresas Salvas</Text>
+          </TouchableOpacity>
+        )}
 
-        <TouchableOpacity style={styles.item} onPress={() => { onClose(); router.push("/avisos"); }}>
+        <TouchableOpacity
+          style={styles.item}
+          onPress={() => {
+            onClose();
+            router.push("/avisos");
+          }}
+        >
           <Ionicons name="chatbubble-ellipses-outline" size={20} color="#fff" />
           <Text style={styles.itemText}>Status</Text>
         </TouchableOpacity>
@@ -92,7 +130,7 @@ const styles = StyleSheet.create({
   overlay: {
     position: "absolute",
     top: 0,
-    left: 0, // encostado na esquerda
+    left: 0,
     bottom: 0,
     right: 0,
     backgroundColor: "rgba(0,0,0,0.4)",
@@ -112,7 +150,13 @@ const styles = StyleSheet.create({
     borderBottomColor: "#00e0ff33",
     paddingBottom: 10,
   },
-  avatar: { width: 40, height: 40, borderRadius: 20, backgroundColor: "#00e0ff55", marginRight: 12 },
+  avatar: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "#00e0ff55",
+    marginRight: 12,
+  },
   name: { color: "#fff", fontWeight: "bold", fontSize: 16 },
   subtitle: { color: "#aaa", fontSize: 12 },
   item: { flexDirection: "row", alignItems: "center", marginVertical: 12 },

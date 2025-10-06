@@ -1,19 +1,40 @@
-// components/QrScanner.tsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, Linking, Alert, TouchableOpacity } from "react-native";
 import { CameraView, useCameraPermissions } from "expo-camera";
+import { auth } from "../services/firebase.config"; // 👈 importa o auth
 import BottomNav from "@/components/BottomNav";
 
 export default function QrScanner() {
   const [permission, requestPermission] = useCameraPermissions();
   const [scanned, setScanned] = useState(false);
+  const [user, setUser] = useState<any>(null);
+
+  // ✅ verifica se há usuário logado
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((currentUser) => {
+      setUser(currentUser);
+    });
+    return unsubscribe;
+  }, []);
+
+  if (!user) {
+    return (
+      <View style={styles.center}>
+        <Text style={styles.blockText}>🔒 Acesso restrito</Text>
+        <Text style={styles.info}>
+          Faça login para usar o leitor de QR Code.
+        </Text>
+      </View>
+    );
+  }
 
   if (!permission) return <View />;
   if (!permission.granted) {
     return (
-        
       <View style={styles.center}>
-        <Text style={styles.info}>Permita o acesso à câmera para usar o leitor.</Text>
+        <Text style={styles.info}>
+          Permita o acesso à câmera para usar o leitor.
+        </Text>
         <Text style={styles.link} onPress={requestPermission}>
           Conceder permissão
         </Text>
@@ -40,32 +61,35 @@ export default function QrScanner() {
 
   return (
     <>
-    <View style={styles.wrapper}>
-      <View style={styles.scannerBox}>
-        <CameraView
-          style={StyleSheet.absoluteFillObject}
-          facing="back"
-          onBarcodeScanned={scanned ? undefined : handleBarcodeScanned}
-          barcodeScannerSettings={{ barcodeTypes: ["qr"] }}
-        />
+      <View style={styles.wrapper}>
+        <View style={styles.scannerBox}>
+          <CameraView
+            style={StyleSheet.absoluteFillObject}
+            facing="back"
+            onBarcodeScanned={scanned ? undefined : handleBarcodeScanned}
+            barcodeScannerSettings={{ barcodeTypes: ["qr"] }}
+          />
 
-        <View style={styles.overlay}>
-          <Text style={styles.overlayText}>Aponte a câmera para o QR CODE</Text>
+          <View style={styles.overlay}>
+            <Text style={styles.overlayText}>Aponte a câmera para o QR CODE</Text>
 
-          <View style={[styles.corner, styles.topLeft]} />
-          <View style={[styles.corner, styles.topRight]} />
-          <View style={[styles.corner, styles.bottomLeft]} />
-          <View style={[styles.corner, styles.bottomRight]} />
+            <View style={[styles.corner, styles.topLeft]} />
+            <View style={[styles.corner, styles.topRight]} />
+            <View style={[styles.corner, styles.bottomLeft]} />
+            <View style={[styles.corner, styles.bottomRight]} />
+          </View>
         </View>
+
+        {scanned && (
+          <TouchableOpacity
+            style={styles.neonButton}
+            onPress={() => setScanned(false)}
+          >
+            <Text style={styles.neonButtonText}>🔄 Escanear novamente</Text>
+          </TouchableOpacity>
+        )}
       </View>
 
-      {/* Botão neon aparece só depois de escanear */}
-      {scanned && (
-        <TouchableOpacity style={styles.neonButton} onPress={() => setScanned(false)}>
-          <Text style={styles.neonButtonText}>🔄 Escanear novamente</Text>
-        </TouchableOpacity>
-      )}
-    </View>
     </>
   );
 }
@@ -110,12 +134,13 @@ const styles = StyleSheet.create({
   bottomLeft: { bottom: 0, left: 0, borderRightWidth: 0, borderTopWidth: 0 },
   bottomRight: { bottom: 0, right: 0, borderLeftWidth: 0, borderTopWidth: 0 },
 
-  // Texto de permissão
-  center: { flex: 1, justifyContent: "center", alignItems: "center" },
-  info: { color: "#fff", textAlign: "center" },
+  // 🔒 bloqueio de acesso
+  center: { flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "#001f2d" },
+  blockText: { color: "#00e0ff", fontSize: 20, fontWeight: "bold", marginBottom: 10 },
+  info: { color: "#ffffff", textAlign: "center", paddingHorizontal: 20 },
   link: { color: "#00e0ff", marginTop: 10, textDecorationLine: "underline" },
 
-  // Botão neon futurista
+  // Botão neon
   neonButton: {
     marginTop: 20,
     paddingHorizontal: 25,
