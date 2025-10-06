@@ -15,9 +15,11 @@ import {
 import { useRouter } from "expo-router";
 import BottomNav from "../components/BottomNav";
 import { fazerLogin } from "../services/authService";
+import SplashScreen from "../components/loading";
 
 export default function Index() {
   const router = useRouter();
+  const [showSplash, setShowSplash] = useState(true);
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
   const [isLoggingIn, setIsLoggingIn] = useState(false);
@@ -57,79 +59,83 @@ export default function Index() {
     }
   };
 
-  return (
-    <View style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#0a3d3d" />
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        style={styles.keyboardView}
+  if (showSplash) {
+  return <SplashScreen onFinish={() => setShowSplash(false)} />; // 👈 ao terminar, desliga o splash
+}
+
+return (
+  <View style={styles.container}>
+    <StatusBar barStyle="light-content" backgroundColor="#0a3d3d" />
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      style={styles.keyboardView}
+    >
+      <ScrollView 
+        contentContainerStyle={styles.scrollContent} 
+        keyboardShouldPersistTaps="handled"
       >
-        <ScrollView 
-          contentContainerStyle={styles.scrollContent} 
-          keyboardShouldPersistTaps="handled"
-        >
-          <Text style={styles.title}>Faça o Login</Text>
+        <Text style={styles.title}>Faça o Login</Text>
 
-          <View style={styles.form}>
-            <TextInput
-              style={styles.input}
-              placeholder="E-mail"
-              placeholderTextColor="#5a8a8a"
-              value={email}
-              onChangeText={(text) => setEmail(text)}
-              keyboardType="email-address"
-              autoCapitalize="none"
-              autoComplete="email"
-              editable={!isLoggingIn}
-            />
+        <View style={styles.form}>
+          <TextInput
+            style={styles.input}
+            placeholder="E-mail"
+            placeholderTextColor="#5a8a8a"
+            value={email}
+            onChangeText={setEmail}
+            keyboardType="email-address"
+            autoCapitalize="none"
+            autoComplete="email"
+            editable={!isLoggingIn}
+          />
 
-            <TextInput
-              style={styles.input}
-              placeholder="Senha"
-              placeholderTextColor="#5a8a8a"
-              value={senha}
-              onChangeText={(text) => setSenha(text)}
-              secureTextEntry={true}
-              autoCapitalize="none"
-              editable={!isLoggingIn}
-            />
+          <TextInput
+            style={styles.input}
+            placeholder="Senha"
+            placeholderTextColor="#5a8a8a"
+            value={senha}
+            onChangeText={setSenha}
+            secureTextEntry={true}
+            autoCapitalize="none"
+            editable={!isLoggingIn}
+          />
 
-            <TouchableOpacity
-              style={[styles.loginButton, isLoggingIn && styles.loginButtonDisabled]}
-              onPress={handleLogin}
-              disabled={isLoggingIn}
-            >
-              {isLoggingIn ? (
-                <ActivityIndicator color="#fff" />
-              ) : (
-                <Text style={styles.loginButtonText}>Entrar</Text>
-              )}
-            </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.loginButton, isLoggingIn && styles.loginButtonDisabled]}
+            onPress={handleLogin}
+            disabled={isLoggingIn}
+          >
+            {isLoggingIn ? (
+              <ActivityIndicator color="#fff" />
+            ) : (
+              <Text style={styles.loginButtonText}>Entrar</Text>
+            )}
+          </TouchableOpacity>
 
-            <TouchableOpacity 
-              onPress={() => router.push("/cadastro")}
-              disabled={isLoggingIn}
-            >
-              <Text style={styles.link}>
-                Não tem uma conta? <Text style={styles.linkBold}>Cadastre-se</Text>
-              </Text>
-            </TouchableOpacity>
+          <TouchableOpacity 
+            onPress={() => router.push("/cadastro")}
+            disabled={isLoggingIn}
+          >
+            <Text style={styles.link}>
+              Não tem uma conta? <Text style={styles.linkBold}>Cadastre-se</Text>
+            </Text>
+          </TouchableOpacity>
 
-            <TouchableOpacity 
-              onPress={() => router.push("/cad_empresa")}
-              disabled={isLoggingIn}
-              style={styles.empresaLink}
-            >
-              <Text style={styles.link}>
-                Cadastre sua <Text style={styles.linkBold}>Empresa</Text>
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </ScrollView>
-      </KeyboardAvoidingView>
-      <BottomNav />
-    </View>
-  );
+          <TouchableOpacity 
+            onPress={() => router.push("/cad_empresa")}
+            disabled={isLoggingIn}
+            style={styles.empresaLink}
+          >
+            <Text style={styles.link}>
+              Cadastre sua <Text style={styles.linkBold}>Empresa</Text>
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
+    <BottomNav />
+  </View>
+);
 }
 
 const styles = StyleSheet.create({
