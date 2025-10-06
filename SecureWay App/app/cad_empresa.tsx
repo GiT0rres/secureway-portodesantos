@@ -8,41 +8,108 @@ import {
   StatusBar,
   KeyboardAvoidingView,
   Platform,
-  ScrollView
+  ScrollView,
+  Alert,
+  ActivityIndicator
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import BottomNav from '@/components/BottomNav';
+import { cadastrarUsuario } from '../services/authService';
 
-export default function CadastroVeiculo() {
+export default function CadastroEmpresa() {
   const router = useRouter();
   const [nome, setNome] = useState('');
   const [cnpj, setCnpj] = useState('');
-  const [endereco, setEndereco] = useState('');
   const [telefone, setTelefone] = useState('');
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
-const formatarTelefone = (text: string) => {
-  // Mantém apenas números
-  const numeros = text.replace(/\D/g, '');
+  const formatarTelefone = (text: string) => {
+    const numeros = text.replace(/\D/g, '');
 
-  if (numeros.length <= 2) {
-    setTelefone(numeros);
-  } else if (numeros.length <= 6) {
-    setTelefone(`(${numeros.slice(0, 2)}) ${numeros.slice(2)}`);
-  } else if (numeros.length <= 10) {
-    // Formato fixo: (XX) XXXX-XXXX
-    setTelefone(`(${numeros.slice(0, 2)}) ${numeros.slice(2, 6)}-${numeros.slice(6, 10)}`);
-  } else {
-    // Formato celular: (XX) XXXXX-XXXX
-    setTelefone(`(${numeros.slice(0, 2)}) ${numeros.slice(2, 7)}-${numeros.slice(7, 11)}`);
-  }
-};
+    if (numeros.length <= 2) {
+      setTelefone(numeros);
+    } else if (numeros.length <= 6) {
+      setTelefone(`(${numeros.slice(0, 2)}) ${numeros.slice(2)}`);
+    } else if (numeros.length <= 10) {
+      setTelefone(`(${numeros.slice(0, 2)}) ${numeros.slice(2, 6)}-${numeros.slice(6, 10)}`);
+    } else {
+      setTelefone(`(${numeros.slice(0, 2)}) ${numeros.slice(2, 7)}-${numeros.slice(7, 11)}`);
+    }
+  };
 
+  const formatarCNPJ = (text: string) => {
+    const numeros = text.replace(/\D/g, '');
+    
+    if (numeros.length <= 2) {
+      setCnpj(numeros);
+    } else if (numeros.length <= 5) {
+      setCnpj(`${numeros.slice(0, 2)}.${numeros.slice(2)}`);
+    } else if (numeros.length <= 8) {
+      setCnpj(`${numeros.slice(0, 2)}.${numeros.slice(2, 5)}.${numeros.slice(5)}`);
+    } else if (numeros.length <= 12) {
+      setCnpj(`${numeros.slice(0, 2)}.${numeros.slice(2, 5)}.${numeros.slice(5, 8)}/${numeros.slice(8)}`);
+    } else {
+      setCnpj(`${numeros.slice(0, 2)}.${numeros.slice(2, 5)}.${numeros.slice(5, 8)}/${numeros.slice(8, 12)}-${numeros.slice(12, 14)}`);
+    }
+  };
 
-  const handleEnviar = () => {
-    console.log('Cadastro Da Empresa:', { nome, cnpj, endereco, telefone, email, senha });
-    // Adicione sua lógica de cadastro aqui
+  const handleCadastro = async () => {
+    if (!nome.trim() || !cnpj.trim() || !telefone.trim() || !email.trim() || !senha.trim()) {
+      Alert.alert('Atenção', 'Preencha todos os campos');
+      return;
+    }
+
+    if (senha.length < 6) {
+      Alert.alert('Atenção', 'A senha deve ter pelo menos 6 caracteres');
+      return;
+    }
+
+    const telefoneNumeros = telefone.replace(/\D/g, '');
+    if (telefoneNumeros.length < 10) {
+      Alert.alert('Atenção', 'Telefone inválido');
+      return;
+    }
+
+    const cnpjNumeros = cnpj.replace(/\D/g, '');
+    if (cnpjNumeros.length !== 14) {
+      Alert.alert('Atenção', 'CNPJ inválido (deve ter 14 dígitos)');
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      const result = await cadastrarUsuario(
+        nome,
+        email,
+        senha,
+        telefoneNumeros,
+        'empresa',
+        cnpjNumeros // CNPJ como 6º parâmetro
+      );
+
+      if (result.success && result.userData) {
+        Alert.alert(
+          'Sucesso!',
+          'Empresa cadastrada com sucesso. Faça login para continuar.',
+          [
+            {
+              text: 'OK',
+              onPress: () => router.replace('/')
+            }
+          ]
+        );
+      } else {
+        Alert.alert('Erro', result.message || 'Erro ao cadastrar empresa');
+      }
+    } catch (error) {
+      Alert.alert('Erro', 'Ocorreu um erro ao realizar o cadastro');
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -67,73 +134,89 @@ const formatarTelefone = (text: string) => {
             <Text style={styles.label}>Nome da Empresa</Text>
             <TextInput
               style={styles.input}
-              placeholder=""
+              placeholder="Digite o nome da empresa"
               placeholderTextColor="#5a8a8a"
               value={nome}
               onChangeText={setNome}
               autoCapitalize="words"
+              editable={!isLoading}
             />
 
             <Text style={styles.label}>E-mail</Text>
             <TextInput
               style={styles.input}
-              placeholder=""
+              placeholder="empresa@exemplo.com"
               placeholderTextColor="#5a8a8a"
               value={email}
               onChangeText={setEmail}
-              autoCapitalize="words"
+              keyboardType="email-address"
+              autoCapitalize="none"
+              editable={!isLoading}
             />
 
             <Text style={styles.label}>Telefone</Text>
             <TextInput
               style={styles.input}
-              placeholder=""
+              placeholder="(00) 00000-0000"
               placeholderTextColor="#5a8a8a"
               value={telefone}
               onChangeText={formatarTelefone}
-              autoCapitalize="characters"
+              keyboardType="phone-pad"
               maxLength={15}
+              editable={!isLoading}
             />
 
             <Text style={styles.label}>CNPJ</Text>
             <TextInput
               style={styles.input}
-              placeholder=""
+              placeholder="00.000.000/0000-00"
               placeholderTextColor="#5a8a8a"
               value={cnpj}
-              onChangeText={setCnpj}
-              autoCapitalize="words"
+              onChangeText={formatarCNPJ}
+              keyboardType="number-pad"
+              maxLength={18}
+              editable={!isLoading}
             />
 
             <Text style={styles.label}>Senha</Text>
             <TextInput
               style={styles.input}
-              placeholder=""
+              placeholder="Mínimo 6 caracteres"
               placeholderTextColor="#5a8a8a"
               value={senha}
               onChangeText={setSenha}
-              autoCapitalize="words"
+              secureTextEntry
+              autoCapitalize="none"
+              editable={!isLoading}
             />
 
             <TouchableOpacity 
-              style={styles.enviarButton}
-              onPress={handleEnviar}
+              style={[styles.enviarButton, isLoading && styles.enviarButtonDisabled]}
+              onPress={handleCadastro}
               activeOpacity={0.8}
+              disabled={isLoading}
             >
-              <Text style={styles.enviarButtonText}>Cadastrar</Text>
+              {isLoading ? (
+                <ActivityIndicator color="#0a3d3d" />
+              ) : (
+                <Text style={styles.enviarButtonText}>Cadastrar</Text>
+              )}
             </TouchableOpacity>
             
-            
-            <TouchableOpacity onPress={() => router.push('/')}>
-            <Text style={styles.loginText}>Já possui uma conta? Faça o <Text style={styles.loginLink}>Login.</Text></Text>
+            <TouchableOpacity 
+              onPress={() => router.push('/')}
+              disabled={isLoading}
+            >
+              <Text style={styles.loginText}>
+                Já possui uma conta? Faça o <Text style={styles.loginLink}>Login.</Text>
+              </Text>
             </TouchableOpacity>
-
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
 
       <BottomNav />
-      </View>
+    </View>
   );
 }
 
@@ -152,8 +235,6 @@ const styles = StyleSheet.create({
   },
   loginLink:{
     color: '#3694AD',
-    marginTop: 16,
-    textAlign: 'center'
   },
   scrollContent: {
     flexGrow: 1,
@@ -207,22 +288,12 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 3,
   },
+  enviarButtonDisabled: {
+    opacity: 0.7,
+  },
   enviarButtonText: {
     color: '#0a3d3d',
     fontSize: 16,
     fontWeight: 'bold',
-  },
-  navButton: {
-    padding: 8,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  navIcon: {
-    fontSize: 24,
-    color: '#5a8a8a',
-  },
-  navIconActive: {
-    fontSize: 24,
-    color: '#ffffff',
   },
 });

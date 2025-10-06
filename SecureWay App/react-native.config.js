@@ -2,16 +2,12 @@ module.exports = {
   dependencies: {
     'react-native-reanimated': {
       platforms: {
-        android: {
-          newArchEnabled: true,
-        },
+        android: {},
       },
     },
     'react-native-worklets': {
       platforms: {
-        android: {
-          newArchEnabled: true,
-        },
+        android: {},
       },
     },
   },

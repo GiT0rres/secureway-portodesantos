@@ -9,105 +9,124 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
+  Alert,
+  ActivityIndicator,
 } from "react-native";
 import { useRouter } from "expo-router";
 import BottomNav from "../components/BottomNav";
-import SplashScreen from "../components/loading"; // ✅ splash animado
+import { fazerLogin } from "../services/authService";
 
 export default function Index() {
   const router = useRouter();
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const [senha, setSenha] = useState("");
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
 
-  // controle do splash
-  const [loading, setLoading] = useState(true);
+  const handleLogin = async () => {
+    // Verificação mais segura
+    const emailValue = email || "";
+    const senhaValue = senha || "";
 
-  const handleLogin = () => {
-    console.log("Login:", { email, password });
-    // lógica de autenticação aqui
+    if (!emailValue.trim() || !senhaValue.trim()) {
+      Alert.alert("Atenção", "Preencha todos os campos");
+      return;
+    }
+
+    setIsLoggingIn(true);
+
+    try {
+      const result = await fazerLogin(emailValue.trim(), senhaValue);
+
+      if (result.success && result.userData) {
+        const userData = result.userData;
+        
+        // Redirecionar baseado no tipo de usuário
+        if (userData.tipo === "empresa") {
+          router.replace("/perfil_empresa");
+        } else {
+          router.replace("/perfil_caminhoneiro");
+        }
+      } else {
+        Alert.alert("Erro", result.message || "Falha ao fazer login");
+      }
+    } catch (error) {
+      console.error("Erro no login:", error);
+      Alert.alert("Erro", "Ocorreu um erro ao fazer login");
+    } finally {
+      setIsLoggingIn(false);
+    }
   };
-
-  // Se ainda está no splash, exibe ele
-  if (loading) {
-    return <SplashScreen onFinish={() => setLoading(false)} />;
-  }
 
   return (
     <View style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="#0a3d3d" />
-
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={styles.keyboardView}
       >
-        <ScrollView
-          contentContainerStyle={styles.scrollContent}
+        <ScrollView 
+          contentContainerStyle={styles.scrollContent} 
           keyboardShouldPersistTaps="handled"
         >
-          <View style={styles.header}>
-            <Text style={styles.title}>Faça o Login</Text>
-            <Text style={styles.subtitle}>Bem-vindo de volta!</Text>
-          </View>
+          <Text style={styles.title}>Faça o Login</Text>
 
           <View style={styles.form}>
-            <View style={styles.inputContainer}>
-              <Text style={styles.label}>E-mail</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="seu@email.com"
-                placeholderTextColor="#5a8a8a"
-                value={email}
-                onChangeText={setEmail}
-                keyboardType="email-address"
-                autoCapitalize="none"
-                autoComplete="email"
-              />
-            </View>
+            <TextInput
+              style={styles.input}
+              placeholder="E-mail"
+              placeholderTextColor="#5a8a8a"
+              value={email}
+              onChangeText={(text) => setEmail(text)}
+              keyboardType="email-address"
+              autoCapitalize="none"
+              autoComplete="email"
+              editable={!isLoggingIn}
+            />
 
-            <View style={styles.inputContainer}>
-              <Text style={styles.label}>Senha</Text>
-              <View style={styles.passwordContainer}>
-                <TextInput
-                  style={styles.passwordInput}
-                  placeholder="••••••••"
-                  placeholderTextColor="#5a8a8a"
-                  value={password}
-                  onChangeText={setPassword}
-                  secureTextEntry={!isPasswordVisible}
-                  autoCapitalize="none"
-                />
-                <TouchableOpacity
-                  onPress={() => setIsPasswordVisible(!isPasswordVisible)}
-                  style={styles.eyeButton}
-                >
-                  <Text style={styles.eyeIcon}>
-                    {isPasswordVisible ? "👁️" : "👁️‍🗨️"}
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            </View>
+            <TextInput
+              style={styles.input}
+              placeholder="Senha"
+              placeholderTextColor="#5a8a8a"
+              value={senha}
+              onChangeText={(text) => setSenha(text)}
+              secureTextEntry={true}
+              autoCapitalize="none"
+              editable={!isLoggingIn}
+            />
 
             <TouchableOpacity
-              style={styles.loginButton}
+              style={[styles.loginButton, isLoggingIn && styles.loginButtonDisabled]}
               onPress={handleLogin}
-              activeOpacity={0.8}
+              disabled={isLoggingIn}
             >
-              <Text style={styles.loginButtonText}>Entrar</Text>
+              {isLoggingIn ? (
+                <ActivityIndicator color="#fff" />
+              ) : (
+                <Text style={styles.loginButtonText}>Entrar</Text>
+              )}
             </TouchableOpacity>
 
-            <View style={styles.signupContainer}>
-              <Text style={styles.signupText}>Não tem uma conta? </Text>
-              <TouchableOpacity
-                onPress={() => router.push("/cadastro" as const)}
-              >
-                <Text style={styles.signupLink}>Cadastre-se</Text>
-              </TouchableOpacity>
-            </View>
+            <TouchableOpacity 
+              onPress={() => router.push("/cadastro")}
+              disabled={isLoggingIn}
+            >
+              <Text style={styles.link}>
+                Não tem uma conta? <Text style={styles.linkBold}>Cadastre-se</Text>
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity 
+              onPress={() => router.push("/cad_empresa")}
+              disabled={isLoggingIn}
+              style={styles.empresaLink}
+            >
+              <Text style={styles.link}>
+                Cadastre sua <Text style={styles.linkBold}>Empresa</Text>
+              </Text>
+            </TouchableOpacity>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
-
       <BottomNav />
     </View>
   );
@@ -116,77 +135,49 @@ export default function Index() {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#001f2d" },
   keyboardView: { flex: 1 },
-  scrollContent: {
-    flexGrow: 1,
-    justifyContent: "center",
-    paddingHorizontal: 24,
-    paddingBottom: 80,
+  scrollContent: { flexGrow: 1, justifyContent: "center", padding: 24 },
+  title: { 
+    fontSize: 28, 
+    fontWeight: "bold", 
+    color: "#fff", 
+    marginBottom: 24, 
+    textAlign: "center" 
   },
-  textoPag:{
-    color: '#ffffff',
-    textAlign: 'center',
-  },
-  linkPag:{
-    color: '#3694AD',
-    textAlign: 'center'
-  },
-  header: { marginBottom: 40, alignItems: "center" },
-  title: {
-    fontSize: 32,
-    fontWeight: "bold",
-    color: "#ffffff",
-    marginBottom: 8,
-  },
-  subtitle: { fontSize: 16, color: "#a0c4c4" },
   form: { width: "100%" },
-  inputContainer: { marginBottom: 20 },
-  label: {
-    fontSize: 14,
-    color: "#a0c4c4",
-    marginBottom: 8,
-    fontWeight: "500",
+  input: { 
+    backgroundColor: "#134949", 
+    padding: 16, 
+    borderRadius: 12, 
+    color: "#fff", 
+    marginBottom: 16,
+    fontSize: 16 
   },
-  input: {
-    backgroundColor: "#134949",
-    borderRadius: 12,
-    padding: 16,
-    fontSize: 16,
-    color: "#ffffff",
-    borderWidth: 1,
-    borderColor: "#1a5c5c",
+  loginButton: { 
+    backgroundColor: "#1a7070", 
+    padding: 16, 
+    borderRadius: 12, 
+    alignItems: "center", 
+    marginBottom: 16 
   },
-  passwordContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#134949",
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: "#1a5c5c",
+  loginButtonDisabled: {
+    opacity: 0.7
   },
-  passwordInput: { flex: 1, padding: 16, fontSize: 16, color: "#ffffff" },
-  eyeButton: { padding: 12 },
-  eyeIcon: { fontSize: 20 },
-  forgotPassword: { alignSelf: "flex-end", marginBottom: 24 },
-  forgotPasswordText: { color: "#6eb5b5", fontSize: 14 },
-  loginButton: {
-    backgroundColor: "#1a7070",
-    borderRadius: 12,
-    padding: 18,
-    alignItems: "center",
-    marginBottom: 24,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 5,
-    marginTop: 25
+  loginButtonText: { 
+    color: "#fff", 
+    fontWeight: "bold", 
+    fontSize: 16 
   },
-  loginButtonText: { color: "#ffffff", fontSize: 18, fontWeight: "bold" },
-  signupContainer: {
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
+  link: { 
+    color: "#6eb5b5", 
+    textAlign: "center", 
+    marginTop: 8,
+    fontSize: 14
   },
-  signupText: { color: "#a0c4c4", fontSize: 14 },
-  signupLink: { color: "#6eb5b5", fontSize: 14, fontWeight: "bold" },
+  linkBold: {
+    fontWeight: "bold",
+    color: "#3694AD"
+  },
+  empresaLink: {
+    marginTop: 12
+  }
 });

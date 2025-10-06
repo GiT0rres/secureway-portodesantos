@@ -8,10 +8,14 @@ import {
   StatusBar,
   KeyboardAvoidingView,
   Platform,
-  ScrollView
+  ScrollView,
+  Alert,
+  ActivityIndicator
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import BottomNav from '@/components/BottomNav';
+import { auth, db } from '../services/firebase.config';
+import { doc, updateDoc } from 'firebase/firestore';
 
 export default function CadastroVeiculo() {
   const router = useRouter();
@@ -20,12 +24,11 @@ export default function CadastroVeiculo() {
   const [cor, setCor] = useState('');
   const [placa, setPlaca] = useState('');
   const [etiqueta, setEtiqueta] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const formatarPlaca = (text: string) => {
-    // Remove caracteres não alfanuméricos
     const limpo = text.replace(/[^A-Za-z0-9]/g, '').toUpperCase();
-    //teste
-    // Formato ABC-1234 ou ABC1D23
+    
     if (limpo.length <= 7) {
       if (limpo.length > 3) {
         setPlaca(`${limpo.slice(0, 3)}-${limpo.slice(3, 7)}`);
@@ -35,9 +38,54 @@ export default function CadastroVeiculo() {
     }
   };
 
-  const handleEnviar = () => {
-    console.log('Cadastro Veículo:', { marca, modelo, cor, placa, etiqueta });
-    // Adicione sua lógica de cadastro aqui
+  const handleEnviar = async () => {
+    if (!marca.trim() || !modelo.trim() || !cor.trim() || !placa.trim()) {
+      Alert.alert('Atenção', 'Preencha ao menos: Marca, Modelo, Cor e Placa');
+      return;
+    }
+
+    const placaLimpa = placa.replace(/[^A-Za-z0-9]/g, '');
+    if (placaLimpa.length !== 7) {
+      Alert.alert('Atenção', 'Placa inválida. Use o formato ABC-1234 ou ABC1D23');
+      return;
+    }
+
+    const user = auth.currentUser;
+    if (!user) {
+      Alert.alert('Erro', 'Usuário não autenticado');
+      router.replace('/');
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      const userDocRef = doc(db, 'usuarios', user.uid);
+      
+      await updateDoc(userDocRef, {
+        marca: marca.trim(),
+        modelo: modelo.trim(),
+        cor: cor.trim(),
+        placa: placaLimpa,
+        etiqueta: etiqueta.trim() || null
+      });
+
+      Alert.alert(
+        'Sucesso!',
+        'Veículo cadastrado com sucesso!',
+        [
+          {
+            text: 'OK',
+            onPress: () => router.replace('/perfil_caminhoneiro')
+          }
+        ]
+      );
+    } catch (error) {
+      console.error('Erro ao cadastrar veículo:', error);
+      Alert.alert('Erro', 'Não foi possível cadastrar o veículo');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -54,75 +102,95 @@ export default function CadastroVeiculo() {
           showsVerticalScrollIndicator={false}
         >
           <View style={styles.header}>
-            <Text style={styles.title}>SecureWay</Text>
+            <Text style={styles.title}>Cadastre seu Veículo</Text>
             <Text style={styles.subtitle}>Complete seu caminho</Text>
           </View>
 
           <View style={styles.form}>
-            <Text style={styles.label}>Marca</Text>
+            <Text style={styles.label}>Marca *</Text>
             <TextInput
               style={styles.input}
-              placeholder=""
+              placeholder="Ex: Scania, Volvo, Mercedes"
               placeholderTextColor="#5a8a8a"
               value={marca}
               onChangeText={setMarca}
               autoCapitalize="words"
+              editable={!isLoading}
             />
 
-            <Text style={styles.label}>Modelo</Text>
+            <Text style={styles.label}>Modelo *</Text>
             <TextInput
               style={styles.input}
-              placeholder=""
+              placeholder="Ex: R450, FH540"
               placeholderTextColor="#5a8a8a"
               value={modelo}
               onChangeText={setModelo}
               autoCapitalize="words"
+              editable={!isLoading}
             />
 
-            <Text style={styles.label}>Cor</Text>
+            <Text style={styles.label}>Cor *</Text>
             <TextInput
               style={styles.input}
-              placeholder=""
+              placeholder="Ex: Branco, Azul"
               placeholderTextColor="#5a8a8a"
               value={cor}
               onChangeText={setCor}
               autoCapitalize="words"
+              editable={!isLoading}
             />
 
-            <Text style={styles.label}>Placa</Text>
+            <Text style={styles.label}>Placa *</Text>
             <TextInput
               style={styles.input}
-              placeholder=""
+              placeholder="ABC-1234"
               placeholderTextColor="#5a8a8a"
               value={placa}
               onChangeText={formatarPlaca}
               autoCapitalize="characters"
               maxLength={8}
+              editable={!isLoading}
             />
 
             <Text style={styles.label}>Etiqueta Autodestrutiva</Text>
             <TextInput
               style={styles.input}
-              placeholder=""
+              placeholder="Código da etiqueta (opcional)"
               placeholderTextColor="#5a8a8a"
               value={etiqueta}
               onChangeText={setEtiqueta}
               autoCapitalize="characters"
+              editable={!isLoading}
             />
 
+            <Text style={styles.observacao}>* Campos obrigatórios</Text>
+
             <TouchableOpacity 
-              style={styles.enviarButton}
+              style={[styles.enviarButton, isLoading && styles.enviarButtonDisabled]}
               onPress={handleEnviar}
               activeOpacity={0.8}
+              disabled={isLoading}
             >
-              <Text style={styles.enviarButtonText}>Enviar</Text>
+              {isLoading ? (
+                <ActivityIndicator color="#0a3d3d" />
+              ) : (
+                <Text style={styles.enviarButtonText}>Cadastrar Veículo</Text>
+              )}
+            </TouchableOpacity>
+
+            <TouchableOpacity 
+              onPress={() => router.push('/perfil_caminhoneiro')}
+              disabled={isLoading}
+              style={styles.voltarButton}
+            >
+              <Text style={styles.voltarText}>Voltar ao Perfil</Text>
             </TouchableOpacity>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
 
       <BottomNav />
-      </View>
+    </View>
   );
 }
 
@@ -142,6 +210,7 @@ const styles = StyleSheet.create({
   },
   header: {
     marginBottom: 30,
+    marginTop: 20,
   },
   title: {
     fontSize: 28,
@@ -171,6 +240,12 @@ const styles = StyleSheet.create({
     color: '#333333',
     marginBottom: 16,
   },
+  observacao: {
+    fontSize: 12,
+    color: '#a0c4c4',
+    marginBottom: 16,
+    fontStyle: 'italic',
+  },
   enviarButton: {
     backgroundColor: '#b8d8d8',
     borderRadius: 8,
@@ -183,22 +258,20 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 3,
   },
+  enviarButtonDisabled: {
+    opacity: 0.7,
+  },
   enviarButtonText: {
     color: '#0a3d3d',
     fontSize: 16,
     fontWeight: 'bold',
   },
-  navButton: {
-    padding: 8,
+  voltarButton: {
+    marginTop: 16,
     alignItems: 'center',
-    justifyContent: 'center',
   },
-  navIcon: {
-    fontSize: 24,
-    color: '#5a8a8a',
-  },
-  navIconActive: {
-    fontSize: 24,
-    color: '#ffffff',
+  voltarText: {
+    color: '#3694AD',
+    fontSize: 14,
   },
 });
