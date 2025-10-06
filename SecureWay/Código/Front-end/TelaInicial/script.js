@@ -1,37 +1,56 @@
-// Aguarda o carregamento completo do DOM
 document.addEventListener('DOMContentLoaded', function() {
+    // Botão de login principal
+    const loginBtn = document.getElementById('loginBtn');
+    const loginLink = document.querySelector('.login-link');
     
-    // Seleciona o elemento do link de login
-    const loginLink = document.getElementById('loginLink');
-    
-    // Adiciona evento de clique ao link de login
+    if (loginBtn) {
+        loginBtn.addEventListener('click', function() {
+            window.location.href = '../CadastroDeCaminhão/index.html';
+        });
+    }
+
     if (loginLink) {
-        loginLink.addEventListener('click', function() {
-            // Redireciona para a página de cadastro
-            window.location.href = 'cadastro.html';
+        loginLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            window.location.href = '../CadastroDeCaminhão/index.html';
         });
     }
     
-    // Adiciona animação de entrada suave
-    const title = document.querySelector('.title');
-    if (title) {
-        setTimeout(() => {
-            title.style.opacity = '1';
-        }, 100);
-    }
+    // Navegação dos botões do header
+    const navBtns = document.querySelectorAll('.nav-btn');
     
-    // Navegação inferior
-    const navBtns = document.querySelectorAll('.nav-button');
-    navBtns.forEach((btn, index) => {
-        btn.addEventListener('click', () => {
-            // Não remove active do botão home ao clicar no menu
-            if (index !== 0) {
-                navBtns.forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
+    navBtns.forEach((btn) => {
+        btn.addEventListener('click', function() {
+            // Remove active de todos os botões
+            navBtns.forEach(b => b.classList.remove('active'));
+            
+            // Adiciona active ao botão clicado
+            this.classList.add('active');
+            
+            // Pega o atributo data-page para identificar qual botão foi clicado
+            const page = this.getAttribute('data-page');
+            
+            // Log para debug
+            console.log('Navegação alterada para:', page);
+            
+            // Aqui você pode adicionar a lógica de navegação específica
+            switch(page) {
+                case 'menu':
+                    console.log('Menu clicado - Abrir menu de navegação');
+                    // Adicione sua lógica aqui
+                    break;
+                case 'inicio':
+                    console.log('Início clicado - Página inicial');
+                    // Adicione sua lógica aqui
+                    break;
+                case 'perfil':
+                    console.log('Perfil clicado - Ir para perfil do usuário');
+                    // Adicione sua lógica aqui
+                    break;
             }
-            console.log('Navegação alterada:', index);
         });
     });
     
-    console.log('SecureWay - Tela Inicial carregada com sucesso!');
+    console.log('✅ SecureWay - Tela Inicial carregada com sucesso!');
+    console.log('📊 Botões de navegação:', navBtns.length);
 });
