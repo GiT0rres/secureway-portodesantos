@@ -202,7 +202,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Link de Login
     linkLogin.addEventListener('click', function(e) {
         e.preventDefault();
-        window.location.href = 'index.html';
+        window.location.href = '../Login/index.html';
     });
 
     console.log('🚀 SecureWay - Página de Cadastro Desktop carregada!');

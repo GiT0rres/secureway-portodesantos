@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SecureWay - Avisos</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <h1 class="header-title">Avisos</h1>
+    </header>
+
+    <!-- Main Container -->
+    <div class="container">
+        <div class="avisos-list">
+            <!-- Aviso 1 -->
+            <div class="aviso-card" data-id="1">
+                <div class="aviso-content">
+                    <h3 class="aviso-titulo">Carga recebida</h3>
+                    <p class="aviso-descricao">Sua carga foi recebida com sucesso no destino</p>
+                    <span class="aviso-data">Há 2 horas</span>
+                </div>
+                <button class="btn-dismiss" data-id="1">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Aviso 2 -->
+            <div class="aviso-card" data-id="2">
+                <div class="aviso-content">
+                    <h3 class="aviso-titulo">Manutenção programada</h3>
+                    <p class="aviso-descricao">Sistema em manutenção amanhã às 03h</p>
+                    <span class="aviso-data">Há 5 horas</span>
+                </div>
+                <button class="btn-dismiss" data-id="2">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Aviso 3 -->
+            <div class="aviso-card" data-id="3">
+                <div class="aviso-content">
+                    <h3 class="aviso-titulo">Novo agendamento</h3>
+                    <p class="aviso-descricao">Você tem um agendamento para amanhã às 14h</p>
+                    <span class="aviso-data">Há 1 dia</span>
+                </div>
+                <button class="btn-dismiss" data-id="3">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Aviso 4 -->
+            <div class="aviso-card" data-id="4">
+                <div class="aviso-content">
+                    <h3 class="aviso-titulo">Documento pendente</h3>
+                    <p class="aviso-descricao">Complete o cadastro enviando os documentos</p>
+                    <span class="aviso-data">Há 2 dias</span>
+                </div>
+                <button class="btn-dismiss" data-id="4">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Aviso 5 -->
+            <div class="aviso-card" data-id="5">
+                <div class="aviso-content">
+                    <h3 class="aviso-titulo">Atualização disponível</h3>
+                    <p class="aviso-descricao">Nova versão do app disponível para download</p>
+                    <span class="aviso-data">Há 3 dias</span>
+                </div>
+                <button class="btn-dismiss" data-id="5">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Mensagem quando não há avisos -->
+            <div class="no-avisos" id="noAvisos" style="display: none;">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                    <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                </svg>
+                <h3>Nenhum aviso</h3>
+                <p>Você está em dia com todas as notificações</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+        <button class="nav-item">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="3" y1="12" x2="21" y2="12"></line>
+                <line x1="3" y1="6" x2="21" y2="6"></line>
+                <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
+        </button>
+        <button class="nav-item" id="btnHome">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                <polyline points="9 22 9 12 15 12 15 22"></polyline>
+            </svg>
+        </button>
+        <button class="nav-item">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+        </button>
+    </nav>
+    
+    <script src="script.js"></script>
+</body>
+</html>
