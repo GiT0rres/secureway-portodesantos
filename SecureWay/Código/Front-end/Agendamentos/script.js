@@ -2,46 +2,45 @@
 document.addEventListener('DOMContentLoaded', function() {
     
     // Elementos
-    const btnHome = document.getElementById('btnHome');
     const appointmentsList = document.getElementById('appointmentsList');
     
     // Dados de exemplo para agendamentos
     const appointments = [
         {
-            company: 'Transportadora ABC Logística',
-            address: 'Rua das Flores, 123 - Centro, São Paulo - SP',
-            datetime: '15/10/2025 às 14:00',
-            location: { lat: -23.550520, lng: -46.633308 }
+            company: 'Lon Mar Transportes',
+            address: 'Av. Conselheiro Rodrigues Alves, 50m do Porto - Macuco, Santos - SP',
+            datetime: '17/10/2025 às 08:30',
+            location: { lat: -23.9459, lng: -46.3240 }
         },
         {
-            company: 'Logística Express Brasil',
-            address: 'Av. Paulista, 1000 - Bela Vista, São Paulo - SP',
-            datetime: '16/10/2025 às 09:30',
-            location: { lat: -23.561414, lng: -46.655881 }
-        },
-        {
-            company: 'Cargas Rápidas Transportes',
-            address: 'Rua do Comércio, 456 - Centro, São Paulo - SP',
+            company: 'RodoQuick Transportes',
+            address: 'Rua da Constituição, 512 - Centro, Santos - SP',
             datetime: '17/10/2025 às 11:00',
-            location: { lat: -23.540520, lng: -46.623308 }
+            location: { lat: -23.9364, lng: -46.3327 }
         },
         {
-            company: 'Distribuidora Sul Entregas',
-            address: 'Av. dos Estados, 789 - Santo André - SP',
-            datetime: '18/10/2025 às 16:30',
-            location: { lat: -23.663421, lng: -46.530544 }
+            company: 'Corporate Logistics do Brasil',
+            address: 'Av. Bernardino de Campos, 98 - José Menino, Santos - SP',
+            datetime: '18/10/2025 às 09:15',
+            location: { lat: -23.9618, lng: -46.3322 }
         },
         {
-            company: 'Transportes Norte Express',
-            address: 'Rua Silva Bueno, 321 - Ipiranga, São Paulo - SP',
-            datetime: '19/10/2025 às 10:15',
-            location: { lat: -23.587320, lng: -46.610181 }
+            company: 'Decklog Transportes',
+            address: 'Rua Frei Gaspar, 365 - Vila Mathias, Santos - SP',
+            datetime: '18/10/2025 às 14:00',
+            location: { lat: -23.9525, lng: -46.3287 }
         },
         {
-            company: 'Mega Transportadora Ltda',
-            address: 'Av. Tiradentes, 654 - Bom Retiro, São Paulo - SP',
+            company: 'EMSAPORT Logística',
+            address: 'Av. Francisco Glicério, 280 - Paquetá, Santos - SP',
+            datetime: '19/10/2025 às 10:30',
+            location: { lat: -23.9297, lng: -46.3386 }
+        },
+        {
+            company: 'All Ships Logística',
+            address: 'Rua General Câmara, 154 - Centro, Santos - SP',
             datetime: '20/10/2025 às 13:45',
-            location: { lat: -23.527520, lng: -46.633308 }
+            location: { lat: -23.9356, lng: -46.3263 }
         }
     ];
     
@@ -146,13 +145,6 @@ document.addEventListener('DOMContentLoaded', function() {
                   `Data/Hora: ${appointment.datetime}\n\n` +
                   `Clique no ícone de localização para ver no mapa.`);
         }
-    }
-    
-    // Botão Home
-    if (btnHome) {
-        btnHome.addEventListener('click', () => {
-            window.location.href = 'index.html';
-        });
     }
     
     // Gera os cards ao carregar
