@@ -8,16 +8,17 @@ import {
   ScrollView,
   ActivityIndicator,
   Alert,
-  Modal,
-  TextInput,
+  Image,
 } from "react-native";
 import { useRouter } from 'expo-router';
+import * as ImagePicker from 'expo-image-picker';
 import BottomNav from "@/components/BottomNav";
 import { auth, db } from '../services/firebase.config';
 import { doc, getDoc } from 'firebase/firestore';
 import { signOut } from 'firebase/auth';
 import { agendamentoService } from '../services/AgendamentoService';
 import { Agendamento } from '../types/agendamentos';
+import { uploadFotoPerfil } from '../services/authService';
 
 interface EmpresaData {
   nomeCompleto: string;
@@ -25,6 +26,7 @@ interface EmpresaData {
   telefone: string;
   cnpj?: string;
   tipo: string;
+  fotoPerfil?: string;
   sedes?: Array<{
     id: number;
     nome: string;
@@ -44,18 +46,7 @@ export default function PerfilEmpresa() {
   const [loading, setLoading] = useState(true);
   const [agendamentos, setAgendamentos] = useState<Agendamento[]>([]);
   const [loadingAgendamentos, setLoadingAgendamentos] = useState(false);
-
-  const sedesPadrao = [
-    { id: 1, nome: "Unidade Centro", endereco: "Rua A, 123 - Centro" },
-    { id: 2, nome: "Unidade Norte", endereco: "Av. Central, 456 - Norte" },
-    { id: 3, nome: "Unidade Sul", endereco: "Rua das Flores, 789 - Sul" },
-  ];
-
-  const horariosPadrao = [
-    { id: 1, dia: "Segunda a Sexta", horas: "08:00 - 20:00" },
-    { id: 2, dia: "Sábado", horas: "09:00 - 14:00" },
-    { id: 3, dia: "Domingo", horas: "Fechado" },
-  ];
+  const [uploadingFoto, setUploadingFoto] = useState(false);
 
   useEffect(() => {
     carregarDadosEmpresa();
@@ -104,6 +95,59 @@ export default function PerfilEmpresa() {
       Alert.alert('Erro', 'Não foi possível carregar os agendamentos');
     } finally {
       setLoadingAgendamentos(false);
+    }
+  };
+
+  const selecionarFoto = async () => {
+    try {
+      // Pedir permissão
+      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      
+      if (status !== 'granted') {
+        Alert.alert(
+          'Permissão necessária',
+          'Precisamos de permissão para acessar suas fotos.'
+        );
+        return;
+      }
+
+      // Abrir galeria
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 0.8,
+      });
+
+      if (!result.canceled && result.assets[0]) {
+        await fazerUploadFoto(result.assets[0].uri);
+      }
+    } catch (error) {
+      console.error('Erro ao selecionar foto:', error);
+      Alert.alert('Erro', 'Não foi possível selecionar a foto');
+    }
+  };
+
+  const fazerUploadFoto = async (uri: string) => {
+    try {
+      setUploadingFoto(true);
+      const user = auth.currentUser;
+      if (!user) return;
+
+      const resultado = await uploadFotoPerfil(user.uid, uri);
+
+      if (resultado.success) {
+        Alert.alert('Sucesso', 'Foto de perfil atualizada!');
+        // Recarregar dados para mostrar a nova foto
+        await carregarDadosEmpresa();
+      } else {
+        Alert.alert('Erro', resultado.message || 'Erro ao fazer upload');
+      }
+    } catch (error) {
+      console.error('Erro no upload:', error);
+      Alert.alert('Erro', 'Não foi possível fazer upload da foto');
+    } finally {
+      setUploadingFoto(false);
     }
   };
 
@@ -173,9 +217,6 @@ export default function PerfilEmpresa() {
     );
   }
 
-  const sedes = empresaData?.sedes || sedesPadrao;
-  const horarios = empresaData?.horarios || horariosPadrao;
-
   return (
     <>
       <View style={styles.container}>
@@ -194,11 +235,27 @@ export default function PerfilEmpresa() {
               <Text style={styles.settingsIcon}>⚙️</Text>
             </TouchableOpacity>
 
-            <View style={styles.avatar}>
-              <Text style={styles.avatarText}>
-                {getInitials(empresaData?.nomeCompleto)}
-              </Text>
-            </View>
+            <TouchableOpacity 
+              style={styles.avatar}
+              onPress={selecionarFoto}
+              disabled={uploadingFoto}
+            >
+              {uploadingFoto ? (
+                <ActivityIndicator size="small" color="#ffffff" />
+              ) : empresaData?.fotoPerfil ? (
+                <Image 
+                  source={{ uri: empresaData.fotoPerfil }}
+                  style={styles.avatarImage}
+                />
+              ) : (
+                <Text style={styles.avatarText}>
+                  {getInitials(empresaData?.nomeCompleto)}
+                </Text>
+              )}
+              <View style={styles.cameraIconContainer}>
+                <Text style={styles.cameraIcon}>📷</Text>
+              </View>
+            </TouchableOpacity>
             
             <Text style={styles.nome}>
               {empresaData?.nomeCompleto || 'Nome não disponível'}
@@ -337,8 +394,37 @@ const styles = StyleSheet.create({
   },
   settingsButton: { position: 'absolute', top: 40, right: 20, padding: 8, zIndex: 10 },
   settingsIcon: { fontSize: 24, color: '#ffffff' },
-  avatar: { width: 120, height: 80, backgroundColor: "#3c5656", borderRadius: 8, marginBottom: 12, justifyContent: 'center', alignItems: 'center' },
-  avatarText: { fontSize: 28, fontWeight: 'bold', color: '#ffffff' },
+  avatar: { 
+    width: 160, 
+    height: 160, 
+    backgroundColor: "#3c5656", 
+    borderRadius: 100, 
+    marginBottom: 12, 
+    justifyContent: 'center', 
+    alignItems: 'center',
+    position: 'relative',
+    overflow: 'hidden',
+  },
+  avatarImage: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 60,
+  },
+  avatarText: { fontSize: 32, fontWeight: 'bold', color: '#ffffff' },
+  cameraIconContainer: {
+    position: 'absolute',
+    bottom: 0,
+    right: 0,
+    backgroundColor: '#3694AD',
+    borderRadius: 15,
+    width: 30,
+    height: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 2,
+    borderColor: '#55777c',
+  },
+  cameraIcon: { fontSize: 16 },
   nome: { fontSize: 18, fontWeight: "bold", color: "#ffffff", marginBottom: 6 },
   funcaoBox: { backgroundColor: "#d4e4e4", borderRadius: 20, paddingHorizontal: 45, paddingVertical: 6 },
   funcao: { color: "#0a3d3d", fontWeight: "bold" },

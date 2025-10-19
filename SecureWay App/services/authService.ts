@@ -7,8 +7,9 @@ import {
   User,
   sendPasswordResetEmail
 } from 'firebase/auth';
-import { doc, setDoc, getDoc } from 'firebase/firestore';
-import { auth, db } from './firebase.config';
+import { doc, setDoc, getDoc, updateDoc } from 'firebase/firestore';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { auth, db, storage } from './firebase.config';
 
 export interface UserData {
   uid: string;
@@ -16,7 +17,8 @@ export interface UserData {
   email: string;
   telefone: string;
   tipo: 'caminhoneiro' | 'empresa';
-  cnpj?: string; // Opcional - apenas para empresas
+  cnpj?: string;
+  fotoPerfil?: string; // URL da foto de perfil
   createdAt: Date;
 }
 
@@ -27,6 +29,46 @@ interface AuthResult {
 }
 
 /**
+ * Faz upload da foto de perfil
+ */
+export const uploadFotoPerfil = async (
+  userId: string,
+  imageUri: string
+): Promise<{ success: boolean; url?: string; message?: string }> => {
+  try {
+    // Converter URI para Blob
+    const response = await fetch(imageUri);
+    const blob = await response.blob();
+
+    // Criar referência no Storage
+    const storageRef = ref(storage, `perfis/${userId}/foto_perfil.jpg`);
+
+    // Upload do arquivo
+    await uploadBytes(storageRef, blob);
+
+    // Obter URL de download
+    const downloadURL = await getDownloadURL(storageRef);
+
+    // Atualizar documento do usuário no Firestore
+    await updateDoc(doc(db, 'usuarios', userId), {
+      fotoPerfil: downloadURL
+    });
+
+    return {
+      success: true,
+      url: downloadURL,
+      message: 'Foto atualizada com sucesso!'
+    };
+  } catch (error: any) {
+    console.error('Erro ao fazer upload da foto:', error);
+    return {
+      success: false,
+      message: error.message || 'Erro ao fazer upload da foto'
+    };
+  }
+};
+
+/**
  * Cadastra um novo usuário no Firebase Auth e Firestore
  */
 export const cadastrarUsuario = async (
@@ -35,28 +77,25 @@ export const cadastrarUsuario = async (
   senha: string,
   telefone: string,
   tipo: 'caminhoneiro' | 'empresa' = 'caminhoneiro',
-  cnpj?: string // <- Este parâmetro opcional
+  cnpj?: string
 ): Promise<AuthResult> => {
   try {
-    // Criar usuário no Firebase Auth
     const userCredential = await createUserWithEmailAndPassword(auth, email, senha);
     const user = userCredential.user;
 
-    // Atualizar perfil com o nome
     await updateProfile(user, {
       displayName: nomeCompleto
     });
 
-    // Criar documento do usuário no Firestore
-   const userData: UserData = {
-  uid: user.uid,
-  nomeCompleto,
-  email,
-  telefone,
-  tipo,
-  ...(tipo === 'empresa' && cnpj ? { cnpj } : {}), // <-- adiciona cnpj se for empresa
-  createdAt: new Date()
-};
+    const userData: UserData = {
+      uid: user.uid,
+      nomeCompleto,
+      email,
+      telefone,
+      tipo,
+      ...(tipo === 'empresa' && cnpj ? { cnpj } : {}),
+      createdAt: new Date()
+    };
 
     await setDoc(doc(db, 'usuarios', user.uid), userData);
 
@@ -106,7 +145,6 @@ export const fazerLogin = async (
     const userCredential = await signInWithEmailAndPassword(auth, email, senha);
     const user = userCredential.user;
 
-    // Buscar dados adicionais do usuário no Firestore
     const userDoc = await getDoc(doc(db, 'usuarios', user.uid));
     
     if (!userDoc.exists()) {

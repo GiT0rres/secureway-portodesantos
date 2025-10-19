@@ -7,20 +7,24 @@ import {
   StatusBar,
   ScrollView,
   ActivityIndicator,
-  Alert
+  Alert,
+  Image
 } from 'react-native';
 import { useRouter, useFocusEffect } from 'expo-router';
+import * as ImagePicker from 'expo-image-picker';
 import BottomNav from '@/components/BottomNav';
 import { auth, db } from '../services/firebase.config';
 import { doc, getDoc } from 'firebase/firestore';
 import { signOut } from 'firebase/auth';
 import { useAgendamentos } from '../hooks/useAgendamentos';
+import { uploadFotoPerfil } from '../services/authService';
 
 interface UserData {
   nomeCompleto: string;
   email: string;
   telefone: string;
   tipo: string;
+  fotoPerfil?: string;
   marca?: string;
   placa?: string;
   modelo?: string;
@@ -32,6 +36,7 @@ export default function PerfilMotorista() {
   const router = useRouter();
   const [userData, setUserData] = useState<UserData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [uploadingFoto, setUploadingFoto] = useState(false);
   const [selectedTab, setSelectedTab] = useState<'caminhos' | 'historico'>('caminhos');
   const { agendamentosPassados, loading: loadingAgendamentos } = useAgendamentos('motorista');
 
@@ -62,6 +67,59 @@ export default function PerfilMotorista() {
       Alert.alert('Erro', 'Não foi possível carregar os dados');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const selecionarFoto = async () => {
+    try {
+      // Pedir permissão
+      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      
+      if (status !== 'granted') {
+        Alert.alert(
+          'Permissão necessária',
+          'Precisamos de permissão para acessar suas fotos.'
+        );
+        return;
+      }
+
+      // Abrir galeria
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 0.8,
+      });
+
+      if (!result.canceled && result.assets[0]) {
+        await fazerUploadFoto(result.assets[0].uri);
+      }
+    } catch (error) {
+      console.error('Erro ao selecionar foto:', error);
+      Alert.alert('Erro', 'Não foi possível selecionar a foto');
+    }
+  };
+
+  const fazerUploadFoto = async (uri: string) => {
+    try {
+      setUploadingFoto(true);
+      const user = auth.currentUser;
+      if (!user) return;
+
+      const resultado = await uploadFotoPerfil(user.uid, uri);
+
+      if (resultado.success) {
+        Alert.alert('Sucesso', 'Foto de perfil atualizada!');
+        // Recarregar dados para mostrar a nova foto
+        await carregarDadosUsuario();
+      } else {
+        Alert.alert('Erro', resultado.message || 'Erro ao fazer upload');
+      }
+    } catch (error) {
+      console.error('Erro no upload:', error);
+      Alert.alert('Erro', 'Não foi possível fazer upload da foto');
+    } finally {
+      setUploadingFoto(false);
     }
   };
 
@@ -132,11 +190,27 @@ export default function PerfilMotorista() {
           </TouchableOpacity>
           
           <View style={styles.profileImageContainer}>
-            <View style={styles.profileImage}>
-              <Text style={styles.profileImageText}>
-                {userData ? getInitials(userData.nomeCompleto) : '--'}
-              </Text>
-            </View>
+            <TouchableOpacity 
+              style={styles.profileImage}
+              onPress={selecionarFoto}
+              disabled={uploadingFoto}
+            >
+              {uploadingFoto ? (
+                <ActivityIndicator size="small" color="#ffffff" />
+              ) : userData?.fotoPerfil ? (
+                <Image 
+                  source={{ uri: userData.fotoPerfil }}
+                  style={styles.profileImagePhoto}
+                />
+              ) : (
+                <Text style={styles.profileImageText}>
+                  {userData ? getInitials(userData.nomeCompleto) : '--'}
+                </Text>
+              )}
+              <View style={styles.cameraIconContainer}>
+                <Text style={styles.cameraIcon}>📷</Text>
+              </View>
+            </TouchableOpacity>
           </View>
           
           <Text style={styles.nome}>
@@ -350,18 +424,39 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   profileImage: {
-    width: 80,
-    height: 80,
-    borderRadius: 8,
+    width: 160,
+    height: 160,
+    borderRadius: 100,
     backgroundColor: '#3a5a5a',
     justifyContent: 'center',
     alignItems: 'center',
+    position: 'relative',
+    overflow: 'hidden',
+  },
+  profileImagePhoto: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 8,
   },
   profileImageText: {
     fontSize: 32,
     fontWeight: 'bold',
     color: '#ffffff',
   },
+  cameraIconContainer: {
+    position: 'absolute',
+    bottom: 0,
+    right: 0,
+    backgroundColor: '#3694AD',
+    borderRadius: 12,
+    width: 24,
+    height: 24,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 2,
+    borderColor: '#5a8a8a',
+  },
+  cameraIcon: { fontSize: 12 },
   nome: {
     fontSize: 20,
     fontWeight: 'bold',
