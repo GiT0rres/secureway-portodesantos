@@ -1,0 +1,87 @@
+usuario 
+
+nome, email, telefone, senhaHash, chaveUnica, id, cpf, rg
+
+
+id, nome, local
+
+
+AGENDADMENTO
+
+id, local, empresa, carga, hora, data, disponivel, CHAVE ESTRANGEIRA = chave nitaria, idUsario, IdEsp
+
+
+
+create table Santos - use Santos
+
+
+use Santos;
+
+select * from users;
+insert into users(cpf,rg,chaveUnitaria,senhaHash,nome,telefone,email,createdAt,updatedAt) values (122, "p2i", "paasdy", "ponto", "Matheus rei deles", 232, "teteus", now(), now());
+select * from esp;
+insert into esp(nome, `local` , createdAt, updatedAt) values ("primeiro", "santos", now(), now());
+select * from scheduling;
+INSERT INTO scheduling (`local`, empresa, 
+arga, dataHora, finalizado, idUsuario, idEsp, createdAt, updatedAt) VALUES ("Porto de Santos", "Maersk Brasil", "Container 20ft - Eletrônicos", "2024-01-15 08:00:00", false, 1, 1, now(), now());
+select * from `read`;
+insert into `read`(readKey, idEsp, crateAt) values (123, 1, now());
+select * from enterprise;
+INSERT INTO enterprise (nome, email, telefone, cnpj, senhaHash, createdAt, updatedAt) 
+VALUES ("Maersk Brasil", "contato@maersk.com.br", "(11) 9999-8888", "12.345.678/0001-90", "senha123", now(), now());
+
+
+
+
+
+TEST PRO AGENDAMENTO:
+
+  {
+    "id": 1,
+    "local": "Porto de Santos",
+    "empresa": "Maersk Brasil",
+    "carga": "Container 20ft - Eletrônicos", 
+    "dataHora": "2024-01-15T08:00:00.000Z",
+    "disponivel": true,
+    "idUsuario": 1,
+    "idEsp": 1,
+    "createdAt": "2024-01-10T10:00:00.000Z",
+    "updatedAt": "2024-01-10T10:00:00.000Z"
+  }
+]
+
+
+"dataHora": "2024-01-15T08:00:00.000Z",
+
+Parte	Valor		Significado
+2024	Ano		2024
+01	Mês		Janeiro
+15	Dia		15º dia
+T	Separador	Separa data da hora
+08	Hora		8 horas da manhã
+00	Minutos		0 minutos
+00	Segundos	0 segundos
+.000	Milissegundos	0 milissegundos
+Z	Fuso horário	UTC (Tempo Universal Coordenado)
+
+
+
+
+
+/**
+ * UTILITÁRIO PARA HASH E CRIPTOGRAFIA
+ * Responsável por todas as operações de segurança de senhas e tokens
+ * 
+ * HASH: Transformação irreversível de dados
+ * - Mesma entrada → sempre mesma saída
+ * - Não pode ser revertido (diferente de criptografia)
+ * - Usado para verificar dados sem armazenar o valor original
+ */
+
+/**
+ * TOKEN: String que representa permissão/identidade
+ * - JWT (JSON Web Token): Token de acesso stateless
+ * - Refresh Token: Token de longa duração para renovar acesso
+ * - Devem ser armazenados com hash no banco por segurança
+ */
+

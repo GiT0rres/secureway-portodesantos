@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SecureWay - Login Empresa</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo-section">
+                <div class="company-logo">SW</div>
+                <div class="company-info">
+                    <h1>SecureWay</h1>
+                    <span class="company-badge">Login de Empresa</span>
+                </div>
+            </div>
+            <nav class="header-nav">
+                <button class="nav-btn" onclick="window.location.href='../Home/index.html'">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                        <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                    </svg>
+                    Início
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="login-wrapper">
+            <div class="login-container">
+                <h2 class="login-title">🏢 Login Empresa</h2>
+                <p style="text-align: center; color: rgba(255,255,255,0.7); margin-bottom: 30px;">
+                    Acesse sua conta empresarial
+                </p>
+
+                <form class="login-form" id="loginForm">
+                    <div class="form-group">
+                        <label for="email">E-mail Corporativo</label>
+                        <input 
+                            type="email" 
+                            id="email" 
+                            name="email" 
+                            placeholder="empresa@email.com"
+                            required
+                            autocomplete="email"
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="senha">Senha</label>
+                        <input 
+                            type="password" 
+                            id="senha" 
+                            name="senha" 
+                            placeholder="Digite sua senha"
+                            required
+                            autocomplete="current-password"
+                        >
+                    </div>
+
+                    <div class="login-footer">
+                        <p class="cadastro-text">
+                            Ainda não possui conta? 
+                            <a href="../CadastroEmpresa/index.html" class="link-cadastro">Cadastre sua empresa</a>
+                        </p>
+                        <p class="cadastro-text">
+                            É motorista? 
+                            <a href="../Login/index.html" class="link-cadastro">Login como usuário</a>
+                        </p>
+                    </div>
+
+                    <button type="submit" class="btn-login">Entrar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        const API_URL = 'http://localhost:3034/api';
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const loginForm = document.getElementById('loginForm');
+            const emailInput = document.getElementById('email');
+            const senhaInput = document.getElementById('senha');
+            
+            // Validação do e-mail
+            emailInput.addEventListener('blur', function() {
+                const valor = this.value.trim();
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                
+                if (emailRegex.test(valor)) {
+                    this.classList.add('valid');
+                    this.classList.remove('error');
+                } else if (valor.length > 0) {
+                    this.classList.add('error');
+                    this.classList.remove('valid');
+                }
+            });
+
+            emailInput.addEventListener('focus', function() {
+                this.classList.remove('error');
+            });
+
+            // Validação da senha
+            senhaInput.addEventListener('blur', function() {
+                const valor = this.value;
+                
+                if (valor.length >= 6) {
+                    this.classList.add('valid');
+                    this.classList.remove('error');
+                } else if (valor.length > 0) {
+                    this.classList.add('error');
+                    this.classList.remove('valid');
+                }
+            });
+
+            senhaInput.addEventListener('focus', function() {
+                this.classList.remove('error');
+            });
+
+            // Função de Login usando a API existente
+            async function fazerLoginEmpresa(email, senhaHash) {
+                try {
+                    console.log('🔐 Tentando login empresa:', email);
+
+                    // Busca todas as empresas da API
+                    const response = await fetch(`${API_URL}/enterprise`);
+                    
+                    if (!response.ok) {
+                        throw new Error('Erro ao conectar com o servidor');
+                    }
+
+                    const empresas = await response.json();
+                    console.log('📥 Empresas recebidas:', empresas.length);
+
+                    // Procura empresa com email e senha correspondentes
+                    const empresa = empresas.find(e => 
+                        e.email === email && e.senhaHash === senhaHash
+                    );
+
+                    if (empresa) {
+                        console.log('✅ Empresa encontrada:', empresa);
+                        return { 
+                            success: true, 
+                            empresa: empresa 
+                        };
+                    } else {
+                        console.log('❌ Empresa não encontrada ou senha incorreta');
+                        return { 
+                            success: false, 
+                            error: 'E-mail ou senha incorretos' 
+                        };
+                    }
+
+                } catch (error) {
+                    console.error('❌ Erro no login:', error);
+                    return { 
+                        success: false, 
+                        error: 'Erro ao conectar com o servidor. Verifique se a API está rodando.' 
+                    };
+                }
+            }
+            
+            // Envio do formulário
+            loginForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const email = emailInput.value.trim();
+                const senha = senhaInput.value;
+                
+                // Validações
+                let erros = [];
+                
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(email)) {
+                    erros.push('Por favor, insira um e-mail válido.');
+                    emailInput.classList.add('error');
+                }
+                
+                if (senha.length < 6) {
+                    erros.push('A senha deve ter no mínimo 6 caracteres.');
+                    senhaInput.classList.add('error');
+                }
+                
+                if (erros.length > 0) {
+                    alert('Por favor, corrija os seguintes erros:\n\n' + erros.join('\n'));
+                    return;
+                }
+                
+                // Feedback visual
+                const btnLogin = loginForm.querySelector('.btn-login');
+                const textoOriginal = btnLogin.textContent;
+                
+                btnLogin.disabled = true;
+                btnLogin.textContent = 'Entrando...';
+                
+                // Faz o login
+                const resultado = await fazerLoginEmpresa(email, senha);
+                
+                if (resultado.success) {
+                    btnLogin.textContent = '✓ Login realizado!';
+                    btnLogin.style.background = 'linear-gradient(135deg, #28a745 0%, #20c997 100%)';
+                    
+                    console.log('✅ Login realizado com sucesso!');
+                    console.log('🏢 Empresa:', resultado.empresa);
+                    
+                    // Salva os dados no localStorage
+                    localStorage.setItem('empresaLogada', JSON.stringify(resultado.empresa));
+                    localStorage.setItem('enterpriseId', resultado.empresa.id);
+                    localStorage.setItem('userType', 'empresa'); // Identifica que é empresa
+                    
+                    console.log('💾 Dados salvos no localStorage');
+                    console.log('🔄 Redirecionando para perfil...');
+                    
+                    // Redireciona para o perfil da empresa
+                    setTimeout(() => {
+                        window.location.href = '../PerfilEmpresa/index.html';
+                    }, 1000);
+                    
+                } else {
+                    btnLogin.textContent = '✗ Erro no login';
+                    btnLogin.style.background = 'linear-gradient(135deg, #dc3545 0%, #c82333 100%)';
+                    
+                    alert(resultado.error || 'E-mail ou senha incorretos. Tente novamente.');
+                    
+                    setTimeout(() => {
+                        btnLogin.textContent = textoOriginal;
+                        btnLogin.style.background = '';
+                        btnLogin.disabled = false;
+                    }, 2000);
+                }
+            });
+
+            // Permitir login com Enter
+            senhaInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    loginForm.dispatchEvent(new Event('submit'));
+                }
+            });
+            
+            console.log('✅ SecureWay - Login Empresa carregado!');
+            console.log('📡 API URL:', API_URL);
+        });
+    </script>
+</body>
+</html>

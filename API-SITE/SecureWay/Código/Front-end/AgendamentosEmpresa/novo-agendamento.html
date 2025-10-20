@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SecureWay - Novo Agendamento</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .form-container {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 40px;
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.15);
+            max-width: 800px;
+            margin: 0 auto;
+            animation: fadeIn 0.6s ease;
+        }
+
+        .form-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .form-header h2 {
+            font-size: 2rem;
+            color: white;
+            margin-bottom: 12px;
+        }
+
+        .form-header p {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 1.05rem;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-group label {
+            display: block;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 600;
+            margin-bottom: 10px;
+            font-size: 0.95rem;
+        }
+
+        .form-group label .required {
+            color: #ff6b6b;
+            margin-left: 4px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 14px 16px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            color: white;
+            font-size: 1rem;
+            font-family: inherit;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 0.15);
+            border-color: #17a2b8;
+            box-shadow: 0 0 0 3px rgba(23, 162, 184, 0.1);
+        }
+
+        .form-group input::placeholder,
+        .form-group textarea::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .form-group select {
+            cursor: pointer;
+        }
+
+        .form-group select option {
+            background: #0d3d4d;
+            color: white;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 16px;
+            margin-top: 32px;
+        }
+
+        .btn-form {
+            flex: 1;
+            padding: 16px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-family: inherit;
+        }
+
+        .btn-cancelar {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-cancelar:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .btn-criar {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+        }
+
+        .btn-criar:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
+        }
+
+        .btn-criar:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .alert {
+            padding: 16px 20px;
+            border-radius: 12px;
+            margin-bottom: 24px;
+            display: none;
+            animation: slideDown 0.3s ease;
+        }
+
+        .alert.success {
+            background: rgba(40, 167, 69, 0.2);
+            border: 1px solid rgba(40, 167, 69, 0.5);
+            color: #28a745;
+        }
+
+        .alert.error {
+            background: rgba(220, 53, 69, 0.2);
+            border: 1px solid rgba(220, 53, 69, 0.5);
+            color: #dc3545;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .form-container {
+                padding: 30px 20px;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .form-actions {
+                flex-direction: column;
+            }
+
+            .form-header h2 {
+                font-size: 1.6rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo-section">
+                <div class="company-logo">SW</div>
+                <div class="company-info">
+                    <h1>SecureWay</h1>
+                    <span class="company-badge">Novo Agendamento</span>
+                </div>
+            </div>
+            <nav class="header-nav">
+                <button class="nav-btn" id="btnVoltar">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="19" y1="12" x2="5" y2="12"></line>
+                        <polyline points="12 19 5 12 12 5"></polyline>
+                    </svg>
+                    Voltar
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="content-wrapper">
+            <div class="form-container">
+                <div class="form-header">
+                    <h2>📅 Criar Novo Agendamento</h2>
+                    <p>Preencha os dados abaixo para agendar uma entrega ou coleta</p>
+                </div>
+
+                <div class="alert success" id="alertSuccess">
+                    ✅ Agendamento criado com sucesso!
+                </div>
+                <div class="alert error" id="alertError">
+                    ❌ Erro ao criar agendamento. Tente novamente.
+                </div>
+
+                <form id="formAgendamento">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="empresa">
+                                Nome da Empresa
+                                <span class="required">*</span>
+                            </label>
+                            <input 
+                                type="text" 
+                                id="empresa" 
+                                name="empresa" 
+                                placeholder="Ex: Transportadora XYZ"
+                                required
+                            >
+                        </div>
+
+                        <div class="form-group">
+                            <label for="local">
+                                Local de Entrega
+                                <span class="required">*</span>
+                            </label>
+                            <input 
+                                type="text" 
+                                id="local" 
+                                name="local" 
+                                placeholder="Ex: Porto de Santos"
+                                required
+                            >
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="carga">
+                                Tipo de Carga
+                                <span class="required">*</span>
+                            </label>
+                            <input 
+                                type="text" 
+                                id="carga" 
+                                name="carga" 
+                                placeholder="Ex: Containers, Granel, Carga Seca, etc..."
+                                required
+                            >
+                        </div>
+
+                        <div class="form-group">
+                            <label for="status">
+                                Status
+                                <span class="required">*</span>
+                            </label>
+                            <select id="status" name="status" required>
+                                <option value="">Selecione o status</option>
+                                <option value="pendente">Pendente</option>
+                                <option value="confirmado">Confirmado</option>
+                                <option value="concluido">Concluído</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="data">
+                                Data
+                                <span class="required">*</span>
+                            </label>
+                            <input 
+                                type="date" 
+                                id="data" 
+                                name="data" 
+                                required
+                            >
+                        </div>
+
+                        <div class="form-group">
+                            <label for="hora">
+                                Horário
+                                <span class="required">*</span>
+                            </label>
+                            <input 
+                                type="time" 
+                                id="hora" 
+                                name="hora" 
+                                required
+                            >
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="idUsuario">
+                                ID do Usuário (Motorista)
+                                <span class="required">*</span>
+                            </label>
+                            <input 
+                                type="number" 
+                                id="idUsuario" 
+                                name="idUsuario" 
+                                placeholder="Ex: 1"
+                                value="1"
+                                min="1"
+                                required
+                            >
+                        </div>
+
+                        <div class="form-group">
+                            <label for="idEsp">
+                                ID do ESP (Dispositivo)
+                                <span class="required">*</span>
+                            </label>
+                            <input 
+                                type="number" 
+                                id="idEsp" 
+                                name="idEsp" 
+                                placeholder="Ex: 1"
+                                value="1"
+                                min="1"
+                                required
+                            >
+                        </div>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label for="observacoes">
+                            Observações (Opcional)
+                        </label>
+                        <textarea 
+                            id="observacoes" 
+                            name="observacoes" 
+                            placeholder="Informações adicionais sobre o agendamento..."
+                        ></textarea>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn-form btn-cancelar" id="btnCancelar">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="18" y1="6" x2="6" y2="18"></line>
+                                <line x1="6" y1="6" x2="18" y2="18"></line>
+                            </svg>
+                            Cancelar
+                        </button>
+                        <button type="submit" class="btn-form btn-criar" id="btnCriar">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                <line x1="12" y1="5" x2="12" y2="19"></line>
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                            </svg>
+                            Criar Agendamento
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:3034/api';
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('formAgendamento');
+            const btnCriar = document.getElementById('btnCriar');
+            const btnCancelar = document.getElementById('btnCancelar');
+            const btnVoltar = document.getElementById('btnVoltar');
+            const alertSuccess = document.getElementById('alertSuccess');
+            const alertError = document.getElementById('alertError');
+            const inputData = document.getElementById('data');
+
+            const hoje = new Date().toISOString().split('T')[0];
+            inputData.min = hoje;
+
+            form.addEventListener('submit', async function(e) {
+                e.preventDefault();
+
+                alertSuccess.style.display = 'none';
+                alertError.style.display = 'none';
+
+                const data = document.getElementById('data').value;
+                const hora = document.getElementById('hora').value;
+                const dataHora = `${data}T${hora}:00`;
+
+                const statusValor = document.getElementById('status').value;
+                let disponivel = true;
+                
+                if (statusValor === 'pendente') {
+                    disponivel = false;
+                } else if (statusValor === 'confirmado') {
+                    disponivel = true;
+                } else if (statusValor === 'concluido') {
+                    disponivel = false;
+                }
+
+                const dadosAgendamento = {
+                    empresa: document.getElementById('empresa').value.trim(),
+                    local: document.getElementById('local').value.trim(),
+                    carga: document.getElementById('carga').value.trim(),
+                    dataHora: dataHora,
+                    disponivel: disponivel,
+                    idUsuario: parseInt(document.getElementById('idUsuario').value),
+                    idEsp: parseInt(document.getElementById('idEsp').value)
+                };
+
+                console.log('Enviando:', dadosAgendamento);
+
+                btnCriar.disabled = true;
+                const btnTextoOriginal = btnCriar.innerHTML;
+                btnCriar.innerHTML = `
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="animation: spin 1s linear infinite;">
+                        <circle cx="12" cy="12" r="10"></circle>
+                    </svg>
+                    Criando...
+                `;
+
+                try {
+                    const response = await fetch(`${API_URL}/scheduling`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(dadosAgendamento)
+                    });
+
+                    const resultado = await response.json();
+
+                    if (response.ok) {
+                        console.log('Sucesso:', resultado);
+                        alertSuccess.style.display = 'block';
+                        alertError.style.display = 'none';
+                        form.reset();
+                        
+                        setTimeout(() => {
+                            window.location.href = 'index.html';
+                        }, 2000);
+                        
+                    } else {
+                        throw new Error(resultado.error || 'Erro ao criar agendamento');
+                    }
+
+                } catch (error) {
+                    console.error('Erro:', error);
+                    alertError.style.display = 'block';
+                    alertError.textContent = `❌ ${error.message}`;
+                    alertSuccess.style.display = 'none';
+                    
+                } finally {
+                    btnCriar.disabled = false;
+                    btnCriar.innerHTML = btnTextoOriginal;
+                }
+            });
+
+            btnCancelar.addEventListener('click', function() {
+                if (confirm('Deseja cancelar? Os dados não serão salvos.')) {
+                    window.location.href = 'index.html';
+                }
+            });
+
+            btnVoltar.addEventListener('click', () => {
+                window.location.href = 'index.html';
+            });
+
+            console.log('Formulário carregado com sucesso');
+            console.log('API URL:', API_URL);
+        });
+    </script>
+</body>
+</html>

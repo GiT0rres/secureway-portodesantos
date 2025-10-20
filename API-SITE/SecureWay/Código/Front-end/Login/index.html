@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SecureWay - Login</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo-section">
+                <div class="company-logo">SW</div>
+                <div class="company-info">
+                    <h1>SecureWay</h1>
+                    <span class="company-badge">Login de Usuário</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="container">
+        <div class="login-wrapper">
+            <div class="login-container">
+                <h2 class="login-title">Login</h2>
+
+                <form class="login-form" id="loginForm">
+                    <div class="form-group">
+                        <label for="email">E-mail</label>
+                        <input type="email" id="email" name="email" required autocomplete="email">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="senha">Senha</label>
+                        <input type="password" id="senha" name="senha" required autocomplete="current-password">
+                    </div>
+
+                    <div class="login-footer">
+                        <p class="cadastro-text">
+                            Ainda não possui uma conta?
+                            <a href="../cadastro/index.html" class="link-cadastro">Cadastre-se</a> já!
+                        </p>
+                    </div>
+
+                    <button type="submit" class="btn-login">Entrar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // URL da API
+        const API_URL = 'http://localhost:3034/api';
+
+        document.addEventListener('DOMContentLoaded', async function() {
+    console.log('🌐 Verificando conexão com a API...');
+
+    try {
+        const response = await fetch(`${API_URL}/users`); // ou /status, /login, etc.
+
+        if (response.ok) {
+            console.log('✅ API está ONLINE! Status:', response.status);
+        } else {
+            console.warn('⚠️ API respondeu, mas com erro. Status:', response.status);
+        }
+    } catch (error) {
+        console.error('❌ Não foi possível conectar à API:', error);
+    }
+});
+
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const loginForm = document.getElementById('loginForm');
+            const emailInput = document.getElementById('email');
+            const senhaInput = document.getElementById('senha');
+
+            // 🔹 Função para fazer login na API
+            const API_URL = 'http://localhost:3034/api';
+            
+            async function fazerLogin(email, senha) {
+            try {
+                const response = await fetch(`${API_URL}/users/login`, { // ✅ Agora inclui /api
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, senha })
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data["access-token"]) {
+                    return {
+                        success: true,
+                        usuario: data // contém access-token
+                    };
+                } else {
+                    return {
+                        success: false,
+                        error: data.message || 'E-mail ou senha incorretos'
+                    };
+                }
+            } catch (error) {
+                return {
+                    success: false,
+                    error: 'Erro ao conectar com o servidor'
+                };
+            }
+        }
+
+
+
+            // 🔹 Envia formulário
+            loginForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+
+                const email = emailInput.value.trim();
+                const senha = senhaInput.value;
+                const btnLogin = loginForm.querySelector('.btn-login');
+                const textoOriginal = btnLogin.textContent;
+
+                // Validação simples
+                if (!email || !senha) {
+                    alert('Preencha todos os campos!');
+                    return;
+                }
+
+                btnLogin.disabled = true;
+                btnLogin.textContent = 'Entrando...';
+
+                const resultado = await fazerLogin(email, senha);
+
+                if (resultado.success) {
+                    btnLogin.textContent = '✓ Login realizado!';
+                    btnLogin.style.background = 'linear-gradient(135deg, #28a745, #20c997)';
+
+                    // ✅ Salvar sessão
+                    localStorage.setItem('usuarioLogado', JSON.stringify(resultado.usuario));
+                    localStorage.setItem('token', resultado.usuario["access-token"]);
+
+                    // Redirecionar
+                    setTimeout(() => {
+                        window.location.href = '../PerfilMotorista/index.html';
+                    }, 1000);
+                } else {
+                    btnLogin.textContent = '✗ Erro no login';
+                    btnLogin.style.background = 'linear-gradient(135deg, #dc3545, #c82333)';
+                    alert(resultado.error);
+
+                    setTimeout(() => {
+                        btnLogin.textContent = textoOriginal;
+                        btnLogin.style.background = '';
+                        btnLogin.disabled = false;
+                    }, 2000);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
