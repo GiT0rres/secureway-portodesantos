@@ -1,0 +1,474 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background: linear-gradient(135deg, #0a1f28 0%, #0d3d4d 100%);
+    min-height: 100vh;
+    color: #333;
+}
+
+/* Header */
+.header {
+    background: linear-gradient(90deg, #0d3d4d 0%, #1a4f5f 100%);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.header-content {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.logo-section {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.company-logo {
+    width: 60px;
+    height: 60px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: white;
+    font-weight: bold;
+}
+
+.company-info h1 {
+    font-size: 1.8rem;
+    color: white;
+    margin-bottom: 4px;
+}
+
+.company-badge {
+    display: inline-block;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 4px 16px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    color: #0a2832;
+    font-weight: 500;
+}
+
+.header-nav {
+    display: flex;
+    gap: 10px;
+}
+
+.nav-btn {
+    background: rgba(255, 255, 255, 0.15);
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.95rem;
+    font-family: inherit;
+}
+
+.nav-btn:hover {
+    background: rgba(255, 255, 255, 0.25);
+    transform: translateY(-2px);
+}
+
+/* Main Container */
+.container {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 0 40px;
+}
+
+.content-wrapper {
+    animation: fadeIn 0.6s ease;
+}
+
+.page-header {
+    margin-bottom: 40px;
+    text-align: center;
+}
+
+.page-title {
+    font-size: 2.5rem;
+    color: white;
+    font-weight: 600;
+    margin-bottom: 12px;
+}
+
+.page-subtitle {
+    font-size: 1.1rem;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+/* Avisos Container */
+.avisos-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    animation: slideUp 0.6s ease;
+}
+
+/* Aviso Card */
+.aviso-card {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 24px 28px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    backdrop-filter: blur(10px);
+    border: 2px solid transparent;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.aviso-card::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 5px;
+    transition: all 0.3s ease;
+}
+
+.aviso-card:hover {
+    transform: translateX(5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+/* Tipos de Avisos */
+.aviso-card.success {
+   border-color: rgba(108, 117, 125, 0.3);
+    background: rgba(108, 117, 125, 0.1);
+}
+
+.aviso-card.success::before {
+    background: #28a745;
+}
+
+.aviso-card.success:hover {
+   border-color: rgba(108, 117, 125, 0.3);
+    background: rgba(108, 117, 125, 0.1);
+}
+
+.aviso-card.error {
+   border-color: rgba(108, 117, 125, 0.3);
+    background: rgba(108, 117, 125, 0.1);
+}
+
+.aviso-card.error::before {
+    background: #dc3545;
+}
+
+.aviso-card.error:hover {
+    border-color: rgba(108, 117, 125, 0.3);
+    background: rgba(108, 117, 125, 0.1);
+}
+
+.aviso-card.neutral {
+    border-color: rgba(108, 117, 125, 0.3);
+    background: rgba(108, 117, 125, 0.1);
+}
+
+.aviso-card.neutral::before {
+    background: #6c757d;
+}
+
+.aviso-card.neutral:hover {
+    border-color: rgba(108, 117, 125, 0.5);
+    background: rgba(108, 117, 125, 0.15);
+}
+
+.aviso-card.info {
+    border-color: rgba(108, 117, 125, 0.3);
+    background: rgba(108, 117, 125, 0.1);
+}
+
+.aviso-card.info::before {
+    background: #17a2b8;
+}
+
+.aviso-card.info:hover {
+   border-color: rgba(108, 117, 125, 0.3);
+    background: rgba(108, 117, 125, 0.1);
+}
+
+.aviso-card.warning {
+   border-color: rgba(108, 117, 125, 0.3);
+    background: rgba(108, 117, 125, 0.1);
+}
+
+.aviso-card.warning::before {
+    background: #ffc107;
+}
+
+.aviso-card.warning:hover {
+   border-color: rgba(108, 117, 125, 0.3);
+    background: rgba(108, 117, 125, 0.1);
+}
+
+/* Ícone do Aviso */
+.aviso-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.aviso-card.success .aviso-icon {
+    background: rgba(40, 167, 69, 0.2);
+    color: #28a745;
+}
+
+.aviso-card.error .aviso-icon {
+    background: rgba(220, 53, 69, 0.2);
+    color: #dc3545;
+}
+
+.aviso-card.neutral .aviso-icon {
+    background: rgba(108, 117, 125, 0.2);
+    color: #6c757d;
+}
+
+.aviso-card.info .aviso-icon {
+    background: rgba(23, 162, 184, 0.2);
+    color: #17a2b8;
+}
+
+.aviso-card.warning .aviso-icon {
+    background: rgba(255, 193, 7, 0.2);
+    color: #ffc107;
+}
+
+/* Conteúdo do Aviso */
+.aviso-content {
+    flex: 1;
+}
+
+.aviso-titulo {
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: white;
+    margin-bottom: 6px;
+}
+
+.aviso-data {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+/* Botão de Dispensar */
+.btn-dismiss {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: rgba(255, 255, 255, 0.7);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.btn-dismiss:hover {
+    background: rgba(220, 53, 69, 0.2);
+    color: #dc3545;
+    transform: rotate(90deg);
+}
+
+/* Mensagem sem avisos */
+.no-avisos {
+    text-align: center;
+    padding: 80px 40px;
+    color: rgba(255, 255, 255, 0.6);
+    animation: fadeIn 0.6s ease;
+}
+
+.no-avisos svg {
+    margin-bottom: 24px;
+    opacity: 0.5;
+}
+
+.no-avisos h3 {
+    font-size: 1.5rem;
+    color: white;
+    margin-bottom: 12px;
+}
+
+.no-avisos p {
+    font-size: 1.05rem;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideOut {
+    from {
+        opacity: 1;
+        transform: translateX(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateX(100px);
+    }
+}
+
+.aviso-card.removing {
+    animation: slideOut 0.4s ease forwards;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .container {
+        padding: 0 30px;
+    }
+}
+
+@media (max-width: 768px) {
+    .header-content {
+        flex-direction: column;
+        gap: 20px;
+        padding: 20px;
+    }
+
+    .container {
+        padding: 0 20px;
+        margin: 30px auto;
+    }
+
+    .page-title {
+        font-size: 2rem;
+    }
+
+    .aviso-card {
+        padding: 20px;
+        gap: 15px;
+    }
+
+    .aviso-icon {
+        width: 45px;
+        height: 45px;
+    }
+
+    .aviso-titulo {
+        font-size: 1.05rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .page-title {
+        font-size: 1.6rem;
+    }
+
+    .aviso-card {
+        padding: 18px;
+        gap: 12px;
+    }
+
+    .aviso-icon {
+        width: 40px;
+        height: 40px;
+    }
+
+    .aviso-icon svg {
+        width: 20px;
+        height: 20px;
+    }
+
+    .aviso-titulo {
+        font-size: 1rem;
+    }
+
+    .aviso-data {
+        font-size: 0.85rem;
+    }
+
+    .btn-dismiss {
+        width: 32px;
+        height: 32px;
+    }
+
+    .no-avisos {
+        padding: 60px 30px;
+    }
+
+    .no-avisos h3 {
+        font-size: 1.3rem;
+    }
+
+    .no-avisos p {
+        font-size: 0.95rem;
+    }
+}
+
+@media (max-width: 360px) {
+    .header-content {
+        padding: 15px;
+    }
+
+    .company-logo {
+        width: 50px;
+        height: 50px;
+        font-size: 1.2rem;
+    }
+
+    .company-info h1 {
+        font-size: 1.4rem;
+    }
+
+    .company-badge {
+        font-size: 0.75rem;
+        padding: 3px 12px;
+    }
+
+    .nav-btn {
+        padding: 8px 16px;
+        font-size: 0.85rem;
+    }
+}

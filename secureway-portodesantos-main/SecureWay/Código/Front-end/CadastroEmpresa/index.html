@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SecureWay - Cadastro</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="desktop-wrapper">
+        <!-- Painel Esquerdo -->
+        <div class="left-panel">
+            <div class="brand-content">
+                <div class="logo-desktop">SW</div>
+                <h1>Bem-vindo ao<br>SecureWay</h1>
+                <p>A plataforma completa para gestão de frotas e rastreamento de veículos.</p>
+                <p>Cadastre sua empresa e comece a proteger seus ativos hoje mesmo.</p>
+                
+                <ul class="features-list">
+                    <li>Rastreamento em tempo real</li>
+                    <li>Gestão completa de frotas</li>
+                    <li>Relatórios detalhados</li>
+                    <li>Segurança garantida</li>
+                    <li>Suporte 24/7</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Painel Direito - Formulário -->
+        <div class="right-panel">
+            <div class="form-header">
+                <h2>Cadastro</h2>
+                <p>Preencha os dados da sua empresa</p>
+            </div>
+
+            <form id="formCadastro">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="nomeEmpresa">Nome da Empresa *</label>
+                        <input 
+                            type="text" 
+                            id="nomeEmpresa" 
+                            name="nomeEmpresa"
+                            placeholder="Digite o nome da empresa"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="cnpj">CNPJ *</label>
+                        <input 
+                            type="text" 
+                            id="cnpj" 
+                            name="cnpj"
+                            placeholder="00.000.000/0000-00"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">E-mail Corporativo *</label>
+                        <input 
+                            type="email" 
+                            id="email" 
+                            name="email"
+                            placeholder="empresa@exemplo.com"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="telefone">Telefone *</label>
+                        <input 
+                            type="tel" 
+                            id="telefone" 
+                            name="telefone"
+                            placeholder="(00) 00000-0000"
+                            required
+                        >
+                    </div>
+                </div>
+
+                <div class="form-group full-width">
+                    <label for="senha">Senha *</label>
+                    <input 
+                        type="password" 
+                        id="senha" 
+                        name="senha"
+                        placeholder="Mínimo 6 caracteres"
+                        required
+                    >
+                    <div class="password-strength" id="passwordStrength">
+                        <div class="password-strength-bar" id="strengthBar"></div>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-cadastrar">Criar Conta</button>
+            </form>
+
+            <div class="login-link">
+                Já possui uma conta? <a href="../Login/index.html" id="linkLogin">Faça Login</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

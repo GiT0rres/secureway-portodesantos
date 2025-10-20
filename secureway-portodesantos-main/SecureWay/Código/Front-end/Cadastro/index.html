@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SecureWay - Cadastro</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo-section">
+                <div class="company-logo">SW</div>
+                <div class="company-info">
+                    <h1>SecureWay</h1>
+                    <span class="company-badge">Cadastro de Usuário</span>
+                </div>
+            </div>
+            <nav class="header-nav">
+                <button class="nav-btn">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="3" y1="12" x2="21" y2="12"></line>
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <line x1="3" y1="18" x2="21" y2="18"></line>
+                    </svg>
+                    Menu
+                </button>
+                <button class="nav-btn" id="btnHome">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                        <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                    </svg>
+                    Início
+                </button>
+                <button class="nav-btn">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                    Perfil
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="container">
+        <div class="content-wrapper">
+            <div class="page-header">
+                <h2 class="page-title">Cadastro de Usuário</h2>
+                <p class="page-subtitle">Preencha suas informações para criar sua conta no SecureWay</p>
+            </div>
+
+            <div class="form-container">
+                <form class="form-cadastro" id="formCadastro">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="nome">Nome Completo</label>
+                            <input type="text" id="nome" name="nome" placeholder="Ex: João da Silva" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="email">E-mail</label>
+                            <input type="email" id="email" name="email" placeholder="Ex: joao@email.com" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="telefone">Telefone</label>
+                            <input type="tel" id="telefone" name="telefone" placeholder="Ex: (11) 98765-4321" maxlength="15" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="senha">Senha</label>
+                            <input type="password" id="senha" name="senha" placeholder="Mínimo 6 caracteres" required>
+                        </div>
+                    </div>
+
+                     <div class="form-row">
+                        <div class="form-group">
+                            <label for="CPF">CPF</label>
+                            <input type="CPF" id="CPF" name="CPF" placeholder="Ex: 555.555.555-55" maxlength="15" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="RG">RG</label>
+                            <input type="RG" id="RG" name="RG" placeholder="Ex: 12.345.678-9" maxlength="15" required>>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="reset" class="btn-secondary">Limpar</button>
+                        <button type="submit" class="btn-primary">Cadastrar</button>
+                    </div>
+                </form>
+
+                <div class="footer-links">
+                    <p>Já possui uma conta? Faça o <a href="../Login/index.html">Login</a>.</p>
+                    <p>Cadastre sua <a href="../CadastroEmpresa/index.html">empresa</a>.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal de Sucesso -->
+    <div class="modal-overlay" id="modalSucesso">
+        <div class="modal-content">
+            <div class="modal-icon">✓</div>
+            <h2 class="modal-title">Cadastro efetuado com sucesso!</h2>
+            <p class="modal-text">Complete o cadastro inserindo as informações necessárias.</p>
+            <button class="modal-btn" id="btnComecar">Começar</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
