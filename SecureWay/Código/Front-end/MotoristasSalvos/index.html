@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SecureWay - Motoristas Cadastrados</title>
+    <title>SecureWay - Motoristas Salvos</title>
     <style>
         * {
             margin: 0;
@@ -16,6 +16,7 @@
             background: linear-gradient(135deg, #0a1f28 0%, #0d3d4d 100%);
             min-height: 100vh;
             color: white;
+            padding-top: 0;
         }
 
         /* Header */
@@ -132,8 +133,26 @@
         .sidebar-header {
             display: flex;
             align-items: center;
+            justify-content: space-between;
             padding: 0 25px 30px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .close-sidebar {
+            background: transparent;
+            border: none;
+            color: white;
+            cursor: pointer;
+            padding: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .close-sidebar:hover {
+            color: #4dd4d4;
+            transform: rotate(90deg);
         }
 
         .user-profile {
@@ -235,20 +254,13 @@
             padding: 40px;
         }
 
-        /* Page Header */
         .page-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
             margin-bottom: 30px;
-            gap: 20px;
         }
 
-        .page-title-section h2 {
+        .page-title {
             font-size: 2rem;
-            color: white;
-            margin-bottom: 5px;
-            font-weight: 700;
+            margin-bottom: 8px;
         }
 
         .page-subtitle {
@@ -256,383 +268,248 @@
             font-size: 1rem;
         }
 
-        .page-actions {
+        /* Search and Filters */
+        .filters-section {
             display: flex;
-            gap: 12px;
-        }
-
-        .btn-action {
-            padding: 12px 24px;
-            border: none;
-            border-radius: 10px;
-            font-size: 0.95rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            text-decoration: none;
-            font-family: inherit;
-        }
-
-        .btn-export {
-            background: rgba(255, 255, 255, 0.15);
-            color: white;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .btn-export:hover {
-            background: rgba(255, 255, 255, 0.25);
-            border-color: rgba(77, 212, 212, 1);
-        }
-
-        .btn-add {
-            background: linear-gradient(135deg, #4a9eff 0%, #2d7dd2 100%);
-            color: white;
-        }
-
-        .btn-add:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(74, 158, 255, 0.4);
-        }
-
-        /* Search and Filter Bar */
-        .search-filter-bar {
-            display: flex;
-            gap: 12px;
+            gap: 15px;
             margin-bottom: 30px;
             flex-wrap: wrap;
+            align-items: center;
         }
 
         .search-box {
             flex: 1;
-            min-width: 250px;
-            display: flex;
-            align-items: center;
-            background: rgba(13, 61, 77, 0.6);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-            padding: 12px 16px;
-            transition: all 0.3s ease;
-        }
-
-        .search-box:focus-within {
-            border-color: rgba(74, 158, 255, 0.5);
-            background: rgba(13, 61, 77, 0.8);
-        }
-
-        .search-box svg {
-            stroke: rgba(255, 255, 255, 0.5);
-            margin-right: 12px;
+            min-width: 300px;
+            position: relative;
         }
 
         .search-box input {
-            background: none;
-            border: none;
+            width: 100%;
+            padding: 12px 45px 12px 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
             color: white;
             font-size: 0.95rem;
-            width: 100%;
-            outline: none;
+            transition: all 0.3s ease;
         }
 
         .search-box input::placeholder {
             color: rgba(255, 255, 255, 0.5);
         }
 
-        .filter-select {
-            padding: 12px 16px;
-            background: rgba(13, 61, 77, 0.6);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+        .search-box input:focus {
+            outline: none;
+            border-color: #3bbebe;
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .search-icon {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .filter-btn {
+            padding: 12px 24px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 10px;
             color: white;
-            font-size: 0.95rem;
             cursor: pointer;
             transition: all 0.3s ease;
+            font-size: 0.95rem;
             font-family: inherit;
         }
 
-        .filter-select:hover,
-        .filter-select:focus {
-            border-color: rgba(74, 158, 255, 0.5);
-            background: rgba(13, 61, 77, 0.8);
+        .filter-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: #3bbebe;
         }
 
-        .filter-select option {
-            background: #0a1f28;
-            color: white;
-        }
-
-        /* Cards Grid */
-        .motoristas-grid {
+        /* Driver Cards */
+        .drivers-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
             gap: 24px;
-            margin-bottom: 40px;
         }
 
-        .card {
+        .driver-card {
             background: rgba(13, 61, 77, 0.6);
-            border-radius: 12px;
+            border-radius: 15px;
             padding: 24px;
             border: 1px solid rgba(255, 255, 255, 0.1);
             transition: all 0.3s ease;
-            cursor: pointer;
+            position: relative;
+            overflow: hidden;
         }
 
-        .card:hover {
+        .driver-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
-            border-color: rgba(74, 158, 255, 0.3);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            border-color: rgba(59, 190, 190, 0.5);
         }
 
-        .card h3 {
-            font-size: 1.2rem;
-            color: white;
-            margin-bottom: 12px;
-            font-weight: 600;
-        }
-
-        .card p {
-            font-size: 0.9rem;
-            color: rgba(255, 255, 255, 0.7);
-            margin-bottom: 8px;
-            line-height: 1.5;
-        }
-
-        .card p strong {
-            color: white;
-        }
-
-        .card-status {
-            display: inline-block;
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            margin-top: 12px;
-        }
-
-        .status-ativo {
-            background: rgba(40, 167, 69, 0.2);
-            color: #28a745;
-        }
-
-        .status-inativo {
-            background: rgba(108, 117, 125, 0.2);
-            color: #6c757d;
-        }
-
-        .status-suspenso {
-            background: rgba(220, 53, 69, 0.2);
-            color: #dc3545;
-        }
-
-        /* Empty State */
-        .empty-state {
-            text-align: center;
-            padding: 60px 20px;
-        }
-
-        .empty-state svg {
-            stroke: rgba(255, 255, 255, 0.3);
-            margin-bottom: 20px;
-        }
-
-        .empty-state h3 {
-            font-size: 1.5rem;
-            color: white;
-            margin-bottom: 10px;
-        }
-
-        .empty-state p {
-            color: rgba(255, 255, 255, 0.6);
-            margin-bottom: 20px;
-        }
-
-        .btn-empty-action {
-            padding: 12px 28px;
-            background: linear-gradient(135deg, #4a9eff 0%, #2d7dd2 100%);
-            border: none;
-            border-radius: 10px;
-            color: white;
-            font-weight: 600;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.3s ease;
-            font-family: inherit;
-        }
-
-        .btn-empty-action:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(74, 158, 255, 0.4);
-        }
-
-        /* Modal */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 3000;
-        }
-
-        .modal.active {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .modal-overlay {
+        .driver-card::before {
+            content: '';
             position: absolute;
             top: 0;
             left: 0;
-            width: 100%;
+            width: 5px;
             height: 100%;
-            background: rgba(10, 20, 25, 0.8);
-            cursor: pointer;
+            background: linear-gradient(180deg, #3bbebe, #2a8a8a);
+            opacity: 0;
+            transition: opacity 0.3s ease;
         }
 
-        .modal-content {
-            position: relative;
-            background: rgba(13, 61, 77, 0.95);
-            border-radius: 16px;
-            padding: 32px;
-            max-width: 500px;
-            width: 90%;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        .driver-card:hover::before {
+            opacity: 1;
         }
 
-        .modal-header {
+        .driver-header {
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            margin-bottom: 24px;
+            gap: 15px;
+            margin-bottom: 20px;
         }
 
-        .modal-header h3 {
+        .driver-avatar {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3bbebe, #2a8a8a);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
             font-size: 1.5rem;
             color: white;
+            box-shadow: 0 4px 15px rgba(59, 190, 190, 0.3);
+        }
+
+        .driver-info h3 {
+            font-size: 1.3rem;
+            color: white;
+            margin-bottom: 5px;
+        }
+
+        .driver-status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
             font-weight: 600;
         }
 
-        .btn-close-modal {
-            background: none;
-            border: none;
-            color: rgba(255, 255, 255, 0.6);
-            cursor: pointer;
-            transition: all 0.3s ease;
+        .status-available {
+            background: rgba(34, 197, 94, 0.2);
+            color: #4ade80;
+            border: 1px solid rgba(34, 197, 94, 0.3);
         }
 
-        .btn-close-modal:hover {
-            color: white;
+        .status-busy {
+            background: rgba(251, 146, 60, 0.2);
+            color: #fb923c;
+            border: 1px solid rgba(251, 146, 60, 0.3);
         }
 
-        .modal-body {
-            margin-bottom: 24px;
+        .status-offline {
+            background: rgba(148, 163, 184, 0.2);
+            color: #94a3b8;
+            border: 1px solid rgba(148, 163, 184, 0.3);
         }
 
-        .modal-info-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 16px;
-        }
-
-        .modal-info-item {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 12px;
-            border-radius: 8px;
-        }
-
-        .modal-info-item label {
-            display: block;
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: rgba(255, 255, 255, 0.6);
-            margin-bottom: 4px;
-            text-transform: uppercase;
-        }
-
-        .modal-info-item p {
-            color: white;
-            font-weight: 500;
-        }
-
-        .modal-footer {
+        .driver-details {
             display: flex;
+            flex-direction: column;
             gap: 12px;
-            justify-content: flex-end;
         }
 
-        .btn-modal {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-family: inherit;
+        .detail-row {
             display: flex;
             align-items: center;
+            gap: 10px;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.95rem;
+        }
+
+        .detail-row svg {
+            color: #3bbebe;
+            flex-shrink: 0;
+        }
+
+        .detail-row strong {
+            color: white;
+        }
+
+        .driver-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .action-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             gap: 6px;
+            font-family: inherit;
         }
 
-        .btn-edit {
-            background: linear-gradient(135deg, #4a9eff 0%, #2d7dd2 100%);
+        .btn-primary {
+            background: linear-gradient(135deg, #3bbebe, #2a8a8a);
             color: white;
         }
 
-        .btn-edit:hover {
-            box-shadow: 0 4px 12px rgba(74, 158, 255, 0.4);
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(59, 190, 190, 0.4);
         }
 
-        .btn-delete {
-            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
             color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
-        .btn-delete:hover {
-            box-shadow: 0 4px 12px rgba(220, 53, 69, 0.4);
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.3);
         }
 
-        /* Notificação Toast */
-        .notificacao-toast {
+        /* Chat Button */
+        .chat-btn {
             position: fixed;
-            bottom: 40px;
-            right: 40px;
-            padding: 20px 30px;
-            border-radius: 15px;
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
-            font-weight: 600;
-            z-index: 3001;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3bbebe, #2a8a8a);
+            border: none;
             color: white;
-            font-size: 1.05rem;
-            min-width: 300px;
-            animation: slideInRight 0.4s ease;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(59, 190, 190, 0.4);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
         }
 
-        .notificacao-toast.info {
-            background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
-        }
-
-        .notificacao-toast.success {
-            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-        }
-
-        @keyframes slideInRight {
-            from {
-                opacity: 0;
-                transform: translateX(100px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
+        .chat-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 25px rgba(59, 190, 190, 0.6);
         }
 
         @media (max-width: 768px) {
@@ -647,7 +524,7 @@
                 justify-content: center;
             }
 
-            .nav-btn span:not(:first-child) {
+            .nav-btn span {
                 display: none;
             }
 
@@ -659,97 +536,44 @@
                 padding: 20px;
             }
 
-            .page-header {
-                flex-direction: column;
-                align-items: flex-start;
+            .drivers-grid {
+                grid-template-columns: 1fr;
             }
 
-            .page-actions {
-                width: 100%;
-            }
-
-            .btn-action {
-                flex: 1;
-                justify-content: center;
-            }
-
-            .search-filter-bar {
+            .filters-section {
                 flex-direction: column;
             }
 
             .search-box {
                 min-width: 100%;
             }
-
-            .filter-select {
-                width: 100%;
-            }
-
-            .motoristas-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .modal-info-grid {
-                grid-template-columns: 1fr;
-            }
         }
     </style>
 </head>
 <body>
-   <!-- Overlay -->
+    <!-- Overlay -->
     <div class="overlay" id="overlay"></div>
-
-    <!-- Header -->
-    <header class="header">
-        <div class="logo-container">
-            <div class="logo-icon">SW</div>
-            <div class="logo-text">
-                <h1>SecureWay</h1>
-                <p>Agendamentos</p>
-            </div>
-        </div>
-
-        <nav class="nav-buttons">
-            <button class="nav-btn" id="menuBtn">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <line x1="3" y1="12" x2="21" y2="12"></line>
-                    <line x1="3" y1="6" x2="21" y2="6"></line>
-                    <line x1="3" y1="18" x2="21" y2="18"></line>
-                </svg>
-            </button>
-
-            <a href="../TelaInicial/index.html" class="nav-btn active">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
-                </svg>
-                <span>Início</span>
-            </a>
-
-            <a href="../PerfilMotorista/index.html" class="nav-btn">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                    <circle cx="12" cy="7" r="4"></circle>
-                </svg>
-                <span>Perfil</span>
-            </a>
-        </nav>
-    </header>
 
     <!-- Sidebar -->
     <aside class="sidebar" id="sidebar">
         <div class="sidebar-header">
             <div class="user-profile">
-                <div class="user-avatar">LT</div>
+                <div class="user-avatar">EM</div>
                 <div class="user-info">
-                    <h3>Lon Mar Transpotes</h3>
-                    <p>Ver perfil</p>
+                    <h3>Empresa Admin</h3>
+                    <p>Administrador</p>
                 </div>
             </div>
+            <button class="close-sidebar" id="closeSidebar">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
         </div>
 
         <nav class="sidebar-nav">
-            <a href="../AgendamentosEmpresa/index.html" class="sidebar-link active">
+            <a href="../Agendamentos/index.html" class="sidebar-link">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
                     <line x1="16" y1="2" x2="16" y2="6"></line>
@@ -759,36 +583,39 @@
                 <span>Agendamentos</span>
             </a>
 
-            <a href="../CaminhõesCadatrados/index.html" class="sidebar-link">
+            <a href="../MotoristasSalvos/index.html" class="sidebar-link active">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <line x1="12" y1="5" x2="12" y2="19"></line>
-                    <line x1="5" y1="12" x2="19" y2="12"></line>
-                </svg>
-                <span>Caminhões Cadastrados</span>
-            </a>
-
-            <a href="../AvisosEmpresa/index.html" class="sidebar-link">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
-                    <circle cx="12" cy="13" r="4"></circle>
-                </svg>
-                <span>Avisos</span>
-            </a>
-            <!--teste-->
-            <a href="../MotoristasSalvos/index.html" class="sidebar-link">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="9" cy="7" r="4"></circle>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
                 </svg>
                 <span>Motoristas Salvos</span>
             </a>
 
-            <a href="../Avisos/index.html" class="sidebar-link">
+            <a href="../VizualizarMotorista/index.html" class="sidebar-link">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                    <circle cx="12" cy="13" r="4"></circle>
+                </svg>
+                <span>Rastreamento</span>
+            </a>
+
+            <a href="../EmpresasSalvas/index.html" class="sidebar-link">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+                <span>Empresas</span>
+            </a>
+
+            <a href="../AvisosEmpresa/index.html" class="sidebar-link">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
                     <polyline points="7 10 12 15 17 10"></polyline>
                     <line x1="12" y1="15" x2="12" y2="3"></line>
                 </svg>
-                <span>Status</span>
+                <span>Relatórios</span>
             </a>
         </nav>
     </aside>
@@ -800,7 +627,7 @@
                 <div class="company-logo">SW</div>
                 <div class="company-info">
                     <h1>SecureWay</h1>
-                    <span class="company-badge">Motoristas</span>
+                    <span class="company-badge">Empresa</span>
                 </div>
             </div>
             <nav class="header-nav">
@@ -811,19 +638,19 @@
                         <line x1="3" y1="18" x2="21" y2="18"></line>
                     </svg>
                 </button>
-                <a href="../Home/index.html" class="nav-btn" id="btnHome">
+                <a href="../Home/index.html" class="nav-btn">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
                         <polyline points="9 22 9 12 15 12 15 22"></polyline>
                     </svg>
                     <span>Início</span>
                 </a>
-                <a href="../MotoristasSalvos/index.html" class="nav-btn active">
+                <a href="../PerfilEmpresa/index.html" class="nav-btn">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                         <circle cx="12" cy="7" r="4"></circle>
                     </svg>
-                    <span>Motoristas</span>
+                    <span>Perfil</span>
                 </a>
             </nav>
         </div>
@@ -833,206 +660,319 @@
     <div class="container">
         <!-- Page Header -->
         <div class="page-header">
-            <div class="page-title-section">
-                <h2>Motoristas Cadastrados</h2>
-                <p class="page-subtitle">Gerencie os motoristas da sua frota</p>
-            </div>
-            <div class="page-actions">
-                <button class="btn-action btn-export" id="btnExport">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                        <polyline points="7 10 12 15 17 10"></polyline>
-                        <line x1="12" y1="15" x2="12" y2="3"></line>
-                    </svg>
-                    Exportar
-                </button>
-                <button class="btn-action btn-add" id="btnAddMotorista">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <line x1="12" y1="5" x2="12" y2="19"></line>
-                        <line x1="5" y1="12" x2="19" y2="12"></line>
-                    </svg>
-                    Novo Motorista
-                </button>
-            </div>
+            <h2 class="page-title">Motoristas Cadastrados</h2>
+            <p class="page-subtitle">Gerencie os motoristas da sua frota</p>
         </div>
 
-        <!-- Search and Filter Bar -->
-        <div class="search-filter-bar">
+        <!-- Filters -->
+        <div class="filters-section">
             <div class="search-box">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <input type="text" placeholder="Buscar motorista por nome, CPF ou CNH..." id="searchInput">
+                <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <circle cx="11" cy="11" r="8"></circle>
-                    <path d="m21 21-4.35-4.35"></path>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
                 </svg>
-                <input type="text" id="searchInput" placeholder="Buscar motorista por nome, CPF ou CNH...">
             </div>
-            <select class="filter-select" id="filterStatus">
-                <option value="todos">Todos os Status</option>
-                <option value="ativo">Ativo</option>
-                <option value="inativo">Inativo</option>
-                <option value="suspenso">Suspenso</option>
-            </select>
-            <select class="filter-select" id="filterOrdem">
-                <option value="nome">Ordenar por Nome</option>
-                <option value="data">Ordenar por Data</option>
-                <option value="status">Ordenar por Status</option>
+            <select class="filter-btn" id="statusFilter">
+                <option value="all">Todos os Status</option>
+                <option value="available">Disponível</option>
+                <option value="busy">Em Viagem</option>
+                <option value="offline">Offline</option>
             </select>
         </div>
 
-        <!-- Motoristas Grid -->
-        <div class="motoristas-grid" id="motoristasGrid">
-            <div class="card" data-nome="João Silva" data-cpf="123.456.789-00" data-cnh="1234567890" data-telefone="(11) 98765-4321" data-email="joao@email.com" data-status="ativo" data-data="10/01/2024">
-                <h3>João Silva</h3>
-                <p><strong>CPF:</strong> 123.456.789-00</p>
-                <p><strong>CNH:</strong> 1234567890</p>
-                <p><strong>Telefone:</strong> (11) 98765-4321</p>
-                <p><strong>E-mail:</strong> joao@email.com</p>
-                <span class="card-status status-ativo">Ativo</span>
-            </div>
-
-            <div class="card" data-nome="Maria Santos" data-cpf="987.654.321-00" data-cnh="0987654321" data-telefone="(11) 99876-5432" data-email="maria@email.com" data-status="ativo" data-data="12/01/2024">
-                <h3>Maria Santos</h3>
-                <p><strong>CPF:</strong> 987.654.321-00</p>
-                <p><strong>CNH:</strong> 0987654321</p>
-                <p><strong>Telefone:</strong> (11) 99876-5432</p>
-                <p><strong>E-mail:</strong> maria@email.com</p>
-                <span class="card-status status-ativo">Ativo</span>
-            </div>
-
-            <div class="card" data-nome="Pedro Oliveira" data-cpf="456.789.123-00" data-cnh="5678901234" data-telefone="(11) 97654-3210" data-email="pedro@email.com" data-status="suspenso" data-data="15/01/2024">
-                <h3>Pedro Oliveira</h3>
-                <p><strong>CPF:</strong> 456.789.123-00</p>
-                <p><strong>CNH:</strong> 5678901234</p>
-                <p><strong>Telefone:</strong> (11) 97654-3210</p>
-                <p><strong>E-mail:</strong> pedro@email.com</p>
-                <span class="card-status status-suspenso">Suspenso</span>
-            </div>
-
-            <div class="card" data-nome="Ana Costa" data-cpf="789.123.456-00" data-cnh="2345678901" data-telefone="(11) 96543-2109" data-email="ana@email.com" data-status="ativo" data-data="18/01/2024">
-                <h3>Ana Costa</h3>
-                <p><strong>CPF:</strong> 789.123.456-00</p>
-                <p><strong>CNH:</strong> 2345678901</p>
-                <p><strong>Telefone:</strong> (11) 96543-2109</p>
-                <p><strong>E-mail:</strong> ana@email.com</p>
-                <span class="card-status status-ativo">Ativo</span>
-            </div>
-
-            <div class="card" data-nome="Carlos Ferreira" data-cpf="321.654.987-00" data-cnh="3456789012" data-telefone="(11) 95432-1098" data-email="carlos@email.com" data-status="inativo" data-data="20/01/2024">
-                <h3>Carlos Ferreira</h3>
-                <p><strong>CPF:</strong> 321.654.987-00</p>
-                <p><strong>CNH:</strong> 3456789012</p>
-                <p><strong>Telefone:</strong> (11) 95432-1098</p>
-                <p><strong>E-mail:</strong> carlos@email.com</p>
-                <span class="card-status status-inativo">Inativo</span>
-            </div>
-
-            <div class="card" data-nome="Beatriz Lima" data-cpf="654.321.987-00" data-cnh="4567890123" data-telefone="(11) 94321-0987" data-email="beatriz@email.com" data-status="ativo" data-data="22/01/2024">
-                <h3>Beatriz Lima</h3>
-                <p><strong>CPF:</strong> 654.321.987-00</p>
-                <p><strong>CNH:</strong> 4567890123</p>
-                <p><strong>Telefone:</strong> (11) 94321-0987</p>
-                <p><strong>E-mail:</strong> beatriz@email.com</p>
-                <span class="card-status status-ativo">Ativo</span>
-            </div>
-        </div>
-
-        <!-- Empty State -->
-        <div class="empty-state" id="emptyState" style="display: none;">
-            <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                <circle cx="9" cy="7" r="4"></circle>
-                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-            </svg>
-            <h3>Nenhum motorista encontrado</h3>
-            <p>Nenhum resultado corresponde aos filtros aplicados</p>
-            <button class="btn-empty-action" id="btnClearFilters">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <circle cx="11" cy="11" r="8"></circle>
-                    <path d="m21 21-4.35-4.35"></path>
-                </svg>
-                Limpar Filtros
-            </button>
-        </div>
-    </div>
-
-    <!-- Modal de Detalhes -->
-    <div class="modal" id="modalDetalhes">
-        <div class="modal-overlay" id="modalOverlay"></div>
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 id="modalNome">Nome do Motorista</h3>
-                <button class="btn-close-modal" id="btnCloseModal">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <line x1="18" y1="6" x2="6" y2="18"></line>
-                        <line x1="6" y1="6" x2="18" y2="18"></line>
-                    </svg>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="modal-info-grid">
-                    <div class="modal-info-item">
-                        <label>CPF</label>
-                        <p id="modalCpf">-</p>
-                    </div>
-                    <div class="modal-info-item">
-                        <label>CNH</label>
-                        <p id="modalCnh">-</p>
-                    </div>
-                    <div class="modal-info-item">
-                        <label>Telefone</label>
-                        <p id="modalTelefone">-</p>
-                    </div>
-                    <div class="modal-info-item">
-                        <label>E-mail</label>
-                        <p id="modalEmail">-</p>
-                    </div>
-                    <div class="modal-info-item">
-                        <label>Status</label>
-                        <p id="modalStatus">-</p>
-                    </div>
-                    <div class="modal-info-item">
-                        <label>Data de Cadastro</label>
-                        <p id="modalData">-</p>
+        <!-- Drivers Grid -->
+        <div class="drivers-grid" id="driversGrid">
+            <!-- Driver 1 -->
+            <div class="driver-card" data-status="available">
+                <div class="driver-header">
+                    <div class="driver-avatar">JM</div>
+                    <div class="driver-info">
+                        <h3>João Mendes</h3>
+                        <span class="driver-status status-available">Disponível</span>
                     </div>
                 </div>
+                <div class="driver-details">
+                    <div class="detail-row">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"></path>
+                            <circle cx="12" cy="10" r="3"></circle>
+                        </svg>
+                        <span><strong>CNH:</strong> 12345678900</span>
+                    </div>
+                    <div class="detail-row">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+                            <line x1="1" y1="10" x2="23" y2="10"></line>
+                        </svg>
+                        <span><strong>CPF:</strong> 987.654.321-00</span>
+                    </div>
+                    <div class="detail-row">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                        </svg>
+                        <span>(21) 99876-5432</span>
+                    </div>
+                    <div class="detail-row">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
+                        </svg>
+                        <span><strong>Viagens:</strong> 189 completas</span>
+                    </div>
+                </div>
+                <div class="driver-actions">
+                    <button class="action-btn btn-primary">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 16 14"></polyline>
+                        </svg>
+                        Agendar
+                    </button>
+                    <button class="action-btn btn-secondary">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                            <circle cx="12" cy="12" r="3"></circle>
+                        </svg>
+                        Perfil
+                    </button>
+                </div>
             </div>
-            <div class="modal-footer">
-                <button class="btn-modal btn-edit" id="btnEditarMotorista">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-                    </svg>
-                    Editar
-                </button>
-                <button class="btn-modal btn-delete" id="btnDeletarMotorista">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <polyline points="3 6 5 6 21 6"></polyline>
-                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                        <line x1="10" y1="11" x2="10" y2="17"></line>
-                        <line x1="14" y1="11" x2="14" y2="17"></line>
-                    </svg>
-                    Excluir
-                </button>
+
+            <!-- Driver 3 -->
+            <div class="driver-card" data-status="available">
+                <div class="driver-header">
+                    <div class="driver-avatar">PC</div>
+                    <div class="driver-info">
+                        <h3>Pedro Costa</h3>
+                        <span class="driver-status status-available">Disponível</span>
+                    </div>
+                </div>
+                <div class="driver-details">
+                    <div class="detail-row">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"></path>
+                            <circle cx="12" cy="10" r="3"></circle>
+                        </svg>
+                        <span><strong>CNH:</strong> 45678912300</span>
+                    </div>
+                    <div class="detail-row">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+                            <line x1="1" y1="10" x2="23" y2="10"></line>
+                        </svg>
+                        <span><strong>CPF:</strong> 456.789.123-00</span>
+                    </div>
+                    <div class="detail-row">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                        </svg>
+                        <span>(31) 97654-3210</span>
+                    </div>
+                    <div class="detail-row">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
+                        </svg>
+                        <span><strong>Viagens:</strong> 312 completas</span>
+                    </div>
+                </div>
+                <div class="driver-actions">
+                    <button class="action-btn btn-primary">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 16 14"></polyline>
+                        </svg>
+                        Agendar
+                    </button>
+                    <button class="action-btn btn-secondary">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                            <circle cx="12" cy="12" r="3"></circle>
+                        </svg>
+                        Perfil
+                    </button>
+                </div>
+            </div>
+
+            <!-- Driver 4 -->
+            <div class="driver-card" data-status="offline">
+                <div class="driver-header">
+                    <div class="driver-avatar">AL</div>
+                    <div class="driver-info">
+                        <h3>Ana Lima</h3>
+                        <span class="driver-status status-offline">Offline</span>
+                    </div>
+                </div>
+                <div class="driver-details">
+                    <div class="detail-row">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"></path>
+                            <circle cx="12" cy="10" r="3"></circle>
+                        </svg>
+                        <span><strong>CNH:</strong> 78912345600</span>
+                    </div>
+                    <div class="detail-row">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+                            <line x1="1" y1="10" x2="23" y2="10"></line>
+                        </svg>
+                        <span><strong>CPF:</strong> 789.123.456-00</span>
+                    </div>
+                    <div class="detail-row">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                        </svg>
+                        <span>(11) 96543-2109</span>
+                    </div>
+                    <div class="detail-row">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
+                        </svg>
+                        <span><strong>Viagens:</strong> 156 completas</span>
+                    </div>
+                </div>
+                <div class="driver-actions">
+                    <button class="action-btn btn-primary">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 16 14"></polyline>
+                        </svg>
+                        Agendar
+                    </button>
+                    <button class="action-btn btn-secondary">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                            <circle cx="12" cy="12" r="3"></circle>
+                        </svg>
+                        Perfil
+                    </button>
+                </div>
+            </div>
+
+            <!-- Driver 5 -->
+            <div class="driver-card" data-status="available">
+                <div class="driver-header">
+                    <div class="driver-avatar">RS</div>
+                    <div class="driver-info">
+                        <h3>Roberto Santos</h3>
+                        <span class="driver-status status-available">Disponível</span>
+                    </div>
+                </div>
+                <div class="driver-details">
+                    <div class="detail-row">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"></path>
+                            <circle cx="12" cy="10" r="3"></circle>
+                        </svg>
+                        <span><strong>CNH:</strong> 32165498700</span>
+                    </div>
+                    <div class="detail-row">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+                            <line x1="1" y1="10" x2="23" y2="10"></line>
+                        </svg>
+                        <span><strong>CPF:</strong> 321.654.987-00</span>
+                    </div>
+                    <div class="detail-row">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                        </svg>
+                        <span>(21) 95432-1098</span>
+                    </div>
+                    <div class="detail-row">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
+                        </svg>
+                        <span><strong>Viagens:</strong> 278 completas</span>
+                    </div>
+                </div>
+                <div class="driver-actions">
+                    <button class="action-btn btn-primary">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 16 14"></polyline>
+                        </svg>
+                        Agendar
+                    </button>
+                    <button class="action-btn btn-secondary">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                            <circle cx="12" cy="12" r="3"></circle>
+                        </svg>
+                        Perfil
+                    </button>
+                </div>
+            </div>
+
+            <!-- Driver 6 -->
+            <div class="driver-card" data-status="busy">
+                <div class="driver-header">
+                    <div class="driver-avatar">CF</div>
+                    <div class="driver-info">
+                        <h3>Carla Ferreira</h3>
+                        <span class="driver-status status-busy">Em Viagem</span>
+                    </div>
+                </div>
+                <div class="driver-details">
+                    <div class="detail-row">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"></path>
+                            <circle cx="12" cy="10" r="3"></circle>
+                        </svg>
+                        <span><strong>CNH:</strong> 65498732100</span>
+                    </div>
+                    <div class="detail-row">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+                            <line x1="1" y1="10" x2="23" y2="10"></line>
+                        </svg>
+                        <span><strong>CPF:</strong> 654.987.321-00</span>
+                    </div>
+                    <div class="detail-row">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                        </svg>
+                        <span>(31) 94321-0987</span>
+                    </div>
+                    <div class="detail-row">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
+                        </svg>
+                        <span><strong>Viagens:</strong> 201 completas</span>
+                    </div>
+                </div>
+                <div class="driver-actions">
+                    <button class="action-btn btn-primary">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 16 14"></polyline>
+                        </svg>
+                        Agendar
+                    </button>
+                    <button class="action-btn btn-secondary">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                            <circle cx="12" cy="12" r="3"></circle>
+                        </svg>
+                        Perfil
+                    </button>
+                </div>
             </div>
         </div>
     </div>
 
-    <script>
-        // ===== DADOS DOS MOTORISTAS =====
-        const motoristas = [
-            { nome: "João Silva", cpf: "123.456.789-00", cnh: "1234567890", telefone: "(11) 98765-4321", email: "joao@email.com", status: "ativo", data: "10/01/2024" },
-            { nome: "Maria Santos", cpf: "987.654.321-00", cnh: "0987654321", telefone: "(11) 99876-5432", email: "maria@email.com", status: "ativo", data: "12/01/2024" },
-            { nome: "Pedro Oliveira", cpf: "456.789.123-00", cnh: "5678901234", telefone: "(11) 97654-3210", email: "pedro@email.com", status: "suspenso", data: "15/01/2024" },
-            { nome: "Ana Costa", cpf: "789.123.456-00", cnh: "2345678901", telefone: "(11) 96543-2109", email: "ana@email.com", status: "ativo", data: "18/01/2024" },
-            { nome: "Carlos Ferreira", cpf: "321.654.987-00", cnh: "3456789012", telefone: "(11) 95432-1098", email: "carlos@email.com", status: "inativo", data: "20/01/2024" },
-            { nome: "Beatriz Lima", cpf: "654.321.987-00", cnh: "4567890123", telefone: "(11) 94321-0987", email: "beatriz@email.com", status: "ativo", data: "22/01/2024" }
-        ];
+    <!-- Chat Button -->
+    <button class="chat-btn" id="chatBtn">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+        </svg>
+    </button>
 
+    <script>
         // ===== CONTROLE DO MENU LATERAL =====
         const menuBtn = document.getElementById('menuBtn');
         const sidebar = document.getElementById('sidebar');
         const overlay = document.getElementById('overlay');
-        const sidebarLinks = document.querySelectorAll('.sidebar-link');
+        const closeSidebar = document.getElementById('closeSidebar');
 
         function toggleMenu() {
             sidebar.classList.toggle('active');
@@ -1044,17 +984,8 @@
             toggleMenu();
         });
         
+        closeSidebar.addEventListener('click', toggleMenu);
         overlay.addEventListener('click', toggleMenu);
-
-        sidebarLinks.forEach(link => {
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
-                const linkText = link.querySelector('span').textContent;
-                console.log('Navegando para:', linkText);
-                mostrarNotificacao(`Navegando para ${linkText}`, 'info');
-                toggleMenu();
-            });
-        });
 
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape' && sidebar.classList.contains('active')) {
@@ -1062,169 +993,90 @@
             }
         });
 
-        // ===== FUNÇÃO PARA MOSTRAR NOTIFICAÇÕES =====
-        function mostrarNotificacao(mensagem, tipo = 'info') {
-            const toast = document.createElement('div');
-            toast.className = `notificacao-toast ${tipo}`;
-            toast.textContent = mensagem;
-            document.body.appendChild(toast);
-
-            setTimeout(() => {
-                toast.remove();
-            }, 3000);
-        }
-
-        // ===== BOTÃO HOME =====
-        document.getElementById('btnHome').addEventListener('click', (e) => {
-            e.preventDefault();
-            mostrarNotificacao('Voltando para a página inicial...');
-        });
-
-        // ===== NAVEGAÇÃO HEADER =====
-        const navBtns = document.querySelectorAll('.header-nav .nav-btn');
-        navBtns.forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                if (btn.id !== 'menuBtn') {
-                    e.preventDefault();
-                    navBtns.forEach(b => {
-                        if (b.id !== 'menuBtn') {
-                            b.classList.remove('active');
-                        }
-                    });
-                    btn.classList.add('active');
-                }
-            });
-        });
-
-        // ===== BUSCA E FILTROS =====
+        // ===== BUSCA DE MOTORISTAS =====
         const searchInput = document.getElementById('searchInput');
-        const filterStatus = document.getElementById('filterStatus');
-        const filterOrdem = document.getElementById('filterOrdem');
-        const motoristasGrid = document.getElementById('motoristasGrid');
-        const emptyState = document.getElementById('emptyState');
-        const cards = document.querySelectorAll('.card');
+        const statusFilter = document.getElementById('statusFilter');
+        const driverCards = document.querySelectorAll('.driver-card');
 
-        function filtrarMotoristas() {
+        function filterDrivers() {
             const searchTerm = searchInput.value.toLowerCase();
-            const statusSelecionado = filterStatus.value;
-            let cardsFiltrados = 0;
+            const selectedStatus = statusFilter.value;
 
-            cards.forEach(card => {
-                const nome = card.dataset.nome.toLowerCase();
-                const cpf = card.dataset.cpf.toLowerCase();
-                const cnh = card.dataset.cnh.toLowerCase();
-                const status = card.dataset.status.toLowerCase();
+            driverCards.forEach(card => {
+                const name = card.querySelector('h3').textContent.toLowerCase();
+                const cardStatus = card.getAttribute('data-status');
+                const detailsText = card.querySelector('.driver-details').textContent.toLowerCase();
 
-                const matchSearch = nome.includes(searchTerm) || cpf.includes(searchTerm) || cnh.includes(searchTerm);
-                const matchStatus = statusSelecionado === 'todos' || status === statusSelecionado;
+                const matchesSearch = name.includes(searchTerm) || detailsText.includes(searchTerm);
+                const matchesStatus = selectedStatus === 'all' || cardStatus === selectedStatus;
 
-                if (matchSearch && matchStatus) {
-                    card.style.display = '';
-                    cardsFiltrados++;
+                if (matchesSearch && matchesStatus) {
+                    card.style.display = 'block';
                 } else {
                     card.style.display = 'none';
                 }
             });
-
-            if (cardsFiltrados === 0) {
-                motoristasGrid.style.display = 'none';
-                emptyState.style.display = 'block';
-            } else {
-                motoristasGrid.style.display = 'grid';
-                emptyState.style.display = 'none';
-            }
         }
 
-        searchInput.addEventListener('input', filtrarMotoristas);
-        filterStatus.addEventListener('change', filtrarMotoristas);
+        searchInput.addEventListener('input', filterDrivers);
+        statusFilter.addEventListener('change', filterDrivers);
 
-        // ===== ORDENAÇÃO =====
-        filterOrdem.addEventListener('change', () => {
-            const ordem = filterOrdem.value;
-            const cardsArray = Array.from(cards).filter(card => card.style.display !== 'none');
-
-            cardsArray.sort((a, b) => {
-                if (ordem === 'nome') {
-                    return a.dataset.nome.localeCompare(b.dataset.nome);
-                } else if (ordem === 'status') {
-                    return a.dataset.status.localeCompare(b.dataset.status);
-                } else if (ordem === 'data') {
-                    return new Date(b.dataset.data.split('/').reverse().join('-')) - new Date(a.dataset.data.split('/').reverse().join('-'));
-                }
-            });
-
-            cardsArray.forEach(card => {
-                motoristasGrid.appendChild(card);
-            });
-        });
-
-        // ===== MODAL =====
-        const modal = document.getElementById('modalDetalhes');
-        const modalOverlay = document.getElementById('modalOverlay');
-        const btnCloseModal = document.getElementById('btnCloseModal');
-
-        cards.forEach(card => {
-            card.addEventListener('click', () => {
-                const nome = card.dataset.nome;
-                const cpf = card.dataset.cpf;
-                const cnh = card.dataset.cnh;
-                const telefone = card.dataset.telefone;
-                const email = card.dataset.email;
-                const status = card.dataset.status;
-                const data = card.dataset.data;
-
-                document.getElementById('modalNome').textContent = nome;
-                document.getElementById('modalCpf').textContent = cpf;
-                document.getElementById('modalCnh').textContent = cnh;
-                document.getElementById('modalTelefone').textContent = telefone;
-                document.getElementById('modalEmail').textContent = email;
-                document.getElementById('modalStatus').textContent = status.charAt(0).toUpperCase() + status.slice(1);
-                document.getElementById('modalData').textContent = data;
-
-                modal.classList.add('active');
-            });
-        });
-
-        function fecharModal() {
-            modal.classList.remove('active');
-        }
-
-        btnCloseModal.addEventListener('click', fecharModal);
-        modalOverlay.addEventListener('click', fecharModal);
-
-        // ===== BOTÕES DO MODAL =====
-        document.getElementById('btnEditarMotorista').addEventListener('click', () => {
-            mostrarNotificacao('Abrindo formulário de edição...', 'info');
-            fecharModal();
-        });
-
-        document.getElementById('btnDeletarMotorista').addEventListener('click', () => {
-            if (confirm('Tem certeza que deseja deletar este motorista?')) {
-                mostrarNotificacao('Motorista deletado com sucesso!', 'success');
-                fecharModal();
-            }
-        });
-
-        // ===== BOTÕES DE AÇÃO =====
-        document.getElementById('btnAddMotorista').addEventListener('click', () => {
-            mostrarNotificacao('Abrindo formulário de novo motorista...', 'info');
-        });
-
-        document.getElementById('btnExport').addEventListener('click', () => {
-            mostrarNotificacao('Exportando dados em CSV...', 'success');
-        });
-
-        document.getElementById('btnClearFilters').addEventListener('click', () => {
-            searchInput.value = '';
-            filterStatus.value = 'todos';
-            filterOrdem.value = 'nome';
-            filtrarMotoristas();
-            mostrarNotificacao('Filtros limpos!', 'info');
-        });
-
-        console.log('✅ SecureWay - Motoristas carregado com sucesso!');
-        console.log('📊 Sistema 100% funcional');
-        console.log('🔍 Busca, filtros e ordenação funcionando');
+        console.log('✅ SecureWay - Motoristas Salvos carregado com sucesso!');
     </script>
 </body>
-</html>
+</html>="23" y2="10"></line>
+                        </svg>
+                        <span><strong>CPF:</strong> 123.456.789-00</span>
+                    </div>
+                    <div class="detail-row">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                        </svg>
+                        <span>(11) 98765-4321</span>
+                    </div>
+                    <div class="detail-row">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
+                        </svg>
+                        <span><strong>Viagens:</strong> 245 completas</span>
+                    </div>
+                </div>
+                <div class="driver-actions">
+                    <button class="action-btn btn-primary">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 16 14"></polyline>
+                        </svg>
+                        Agendar
+                    </button>
+                    <button class="action-btn btn-secondary">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                            <circle cx="12" cy="12" r="3"></circle>
+                        </svg>
+                        Perfil
+                    </button>
+                </div>
+            </div>
+
+            <!-- Driver 2 -->
+            <div class="driver-card" data-status="busy">
+                <div class="driver-header">
+                    <div class="driver-avatar">MS</div>
+                    <div class="driver-info">
+                        <h3>Maria Silva</h3>
+                        <span class="driver-status status-busy">Em Viagem</span>
+                    </div>
+                </div>
+                <div class="driver-details">
+                    <div class="detail-row">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"></path>
+                            <circle cx="12" cy="10" r="3"></circle>
+                        </svg>
+                        <span><strong>CNH:</strong> 98765432100</span>
+                    </div>
+                    <div class="detail-row">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+                            <line x1="1" y1="10" x2

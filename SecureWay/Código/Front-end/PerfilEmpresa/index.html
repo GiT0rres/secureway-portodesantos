@@ -229,6 +229,73 @@
             visibility: visible;
         }
 
+        /* Container */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+            flex-wrap: wrap;
+        }
+
+        .tab {
+            background: transparent;
+            border: none;
+            color: rgba(255, 255, 255, 0.7);
+            padding: 15px 30px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+            font-family: inherit;
+            position: relative;
+            margin-bottom: -2px;
+        }
+
+        .tab:hover {
+            color: white;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .tab.active {
+            color: #4dd4d4;
+            border-bottom-color: #4dd4d4;
+        }
+
+        /* Tab Content */
+        .tab-content {
+            min-height: 400px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .tab-pane {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .tab-pane.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
         /* Cards Grid */
         .cards-grid {
             display: grid;
@@ -266,6 +333,31 @@
 
         .card p strong {
             color: white;
+        }
+
+        /* Chat Button */
+        .chat-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3bbebe, #2a8a8a);
+            border: none;
+            color: white;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(59, 190, 190, 0.4);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .chat-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 25px rgba(59, 190, 190, 0.6);
         }
 
         /* Notificação Toast */
@@ -317,6 +409,14 @@
 
             .sidebar {
                 width: 250px;
+            }
+
+            .container {
+                padding: 20px;
+            }
+
+            .cards-grid {
+                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -459,7 +559,9 @@
             </div>
 
             <!-- Horários -->
-            <div class="tab-pane" id="contentHorarios"></div>
+            <div class="tab-pane" id="contentHorarios">
+                <p style="text-align: center; color: rgba(255,255,255,0.6); padding: 40px;">Conteúdo de horários será exibido aqui</p>
+            </div>
         </div>
     </div>
 
@@ -475,7 +577,6 @@
         const menuBtn = document.getElementById('menuBtn');
         const sidebar = document.getElementById('sidebar');
         const overlay = document.getElementById('overlay');
-        const sidebarLinks = document.querySelectorAll('.sidebar-link');
 
         function toggleMenu() {
             sidebar.classList.toggle('active');
@@ -488,16 +589,6 @@
         });
         
         overlay.addEventListener('click', toggleMenu);
-
-        sidebarLinks.forEach(link => {
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
-                const linkText = link.querySelector('span').textContent;
-                console.log('Navegando para:', linkText);
-                mostrarNotificacao(`Navegando para ${linkText}`, 'info');
-                toggleMenu();
-            });
-        });
 
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape' && sidebar.classList.contains('active')) {
@@ -518,40 +609,6 @@
                 
                 btn.classList.add('active');
                 document.getElementById(`content${tabName.charAt(0).toUpperCase() + tabName.slice(1)}`).classList.add('active');
-            });
-        });
-
-        // ===== FUNÇÃO PARA MOSTRAR NOTIFICAÇÕES =====
-        function mostrarNotificacao(mensagem, tipo = 'info') {
-            const toast = document.createElement('div');
-            toast.className = `notificacao-toast ${tipo}`;
-            toast.textContent = mensagem;
-            document.body.appendChild(toast);
-
-            setTimeout(() => {
-                toast.remove();
-            }, 3000);
-        }
-
-        // ===== BOTÃO HOME =====
-        document.getElementById('btnHome').addEventListener('click', (e) => {
-            e.preventDefault();
-            mostrarNotificacao('Voltando para a página inicial...');
-        });
-
-        // ===== NAVEGAÇÃO HEADER =====
-        const navBtns = document.querySelectorAll('.header-nav .nav-btn');
-        navBtns.forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                if (btn.id !== 'menuBtn') {
-                    e.preventDefault();
-                    navBtns.forEach(b => {
-                        if (b.id !== 'menuBtn') {
-                            b.classList.remove('active');
-                        }
-                    });
-                    btn.classList.add('active');
-                }
             });
         });
 

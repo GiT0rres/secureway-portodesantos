@@ -739,12 +739,12 @@
             </div>
             <nav class="header-nav">
                 <button class="nav-btn" id="menuBtn">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <line x1="3" y1="12" x2="21" y2="12"></line>
-                    <line x1="3" y1="6" x2="21" y2="6"></line>
-                    <line x1="3" y1="18" x2="21" y2="18"></line>
-                </svg>
-            </button>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="3" y1="12" x2="21" y2="12"></line>
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <line x1="3" y1="18" x2="21" y2="18"></line>
+                    </svg>
+                </button>
                 <a href="../Home/index.html" class="nav-btn" id="btnHome">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
@@ -911,36 +911,25 @@
         const menuBtn = document.getElementById('menuBtn');
         const sidebar = document.getElementById('sidebar');
         const overlay = document.getElementById('overlay');
-        const sidebarLinks = document.querySelectorAll('.sidebar-link');
 
-        function toggleMenu() {
+        function toggleMenu(e) {
+            if (e) e.preventDefault();
             sidebar.classList.toggle('active');
             overlay.classList.toggle('active');
         }
 
-        // Abrir/fechar menu
-        menuBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            toggleMenu();
-        });
-        
-        overlay.addEventListener('click', toggleMenu);
-
-        // Fechar menu ao clicar em um link
-        sidebarLinks.forEach(link => {
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
-                const linkText = link.querySelector('span').textContent;
-                console.log('Navegando para:', linkText);
-                mostrarNotificacao(`Navegando para ${linkText}`, 'info');
-                toggleMenu();
-            });
+        // Abrir/fechar menu - APENAS o botão do menu precisa preventDefault
+        menuBtn.addEventListener('click', toggleMenu);
+        overlay.addEventListener('click', () => {
+            sidebar.classList.remove('active');
+            overlay.classList.remove('active');
         });
 
         // Fechar menu com ESC
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape' && sidebar.classList.contains('active')) {
-                toggleMenu();
+                sidebar.classList.remove('active');
+                overlay.classList.remove('active');
             }
         });
 
@@ -972,7 +961,7 @@
             setTimeout(() => {
                 toast.style.animation = 'slideOutRight 0.4s ease';
                 setTimeout(() => toast.remove(), 400);
-            }, 3000);
+            }, 2000);
         }
 
         // ===== BOTÃO ALTERAR FOTO =====
@@ -980,78 +969,9 @@
             mostrarNotificacao('Função de alteração de foto em desenvolvimento!', 'info');
         });
 
-        // ===== BOTÃO DESLOGAR =====
-        document.getElementById('btnLogout').addEventListener('click', (e) => {
-            e.preventDefault();
-            if (confirm('Deseja realmente sair da sua conta?')) {
-                mostrarNotificacao('Saindo do sistema...', 'info');
-                setTimeout(() => {
-                    console.log('Redirecionando para login...');
-                }, 1500);
-            }
-        });
-
-        // ===== BOTÃO EXCLUIR CONTA =====
-        document.getElementById('btnDeleteAccount').addEventListener('click', (e) => {
-            e.preventDefault();
-            if (confirm('⚠️ ATENÇÃO! Esta ação é IRREVERSÍVEL!\n\nDeseja realmente excluir sua conta permanentemente?\n\nTodos os seus dados serão perdidos.')) {
-                mostrarNotificacao('Conta excluída com sucesso!', 'error');
-                setTimeout(() => {
-                    console.log('Conta excluída. Redirecionando...');
-                }, 2000);
-            }
-        });
-
-        // ===== BOTÃO EDITAR INFORMAÇÕES =====
-        document.getElementById('btnEdit').addEventListener('click', (e) => {
-            e.preventDefault();
-            mostrarNotificacao('Modo de edição ativado!', 'success');
-            
-            // Simular modo de edição
-            const infos = document.querySelectorAll('.info-card p');
-            infos.forEach(info => {
-                info.style.border = '2px dashed rgba(74, 158, 255, 0.5)';
-                info.style.padding = '5px';
-                info.style.borderRadius = '5px';
-            });
-
-            setTimeout(() => {
-                infos.forEach(info => {
-                    info.style.border = 'none';
-                    info.style.padding = '0';
-                });
-            }, 3000);
-        });
-
-        // ===== BOTÃO ADICIONAR VEÍCULO =====
-        document.getElementById('btnAddVeiculo').addEventListener('click', (e) => {
-            e.preventDefault();
-            mostrarNotificacao('Abrindo formulário de cadastro...', 'success');
-            console.log('Redirecionando para cadastro de veículo...');
-        });
-
-        // ===== BOTÃO INÍCIO (HEADER) =====
-        document.getElementById('btnHome').addEventListener('click', (e) => {
-            e.preventDefault();
-            mostrarNotificacao('Voltando para a página inicial...', 'info');
-            console.log('Redirecionando para home...');
-        });
-
-        // ===== NAVEGAÇÃO HEADER =====
-        const navBtns = document.querySelectorAll('.header-nav .nav-btn');
-        navBtns.forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                if (btn.id !== 'menuBtn') {
-                    e.preventDefault();
-                    navBtns.forEach(b => {
-                        if (b.id !== 'menuBtn') {
-                            b.classList.remove('active');
-                        }
-                    });
-                    btn.classList.add('active');
-                }
-            });
-        });
+        // ===== TODOS OS OUTROS LINKS NAVEGAM NORMALMENTE =====
+        // Removidos os event listeners que bloqueavam a navegação
+        // Os links <a href="..."> agora funcionam naturalmente
 
         // ===== ANIMAÇÃO DE ENTRADA =====
         window.addEventListener('load', () => {
