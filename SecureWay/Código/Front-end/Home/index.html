@@ -35,34 +35,37 @@
 
         .loader {
             position: relative;
-            width: 400px;
+            width: 200px;
             height: 200px;
             margin-bottom: 30px;
         }
 
         .sun {
             position: absolute;
-            top: 0;
+            top: 50%;
             left: 50%;
-            transform: translateX(-50%);
+            transform: translate(-50%, -50%);
             width: 150px;
             height: 150px;
             background: radial-gradient(circle, #ff6b35 0%, #ff8c42 50%, #ffa726 100%);
             border-radius: 50%;
             box-shadow: 0 0 60px rgba(255, 107, 53, 0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
         }
 
-        .truck {
-            position: absolute;
-            bottom: 15px;
-            font-size: 50px;
-            animation: drive 3s linear infinite;
-            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
-        }
+       .truck {
+    width: 800px;
+    height: 190px;
+    object-fit: contain;
+    animation: blink 2s ease-in-out infinite;
+}
 
-        @keyframes drive {
-            0% { left: -100px; }
-            100% { left: calc(100% + 100px); }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
 
         .loading-text {
@@ -524,14 +527,15 @@
     </style>
 </head>
 <body>
-    <!-- Loading Screen -->
-    <div id="loading">
-        <div class="loader">
-            <div class="sun"></div>
-            <div class="truck"></div>
+   <!-- Loading Screen -->
+<div id="loading">
+    <div class="loader">
+        <div class="sun">
+            <img src="../../../imagens/truck.png" alt="Carregando" class="truck">
         </div>
-        <p class="loading-text">Carregando...</p>
     </div>
+    <p class="loading-text">Carregando...</p>
+</div>
 
     <!-- Content -->
     <div id="content">
@@ -554,7 +558,7 @@
                     </svg>
                 </a>
 
-                <a href="#" class="nav-btn active">
+                <a href="../Home/index.html" class="nav-btn active">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
                         <polyline points="9 22 9 12 15 12 15 22"></polyline>
@@ -562,7 +566,7 @@
                     <span>Início</span>
                 </a>
 
-                <a href="#" class="nav-btn">
+                <a href="../PerfilMotorista/index.html" class="nav-btn">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                         <circle cx="12" cy="7" r="4"></circle>
@@ -572,7 +576,7 @@
             </nav>
         </header>
 
-       <aside class="sidebar" id="sidebar">
+        <aside class="sidebar" id="sidebar">
         <div class="sidebar-header">
             <div class="user-profile">
                 <div class="user-avatar">SA</div>
@@ -631,7 +635,6 @@
             </a>
         </nav>
     </aside>
-
         <!-- Overlay -->
         <div class="overlay" id="overlay"></div>
 
@@ -789,78 +792,78 @@
                         </svg>
                     </div>
                     <div class="info-text">
-                        <p>Endereço</p>
-                        <p>${company.address}</p>
-                    </div>
+                    <p>Endereço</p>
+                    <p>${company.address}</p>
                 </div>
-            `;
+            </div>
+        `;
 
-            modalButtons.innerHTML = `
-                <a href="${company.linkedin}" target="_blank" class="modal-btn linkedin">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
-                        <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path>
-                        <rect x="2" y="9" width="4" height="12"></rect>
-                        <circle cx="4" cy="4" r="2"></circle>
-                    </svg>
-                    LinkedIn
-                </a>
-                <a href="${company.website}" target="_blank" class="modal-btn website">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <line x1="2" y1="12" x2="22" y2="12"></line>
-                        <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
-                    </svg>
-                    Website
-                </a>
-            `;
+        modalButtons.innerHTML = `
+            <a href="${company.linkedin}" target="_blank" class="modal-btn linkedin">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
+                    <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path>
+                    <rect x="2" y="9" width="4" height="12"></rect>
+                    <circle cx="4" cy="4" r="2"></circle>
+                </svg>
+                LinkedIn
+            </a>
+            <a href="${company.website}" target="_blank" class="modal-btn website">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="2" y1="12" x2="22" y2="12"></line>
+                    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                </svg>
+                Website
+            </a>
+        `;
 
-            modal.classList.add('active');
-        }
+        modal.classList.add('active');
+    }
 
-        // Close modal
-        document.getElementById('modalClose').addEventListener('click', () => {
+    // Close modal
+    document.getElementById('modalClose').addEventListener('click', () => {
+        document.getElementById('modal').classList.remove('active');
+    });
+
+    document.getElementById('modal').addEventListener('click', (e) => {
+        if (e.target.id === 'modal') {
             document.getElementById('modal').classList.remove('active');
-        });
-
-        document.getElementById('modal').addEventListener('click', (e) => {
-            if (e.target.id === 'modal') {
-                document.getElementById('modal').classList.remove('active');
-            }
-        });
-
-        // Menu sidebar
-        const menuBtn = document.getElementById('menuBtn');
-        const sidebar = document.getElementById('sidebar');
-        const overlay = document.getElementById('overlay');
-
-        function toggleMenu(e) {
-            e.preventDefault();
-            sidebar.classList.toggle('active');
-            overlay.classList.toggle('active');
         }
+    });
 
-        menuBtn.addEventListener('click', toggleMenu);
-        overlay.addEventListener('click', toggleMenu);
+    // Menu sidebar
+    const menuBtn = document.getElementById('menuBtn');
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('overlay');
 
-        // Search
-        const searchInput = document.getElementById('searchInput');
-        const clearBtn = document.getElementById('clearBtn');
+    function toggleMenu(e) {
+        e.preventDefault();
+        sidebar.classList.toggle('active');
+        overlay.classList.toggle('active');
+    }
 
-        clearBtn.addEventListener('click', () => {
-            searchInput.value = '';
-            renderCards();
-        });
+    menuBtn.addEventListener('click', toggleMenu);
+    overlay.addEventListener('click', toggleMenu);
 
-        searchInput.addEventListener('input', (e) => {
-            const term = e.target.value.toLowerCase();
-            const filtered = companies.filter(company =>
-                company.name.toLowerCase().includes(term)
-            );
-            renderCards(filtered);
-        });
+    // Search
+    const searchInput = document.getElementById('searchInput');
+    const clearBtn = document.getElementById('clearBtn');
 
-        // Initialize
+    clearBtn.addEventListener('click', () => {
+        searchInput.value = '';
         renderCards();
-    </script>
+    });
+
+    searchInput.addEventListener('input', (e) => {
+        const term = e.target.value.toLowerCase();
+        const filtered = companies.filter(company =>
+            company.name.toLowerCase().includes(term)
+        );
+        renderCards(filtered);
+    });
+
+    // Initialize
+    renderCards();
+</script>
 </body>
 </html>
