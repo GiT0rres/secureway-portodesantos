@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug - Cadastro Empresa</title>
+    <script src="../js/api-config.js"></script>
+    <style>
+        body {
+            font-family: monospace;
+            padding: 40px;
+            background: #1e1e1e;
+            color: #00ff00;
+        }
+        button {
+            padding: 20px;
+            font-size: 16px;
+            margin: 10px;
+            cursor: pointer;
+        }
+        .log {
+            background: #000;
+            padding: 20px;
+            border: 1px solid #00ff00;
+            margin: 20px 0;
+            white-space: pre-wrap;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        .error { color: #ff0000; }
+        .success { color: #00ff00; }
+        .info { color: #00aaff; }
+    </style>
+</head>
+<body>
+    <h1>🔍 Debug - Cadastro de Empresa</h1>
+    
+    <button onclick="testarCadastro1()">Teste 1: Com parseInt</button>
+    <button onclick="testarCadastro2()">Teste 2: Campos String</button>
+    <button onclick="testarCadastro3()">Teste 3: Todos os Campos</button>
+    <button onclick="verificarModelo()">Verificar Modelo Enterprise</button>
+    
+    <div class="log" id="log"></div>
+
+    <script>
+        const log = document.getElementById('log');
+        
+        function addLog(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            log.innerHTML += `<div class="${type}">[${timestamp}] ${message}</div>`;
+            log.scrollTop = log.scrollHeight;
+        }
+
+        async function testarCadastro1() {
+            log.innerHTML = '';
+            addLog('🧪 TESTE 1: Com parseInt (telefone e cnpj como NUMBER)', 'info');
+            
+            const payload = {
+                nome: "Teste Nintendo",
+                email: `teste${Date.now()}@nintendo.com`,
+                telefone: parseInt("11932344567"),
+                senha: "123456",
+                cnpj: parseInt("43467347000151")
+            };
+            
+            addLog('📦 Payload:', 'info');
+            addLog(JSON.stringify(payload, null, 2), 'info');
+            addLog(`Tipos: telefone=${typeof payload.telefone}, cnpj=${typeof payload.cnpj}`, 'info');
+            
+            try {
+                const response = await apiClient.post('/enterprise', payload);
+                addLog('✅ SUCESSO!', 'success');
+                addLog(JSON.stringify(response.data, null, 2), 'success');
+            } catch (error) {
+                addLog('❌ ERRO:', 'error');
+                addLog(`Status: ${error.status}`, 'error');
+                addLog(`Message: ${error.message}`, 'error');
+                if (error.data) {
+                    addLog(`Data: ${JSON.stringify(error.data, null, 2)}`, 'error');
+                }
+            }
+        }
+
+        async function testarCadastro2() {
+            log.innerHTML = '';
+            addLog('🧪 TESTE 2: Telefone e CNPJ como STRING', 'info');
+            
+            const payload = {
+                nome: "Teste Nintendo 2",
+                email: `teste${Date.now()}@nintendo.com`,
+                telefone: "11932344567",
+                senha: "123456",
+                cnpj: "43467347000151"
+            };
+            
+            addLog('📦 Payload:', 'info');
+            addLog(JSON.stringify(payload, null, 2), 'info');
+            addLog(`Tipos: telefone=${typeof payload.telefone}, cnpj=${typeof payload.cnpj}`, 'info');
+            
+            try {
+                const response = await apiClient.post('/enterprise', payload);
+                addLog('✅ SUCESSO!', 'success');
+                addLog(JSON.stringify(response.data, null, 2), 'success');
+            } catch (error) {
+                addLog('❌ ERRO:', 'error');
+                addLog(`Status: ${error.status}`, 'error');
+                addLog(`Message: ${error.message}`, 'error');
+                if (error.data) {
+                    addLog(`Data: ${JSON.stringify(error.data, null, 2)}`, 'error');
+                }
+            }
+        }
+
+        async function testarCadastro3() {
+            log.innerHTML = '';
+            addLog('🧪 TESTE 3: Payload completo com todos os campos opcionais', 'info');
+            
+            const payload = {
+                nome: "Nintendo Teste Completo",
+                email: `teste${Date.now()}@nintendo.com`,
+                telefone: 11932344567,
+                senha: "123456",
+                cnpj: 43467347000151,
+                firebaseUid: null,  // Caso precise
+                address: ""         // Caso tenha no modelo
+            };
+            
+            addLog('📦 Payload:', 'info');
+            addLog(JSON.stringify(payload, null, 2), 'info');
+            
+            try {
+                const response = await apiClient.post('/enterprise', payload);
+                addLog('✅ SUCESSO!', 'success');
+                addLog(JSON.stringify(response.data, null, 2), 'success');
+            } catch (error) {
+                addLog('❌ ERRO:', 'error');
+                addLog(`Status: ${error.status}`, 'error');
+                addLog(`Message: ${error.message}`, 'error');
+                if (error.data) {
+                    addLog(`Data: ${JSON.stringify(error.data, null, 2)}`, 'error');
+                }
+            }
+        }
+
+        async function verificarModelo() {
+            log.innerHTML = '';
+            addLog('🔍 Verificando estrutura do modelo Enterprise...', 'info');
+            
+            try {
+                // Tenta buscar empresas existentes para ver a estrutura
+                const response = await apiClient.get('/enterprise');
+                
+                if (response.data && response.data.length > 0) {
+                    addLog('✅ Empresas existentes encontradas:', 'success');
+                    addLog(JSON.stringify(response.data[0], null, 2), 'info');
+                    addLog('\n📋 Campos do modelo:', 'info');
+                    Object.keys(response.data[0]).forEach(key => {
+                        addLog(`  - ${key}: ${typeof response.data[0][key]}`, 'info');
+                    });
+                } else {
+                    addLog('⚠️ Nenhuma empresa cadastrada ainda', 'info');
+                    addLog('Tente cadastrar uma pelo backend direto para ver a estrutura', 'info');
+                }
+            } catch (error) {
+                addLog('❌ Erro ao buscar empresas:', 'error');
+                addLog(error.message, 'error');
+            }
+        }
+
+        addLog('🎯 Sistema de debug carregado', 'success');
+        addLog('Clique nos botões acima para testar diferentes payloads', 'info');
+        addLog('', 'info');
+        addLog('⚠️ IMPORTANTE: Cada teste usa um email único (timestamp)', 'info');
+    </script>
+</body>
+</html>

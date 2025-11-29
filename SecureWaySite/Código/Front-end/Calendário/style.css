@@ -1,0 +1,476 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background: linear-gradient(135deg, #0a1f28 0%, #0d3d4d 100%);
+    min-height: 100vh;
+    color: #333;
+}
+
+/* Header */
+.header {
+    background: linear-gradient(90deg, #0d3d4d 0%, #1a4f5f 100%);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.header-content {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.logo-section {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.company-logo {
+    width: 60px;
+    height: 60px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: white;
+    font-weight: bold;
+}
+
+.company-info h1 {
+    font-size: 1.8rem;
+    color: white;
+    margin-bottom: 4px;
+}
+
+.company-badge {
+    display: inline-block;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 4px 16px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    color: #0a2832;
+    font-weight: 500;
+}
+
+.header-nav {
+    display: flex;
+    gap: 10px;
+}
+
+.nav-btn {
+    background: rgba(255, 255, 255, 0.15);
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.95rem;
+}
+
+.nav-btn:hover {
+    background: rgba(255, 255, 255, 0.25);
+    transform: translateY(-2px);
+}
+
+/* Main Container */
+.container {
+    max-width: 1400px;
+    margin: 40px auto;
+    padding: 0 40px;
+}
+
+.content-wrapper {
+    animation: fadeIn 0.6s ease;
+}
+
+.page-header {
+    margin-bottom: 40px;
+    text-align: center;
+}
+
+.page-title {
+    font-size: 2.5rem;
+    color: white;
+    font-weight: 600;
+    margin-bottom: 12px;
+}
+
+.page-subtitle {
+    font-size: 1.1rem;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+/* Calendar Container */
+.calendar-container {
+    display: grid;
+    grid-template-columns: 1fr 400px;
+    gap: 40px;
+    align-items: start;
+}
+
+/* Calendar Card */
+.calendar-card {
+    background: linear-gradient(135deg, rgba(174, 192, 201, 0.9) 0%, rgba(160, 181, 188, 0.85) 100%);
+    border-radius: 20px;
+    padding: 32px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    animation: slideUp 0.6s ease;
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 32px;
+    padding-bottom: 24px;
+    border-bottom: 2px solid rgba(10, 40, 50, 0.15);
+}
+
+.selected-date-display {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.date-label {
+    font-size: 0.9rem;
+    color: rgba(10, 40, 50, 0.7);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.selected-date {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #0a2832;
+}
+
+.edit-btn {
+    background: rgba(10, 40, 50, 0.1);
+    border: none;
+    color: #0a2832;
+    cursor: pointer;
+    padding: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    border-radius: 10px;
+}
+
+.edit-btn:hover {
+    background: rgba(10, 40, 50, 0.2);
+    transform: scale(1.05);
+}
+
+.month-selector {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.month-text {
+    font-size: 1.3rem;
+    color: #0a2832;
+    font-weight: 600;
+}
+
+.month-btn {
+    background: rgba(10, 40, 50, 0.1);
+    border: none;
+    color: #0a2832;
+    cursor: pointer;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    border-radius: 10px;
+}
+
+.month-btn:hover {
+    background: rgba(10, 40, 50, 0.2);
+    transform: scale(1.05);
+}
+
+.calendar {
+    margin-bottom: 32px;
+}
+
+.weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.weekday {
+    text-align: center;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #0a2832;
+    padding: 12px 0;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 8px;
+}
+
+.day {
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    color: #0a2832;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.day:hover {
+    background: rgba(10, 40, 50, 0.15);
+    transform: scale(1.05);
+}
+
+.day.selected {
+    background: #0d6677;
+    color: white;
+    font-weight: 700;
+    box-shadow: 0 4px 12px rgba(13, 102, 119, 0.4);
+    transform: scale(1.05);
+}
+
+.day.today {
+    border: 2px solid #0d6677;
+    font-weight: 600;
+}
+
+.day.empty {
+    cursor: default;
+    pointer-events: none;
+    background: transparent;
+}
+
+.card-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 16px;
+    padding-top: 24px;
+    border-top: 2px solid rgba(10, 40, 50, 0.15);
+}
+
+.action-btn {
+    border: none;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 14px 28px;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+}
+
+.action-btn.secondary {
+    background: rgba(10, 40, 50, 0.1);
+    color: #0a2832;
+}
+
+.action-btn.secondary:hover {
+    background: rgba(10, 40, 50, 0.2);
+    transform: translateY(-2px);
+}
+
+.action-btn.primary {
+    background: #0d6677;
+    color: white;
+    box-shadow: 0 4px 12px rgba(13, 102, 119, 0.3);
+}
+
+.action-btn.primary:hover {
+    background: #0a5563;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(13, 102, 119, 0.4);
+}
+
+/* Info Panel */
+.info-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.info-card {
+    background: linear-gradient(135deg, rgba(174, 192, 201, 0.3) 0%, rgba(160, 181, 188, 0.25) 100%);
+    border-radius: 16px;
+    padding: 24px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+    animation: slideRight 0.6s ease;
+}
+
+.info-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    background: linear-gradient(135deg, rgba(174, 192, 201, 0.4) 0%, rgba(160, 181, 188, 0.35) 100%);
+}
+
+.info-icon {
+    width: 60px;
+    height: 60px;
+    background: rgba(13, 102, 119, 0.2);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 16px;
+    color: #0d6677;
+}
+
+.info-card h3 {
+    font-size: 1.2rem;
+    color: white;
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+
+.info-card p {
+    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.85);
+    line-height: 1.6;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideRight {
+    from {
+        opacity: 0;
+        transform: translateX(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+    .calendar-container {
+        grid-template-columns: 1fr;
+        gap: 30px;
+    }
+
+    .info-panel {
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        display: grid;
+    }
+}
+
+@media (max-width: 768px) {
+    .header-content {
+        flex-direction: column;
+        gap: 20px;
+        padding: 20px;
+    }
+
+    .container {
+        padding: 0 20px;
+    }
+
+    .page-title {
+        font-size: 2rem;
+    }
+
+    .page-subtitle {
+        font-size: 1rem;
+    }
+
+    .calendar-card {
+        padding: 24px;
+    }
+
+    .selected-date {
+        font-size: 1.5rem;
+    }
+
+    .month-text {
+        font-size: 1.1rem;
+    }
+
+    .day {
+        font-size: 0.9rem;
+    }
+
+    .info-panel {
+        grid-template-columns: 1fr;
+    }
+
+    .card-actions {
+        flex-direction: column;
+    }
+
+    .action-btn {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .page-title {
+        font-size: 1.6rem;
+    }
+
+    .weekday {
+        font-size: 0.8rem;
+    }
+
+    .calendar-card {
+        padding: 20px;
+    }
+}

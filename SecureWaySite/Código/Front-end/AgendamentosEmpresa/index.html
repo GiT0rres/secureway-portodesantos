@@ -1,0 +1,1205 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SecureWay - Agendamentos</title>
+     <!-- API Core -->
+    <script src="../js/api-config.js"></script>
+    
+    <!-- Services -->
+    <script src="../js/auth.js"></script>
+    <script src="../js/user.js"></script>
+    <script src="../js/enterprise.js"></script>
+    <script src="../js/esp.js"></script>
+    <script src="../js/scheduling.js"></script>
+    <script src="../js/read.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #0a1f28 0%, #0d3d4d 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .header {
+            background: rgba(13, 61, 77, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 15px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #3bbebe, #2a8a8a);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: white;
+        }
+
+        .logo-text h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: white;
+            margin-bottom: 2px;
+        }
+
+        .logo-text p {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .nav-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: rgba(255, 255, 255, 0.8);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+            font-weight: 500;
+            text-decoration: none;
+        }
+
+        .nav-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+            transform: translateY(-2px);
+            border-color: #4dd4d4;
+        }
+
+        .nav-btn.active {
+            background: rgba(59, 190, 190, 0.3);
+            border-color: #3bbebe;
+        }
+
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 270px;
+            height: 100vh;
+            background: rgba(13, 61, 77, 0.95);
+            backdrop-filter: blur(12px);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 5px 0 20px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            padding-top: 25px;
+            transform: translateX(-100%);
+            transition: transform 0.4s ease;
+            z-index: 2000;
+        }
+
+        .sidebar.active {
+            transform: translateX(0);
+        }
+
+        .sidebar-header {
+            padding: 0 25px 30px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-avatar {
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3bbebe, #2a8a8a);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: white;
+        }
+
+        .user-info h3 {
+            font-size: 1rem;
+            color: white;
+        }
+
+        .user-info p {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.7);
+            cursor: pointer;
+        }
+
+        .sidebar-nav {
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            gap: 12px;
+        }
+
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 12px 18px;
+            color: rgba(255, 255, 255, 0.85);
+            text-decoration: none;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-link:hover {
+            background: rgba(255, 255, 255, 0.12);
+            color: #4dd4d4;
+            transform: translateX(4px);
+        }
+
+        .sidebar-link.active {
+            background: rgba(59, 190, 190, 0.25);
+            color: #4dd4d4;
+            border-left: 3px solid #4dd4d4;
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 20, 25, 0.7);
+            backdrop-filter: blur(3px);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 1500;
+        }
+
+        .overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px;
+        }
+
+        .page-header {
+            margin-bottom: 30px;
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            color: white;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .page-subtitle {
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .action-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .btn-novo-agendamento {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 28px;
+            background: linear-gradient(135deg, #4a9eff 0%, #2d7dd2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        .btn-novo-agendamento:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(74, 158, 255, 0.4);
+        }
+
+        .filtros {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-filtro {
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        .btn-filtro:hover {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+        }
+
+        .btn-filtro.active {
+            background: rgba(59, 190, 190, 0.3);
+            color: white;
+            border-color: #3bbebe;
+        }
+
+        .agendamentos-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+            gap: 25px;
+        }
+
+        .agendamento-card {
+            background: linear-gradient(135deg, rgba(13, 61, 77, 0.6) 0%, rgba(26, 79, 95, 0.4) 100%);
+            border-radius: 16px;
+            padding: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .agendamento-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            border-color: rgba(74, 158, 255, 0.3);
+        }
+
+        .agendamento-status {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .agendamento-status.pendente {
+            background: rgba(255, 193, 7, 0.2);
+            color: #ffc107;
+        }
+
+        .agendamento-status.confirmado {
+            background: rgba(40, 167, 69, 0.2);
+            color: #28a745;
+        }
+
+        .agendamento-status.concluido {
+            background: rgba(23, 162, 184, 0.2);
+            color: #17a2b8;
+        }
+
+        .agendamento-header {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .agendamento-icon {
+            width: 50px;
+            height: 50px;
+            background: rgba(74, 158, 255, 0.2);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #4a9eff;
+            flex-shrink: 0;
+        }
+
+        .agendamento-info h3 {
+            color: white;
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .agendamento-descricao {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.95rem;
+        }
+
+        .agendamento-detalhes {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .detalhe-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.95rem;
+        }
+
+        .detalhe-item svg {
+            color: #4a9eff;
+            flex-shrink: 0;
+        }
+
+        .agendamento-acoes {
+            display: flex;
+            gap: 10px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-acao {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        .btn-editar {
+            background: rgba(74, 158, 255, 0.2);
+            color: #4a9eff;
+        }
+
+        .btn-editar:hover {
+            background: rgba(74, 158, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .btn-cancelar {
+            background: rgba(220, 53, 69, 0.2);
+            color: #dc3545;
+        }
+
+        .btn-cancelar:hover {
+            background: rgba(220, 53, 69, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .btn-visualizar {
+            background: rgba(23, 162, 184, 0.2);
+            color: #17a2b8;
+        }
+
+        .btn-visualizar:hover {
+            background: rgba(23, 162, 184, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .no-agendamentos {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 80px 20px;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .no-agendamentos svg {
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        .no-agendamentos h3 {
+            font-size: 1.5rem;
+            color: white;
+            margin-bottom: 10px;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            padding: 16px 24px;
+            border-radius: 12px;
+            color: white;
+            font-weight: 600;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            z-index: 3000;
+            display: none;
+        }
+
+        .toast.success {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        }
+
+        .toast.info {
+            background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+        }
+
+        .toast.show {
+            display: block;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(100px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes fadeOut {
+            from { opacity: 1; transform: scale(1); }
+            to { opacity: 0; transform: scale(0.9); }
+        }
+
+        @media (max-width: 768px) {
+            .container { padding: 20px; }
+            .agendamentos-container { grid-template-columns: 1fr; }
+            .action-bar { flex-direction: column; align-items: stretch; }
+            .nav-btn span { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <div class="overlay" id="overlay"></div>
+
+    <header class="header">
+        <div class="logo-container">
+            <div class="logo-icon">SW</div>
+            <div class="logo-text">
+                <h1>SecureWay</h1>
+                <p>Agendamentos</p>
+            </div>
+        </div>
+        <nav class="nav-buttons">
+            <button class="nav-btn" id="menuBtn">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                </svg>
+            </button>
+            <a href="#" class="nav-btn active">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                </svg>
+                <span>Início</span>
+            </a>
+            <a href="#" class="nav-btn">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+                <span>Perfil</span>
+            </a>
+        </nav>
+    </header>
+   <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+        <div class="user-profile">
+            <div class="user-avatar">SA</div>
+            <div class="user-info">
+                <h3>Sérgio Andrade</h3>
+                <p>Ver perfil</p>
+            </div>
+        </div>
+    </div>
+    <nav class="sidebar-nav">
+        <a href="../MotoristasSalvos/index.html" class="sidebar-link">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                <circle cx="9" cy="7" r="4"></circle>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+            </svg>
+            <span>Motoristas</span>
+        </a>
+        <a href="../PerfilEmpresa/index.html" class="sidebar-link active">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+            <span>Perfil</span>
+        </a>
+        <a href="../AvisosEmpresa/index.html" class="sidebar-link">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+            </svg>
+            <span>Avisos</span>
+        </a>
+        <a href="../AgendamentosEmpresa/index.html" class="sidebar-link">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="16" y1="2" x2="16" y2="6"></line>
+                <line x1="8" y1="2" x2="8" y2="6"></line>
+                <line x1="3" y1="10" x2="21" y2="10"></line>
+                <path d="M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01M16 18h.01"></path>
+            </svg>
+            <span>Agendar Entrega</span>
+        </a>
+        <a href="../CaminhoesCadastrados/index.html" class="sidebar-link">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="1" y="3" width="15" height="13"></rect>
+                <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
+                <circle cx="5.5" cy="18.5" r="2.5"></circle>
+                <circle cx="18.5" cy="18.5" r="2.5"></circle>
+            </svg>
+            <span>Caminhões Cadastrados</span>
+        </a>
+        <a href="../CadastroDeCaminhao/index.html" class="sidebar-link">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+                <rect x="1" y="3" width="15" height="13"></rect>
+                <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
+            </svg>
+            <span>Cadastrar Caminhão</span>
+        </a>
+    </nav>
+</aside>
+    <div class="container">
+        <div class="page-header">
+            <h2 class="page-title">Agendamentos</h2>
+            <p class="page-subtitle">Gerencie suas entregas e coletas programadas</p>
+        </div>
+
+        <button class="btn-novo-agendamento" id="btnNovoAgendamento">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <line x1="12" y1="5" x2="12" y2="19"></line>
+        <line x1="5" y1="12" x2="19" y2="12"></line>
+    </svg>
+    Novo Agendamento
+</button>
+
+
+
+        <div class="agendamentos-container" id="agendamentosContainer">
+            <!-- Card 1 -->
+            <div class="agendamento-card" data-status="pendente">
+                <div class="agendamento-status pendente">Pendente</div>
+                <div class="agendamento-header">
+                    <div class="agendamento-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                            <line x1="16" y1="2" x2="16" y2="6"></line>
+                            <line x1="8" y1="2" x2="8" y2="6"></line>
+                            <line x1="3" y1="10" x2="21" y2="10"></line>
+                        </svg>
+                    </div>
+                    <div class="agendamento-info">
+                        <h3 class="agendamento-titulo">Recebimento de Contêineres</h3>
+                        <p class="agendamento-descricao">Santos Brasil - Terminal de Contêineres</p>
+                    </div>
+                </div>
+                <div class="agendamento-detalhes">
+                    <div class="detalhe-item">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                            <line x1="16" y1="2" x2="16" y2="6"></line>
+                            <line x1="8" y1="2" x2="8" y2="6"></line>
+                            <line x1="3" y1="10" x2="21" y2="10"></line>
+                        </svg>
+                        <span>25/11/2025</span>
+                    </div>
+                    <div class="detalhe-item">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 16 14"></polyline>
+                        </svg>
+                        <span>09:00</span>
+                    </div>
+                    <div class="detalhe-item">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                            <circle cx="12" cy="10" r="3"></circle>
+                        </svg>
+                        <span>Av. Santos Dumont, s/nº - Guarujá/SP</span>
+                    </div>
+                </div>
+                <div class="agendamento-acoes">
+                    <button class="btn-acao btn-editar" data-id="1">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                        </svg>
+                        Editar
+                    </button>
+                    <button class="btn-acao btn-cancelar" data-id="1">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                        Cancelar
+                    </button>
+                </div>
+            </div>
+
+            <!-- Card 2 -->
+            <div class="agendamento-card" data-status="confirmado">
+                <div class="agendamento-status confirmado">Confirmado</div>
+                <div class="agendamento-header">
+                    <div class="agendamento-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                            <line x1="16" y1="2" x2="16" y2="6"></line>
+                            <line x1="8" y1="2" x2="8" y2="6"></line>
+                            <line x1="3" y1="10" x2="21" y2="10"></line>
+                        </svg>
+                    </div>
+                    <div class="agendamento-info">
+                        <h3 class="agendamento-titulo">Coleta de Carga Geral</h3>
+                        <p class="agendamento-descricao">DP World Santos</p>
+                    </div>
+                </div>
+                <div class="agendamento-detalhes">
+                    <div class="detalhe-item">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                            <line x1="16" y1="2" x2="16" y2="6"></line>
+                            <line x1="8" y1="2" x2="8" y2="6"></line>
+                            <line x1="3" y1="10" x2="21" y2="10"></line>
+                        </svg>
+                        <span>26/11/2025</span>
+                    </div>
+                    <div class="detalhe-item">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 16 14"></polyline>
+                        </svg>
+                        <span>14:30</span>
+                    </div>
+                    <div class="detalhe-item">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                            <circle cx="12" cy="10" r="3"></circle>
+                        </svg>
+                        <span>Praça Antônio Telles, 12 - Santos/SP</span>
+                    </div>
+                </div>
+                <div class="agendamento-acoes">
+                    <button class="btn-acao btn-editar" data-id="2">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                        </svg>
+                        Editar
+                    </button>
+                    <button class="btn-acao btn-cancelar" data-id="2">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                        Cancelar
+                    </button>
+                </div>
+            </div>
+
+            <!-- Card 3 -->
+            <div class="agendamento-card" data-status="concluido">
+                <div class="agendamento-status concluido">Concluído</div>
+                <div class="agendamento-header">
+                    <div class="agendamento-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                            <line x1="16" y1="2" x2="16" y2="6"></line>
+                            <line x1="8" y1="2" x2="8" y2="6"></line>
+                            <line x1="3" y1="10" x2="21" y2="10"></line>
+                        </svg>
+                    </div>
+                    <div class="agendamento-info">
+                        <h3 class="agendamento-titulo">Entrega de Granéis</h3>
+                        <p class="agendamento-descricao">BTP - Brasil Terminal Portuário</p>
+                    </div>
+                </div>
+                <div class="agendamento-detalhes">
+                    <div class="detalhe-item">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                            <line x1="16" y1="2" x2="16" y2="6"></line>
+                            <line x1="8" y1="2" x2="8" y2="6"></line>
+                            <line x1="3" y1="10" x2="21" y2="10"></line>
+                        </svg>
+                        <span>20/11/2025</span>
+                    </div>
+                    <div class="detalhe-item">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 16 14"></polyline>
+                        </svg>
+                        <span>08:00</span>
+                    </div>
+                    <div class="detalhe-item">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                            <circle cx="12" cy="10" r="3"></circle>
+                        </svg>
+                        <span>Av. Candido Gaffrée, 80 - Santos/SP</span>
+                    </div>
+                </div>
+                <div class="agendamento-acoes">
+                    <button class="btn-acao btn-visualizar" data-id="3">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                            <circle cx="12" cy="12" r="3"></circle>
+                        </svg>
+                        Detalhes
+                    </button>
+                </div>
+            </div>
+
+            <!-- Card 4 -->
+            <div class="agendamento-card" data-status="pendente">
+                <div class="agendamento-status pendente">Pendente</div>
+                <div class="agendamento-header">
+                    <div class="agendamento-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                            <line x1="16" y1="2" x2="16" y2="6"></line>
+                            <line x1="8" y1="2" x2="8" y2="6"></line>
+                            <line x1="3" y1="10" x2="21" y2="10"></line>
+                        </svg>
+                    </div>
+                    <div class="agendamento-info">
+                        <h3 class="agendamento-titulo">Recebimento de Produtos Químicos</h3>
+                        <p class="agendamento-descricao">Tecondi - Terminal de Contêineres</p>
+                    </div>
+                </div>
+                <div class="agendamento-detalhes">
+                    <div class="detalhe-item">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                            <line x1="16" y1="2" x2="16" y2="6"></line>
+                            <line x1="8" y1="2" x2="8" y2="6"></line>
+                            <line x1="3" y1="10" x2="21" y2="10"></line>
+                        </svg>
+                        <span>28/11/2025</span>
+                    </div>
+                    <div class="detalhe-item">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 16 14"></polyline>
+                        </svg>
+                        <span>11:00</span>
+                    </div>
+                    <div class="detalhe-item">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                            <circle cx="12" cy="10" r="3"></circle>
+                        </svg>
+                        <span>Ilha Barnabé - Santos/SP</span>
+                    </div>
+                </div>
+                <div class="agendamento-acoes">
+                    <button class="btn-acao btn-editar" data-id="4">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                        </svg>
+                        Editar
+                    </button>
+                    <button class="btn-acao btn-cancelar" data-id="4">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                        Cancelar
+                    </button>
+                </div>
+            </div>
+
+            <!-- Card 5 -->
+            <div class="agendamento-card" data-status="confirmado">
+                <div class="agendamento-status confirmado">Confirmado</div>
+                <div class="agendamento-header">
+                    <div class="agendamento-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                            <line x1="16" y1="2" x2="16" y2="6"></line>
+                            <line x1="8" y1="2" x2="8" y2="6"></line>
+                            <line x1="3" y1="10" x2="21" y2="10"></line>
+                        </svg>
+                    </div>
+                    <div class="agendamento-info">
+                        <h3 class="agendamento-titulo">Movimentação de Veículos</h3>
+                        <p class="agendamento-descricao">Embraport - Terminal Portuário</p>
+                    </div>
+                </div>
+                <div class="agendamento-detalhes">
+                    <div class="detalhe-item">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                            <line x1="16" y1="2" x2="16" y2="6"></line>
+                            <line x1="8" y1="2" x2="8" y2="6"></line>
+                            <line x1="3" y1="10" x2="21" y2="10"></line>
+                        </svg>
+                        <span>27/11/2025</span>
+                    </div>
+                    <div class="detalhe-item">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 16 14"></polyline>
+                        </svg>
+                        <span>10:30</span>
+                    </div>
+                    <div class="detalhe-item">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                            <circle cx="12" cy="10" r="3"></circle>
+                        </svg>
+                        <span>Av. Portuária, s/nº - Santos/SP</span>
+                    </div>
+                </div>
+                <div class="agendamento-acoes">
+                    <button class="btn-acao btn-editar" data-id="5">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                        </svg>
+                        Editar
+                    </button>
+                    <button class="btn-acao btn-cancelar" data-id="5">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                        Cancelar
+                    </button>
+                </div>
+            </div>
+
+            <!-- Mensagem Vazia -->
+            <div class="no-agendamentos" id="noAgendamentos" style="display: none;">
+                <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                </svg>
+                <h3>Nenhum agendamento encontrado</h3>
+                <p>Crie um novo agendamento para começar</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+// ============================================
+// AGENDAMENTOS EMPRESA - INTEGRAÇÃO COM API
+// Substitua TODO o <script> existente por este
+// ============================================
+
+const menuBtn = document.getElementById('menuBtn');
+const sidebar = document.getElementById('sidebar');
+const overlay = document.getElementById('overlay');
+const btnNovoAgendamento = document.getElementById('btnNovoAgendamento');
+const toast = document.getElementById('toast');
+const noAgendamentos = document.getElementById('noAgendamentos');
+const agendamentosContainer = document.getElementById('agendamentosContainer');
+
+let agendamentos = [];
+let agendamentosExibidos = [];
+
+// ==================== CARREGA AGENDAMENTOS DA API ====================
+async function carregarAgendamentos() {
+    try {
+        console.log('📡 Buscando agendamentos da API...');
+        
+        // Busca todos os agendamentos
+        const dados = await Scheduling.getAll();
+        
+        console.log('✅ Agendamentos recebidos:', dados);
+        
+        agendamentos = dados;
+        agendamentosExibidos = [...agendamentos];
+        
+        renderizarAgendamentos();
+        
+    } catch (error) {
+        console.error('❌ Erro ao carregar agendamentos:', error);
+        showToast('Erro ao carregar agendamentos: ' + error.message, 'error');
+    }
+}
+
+// ==================== RENDERIZA AGENDAMENTOS ====================
+function renderizarAgendamentos() {
+    agendamentosContainer.innerHTML = '';
+    
+    if (agendamentosExibidos.length === 0) {
+        noAgendamentos.style.display = 'block';
+        return;
+    }
+    
+    noAgendamentos.style.display = 'none';
+    
+    agendamentosExibidos.forEach(ag => {
+        const data = new Date(ag.dataHora);
+        const dataFormatada = data.toLocaleDateString('pt-BR');
+        const horaFormatada = data.toLocaleTimeString('pt-BR', {hour: '2-digit', minute: '2-digit'});
+        
+        const status = ag.finalizado ? 'concluido' : 'pendente';
+        const statusTexto = ag.finalizado ? 'Concluído' : 'Pendente';
+        
+        const card = document.createElement('div');
+        card.className = 'agendamento-card';
+        card.dataset.status = status;
+        card.dataset.id = ag.id;
+        
+        card.innerHTML = `
+            <div class="agendamento-status ${status}">${statusTexto}</div>
+            <div class="agendamento-header">
+                <div class="agendamento-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                        <line x1="16" y1="2" x2="16" y2="6"></line>
+                        <line x1="8" y1="2" x2="8" y2="6"></line>
+                        <line x1="3" y1="10" x2="21" y2="10"></line>
+                    </svg>
+                </div>
+                <div class="agendamento-info">
+                    <h3 class="agendamento-titulo">${ag.carga}</h3>
+                    <p class="agendamento-descricao">${ag.empresa}</p>
+                </div>
+            </div>
+            <div class="agendamento-detalhes">
+                <div class="detalhe-item">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                        <line x1="16" y1="2" x2="16" y2="6"></line>
+                        <line x1="8" y1="2" x2="8" y2="6"></line>
+                        <line x1="3" y1="10" x2="21" y2="10"></line>
+                    </svg>
+                    <span>${dataFormatada}</span>
+                </div>
+                <div class="detalhe-item">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>
+                    <span>${horaFormatada}</span>
+                </div>
+                <div class="detalhe-item">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                        <circle cx="12" cy="10" r="3"></circle>
+                    </svg>
+                    <span>${ag.local}</span>
+                </div>
+            </div>
+            <div class="agendamento-acoes">
+                ${!ag.finalizado ? `
+                    <button class="btn-acao btn-editar" onclick="editarAgendamento(${ag.id})">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                        </svg>
+                        Editar
+                    </button>
+                    <button class="btn-acao btn-cancelar" onclick="cancelarAgendamento(${ag.id})">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                        Cancelar
+                    </button>
+                ` : `
+                    <button class="btn-acao btn-visualizar" onclick="visualizarAgendamento(${ag.id})">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                            <circle cx="12" cy="12" r="3"></circle>
+                        </svg>
+                        Detalhes
+                    </button>
+                `}
+            </div>
+        `;
+        
+        agendamentosContainer.appendChild(card);
+    });
+}
+
+// ==================== EDITAR AGENDAMENTO ====================
+window.editarAgendamento = async function(id) {
+    const ag = agendamentos.find(a => a.id === id);
+    if (!ag) return;
+    
+    const novoLocal = prompt('Novo local:', ag.local);
+    const novaCarga = prompt('Nova carga:', ag.carga);
+    
+    if (!novoLocal && !novaCarga) return;
+    
+    try {
+        const updates = {};
+        if (novoLocal && novoLocal.trim()) updates.local = novoLocal.trim();
+        if (novaCarga && novaCarga.trim()) updates.carga = novaCarga.trim();
+        
+        console.log('📤 Atualizando agendamento', id, updates);
+        
+        await Scheduling.update(id, updates);
+        
+        showToast('Agendamento atualizado com sucesso!', 'success');
+        await carregarAgendamentos();
+        
+    } catch (error) {
+        console.error('❌ Erro ao atualizar:', error);
+        showToast('Erro ao atualizar: ' + error.message, 'error');
+    }
+}
+
+// ==================== CANCELAR AGENDAMENTO ====================
+window.cancelarAgendamento = async function(id) {
+    if (!confirm('Tem certeza que deseja cancelar este agendamento?')) return;
+    
+    try {
+        console.log('🗑️ Deletando agendamento', id);
+        
+        await Scheduling.delete(id);
+        
+        // Remove da lista local
+        agendamentos = agendamentos.filter(a => a.id !== id);
+        agendamentosExibidos = agendamentosExibidos.filter(a => a.id !== id);
+        
+        // Remove card com animação
+        const card = document.querySelector(`[data-id="${id}"]`);
+        if (card) {
+            card.style.animation = 'fadeOut 0.3s ease';
+            setTimeout(() => {
+                card.remove();
+                if (agendamentosExibidos.length === 0) {
+                    noAgendamentos.style.display = 'block';
+                }
+            }, 300);
+        }
+        
+        showToast('Agendamento cancelado com sucesso!', 'success');
+        
+    } catch (error) {
+        console.error('❌ Erro ao cancelar:', error);
+        showToast('Erro ao cancelar: ' + error.message, 'error');
+    }
+}
+
+// ==================== VISUALIZAR AGENDAMENTO ====================
+window.visualizarAgendamento = function(id) {
+    const ag = agendamentos.find(a => a.id === id);
+    if (!ag) return;
+    
+    const data = new Date(ag.dataHora);
+    const dataFormatada = data.toLocaleString('pt-BR');
+    
+    const info = `
+📋 Agendamento #${ag.id}
+
+🏢 Empresa: ${ag.empresa}
+📦 Carga: ${ag.carga}
+📍 Local: ${ag.local}
+📅 Data/Hora: ${dataFormatada}
+✅ Status: ${ag.finalizado ? 'Concluído' : 'Pendente'}
+
+👤 ID Usuário: ${ag.idUsuario}
+📡 ID ESP: ${ag.idEsp}
+    `;
+    
+    alert(info);
+}
+
+// ==================== NOVO AGENDAMENTO ====================
+btnNovoAgendamento.addEventListener('click', async () => {
+    // Redireciona para página de calendário
+    window.location.href = '../Calendário/index.html';
+});
+
+// ==================== TOAST ====================
+function showToast(message, type = 'info') {
+    toast.textContent = message;
+    toast.className = `toast ${type} show`;
+    setTimeout(() => toast.classList.remove('show'), 3000);
+}
+
+// ==================== MENU SIDEBAR ====================
+function toggleMenu() {
+    sidebar.classList.toggle('active');
+    overlay.classList.toggle('active');
+}
+
+menuBtn.addEventListener('click', toggleMenu);
+overlay.addEventListener('click', toggleMenu);
+
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && sidebar.classList.contains('active')) {
+        toggleMenu();
+    }
+});
+
+// ==================== INICIALIZAÇÃO ====================
+document.addEventListener('DOMContentLoaded', async () => {
+    console.log('🚀 Página de Agendamentos Empresa carregada');
+    
+    // Verifica autenticação (opcional)
+    if (!TokenManager.hasToken()) {
+        console.warn('⚠️ Sem token, mas continuando...');
+        // Descomente se quiser bloquear sem login:
+        // showToast('Faça login primeiro', 'error');
+        // setTimeout(() => window.location.href = '../LoginEmpresa/index.html', 2000);
+        // return;
+    }
+    
+    // Carrega agendamentos
+    await carregarAgendamentos();
+});
+
+console.log('✅ Script de Agendamentos Empresa carregado');
+    </script>
+</body>
+</html>

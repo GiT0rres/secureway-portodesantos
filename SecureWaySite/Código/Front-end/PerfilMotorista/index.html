@@ -1,0 +1,1015 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SecureWay - Perfil do Motorista</title>
+    <script src="../js/api-config.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/user.js"></script>
+    <script src="../js/read.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #0a1f28 0%, #0d3d4d 100%);
+            min-height: 100vh;
+            color: white;
+        }
+
+        /* Header */
+        .header {
+            background: rgba(13, 61, 77, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .company-logo {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #3bbebe, #2a8a8a);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+            font-weight: bold;
+        }
+
+        .company-info h1 {
+            font-size: 1.8rem;
+            color: white;
+            margin-bottom: 4px;
+        }
+
+        .company-badge {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 4px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            color: #0a2832;
+            font-weight: 500;
+        }
+
+        .header-nav {
+            display: flex;
+            gap: 10px;
+        }
+
+        .nav-btn {
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            text-decoration: none;
+        }
+
+        .nav-btn:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: translateY(-2px);
+            border-color: rgba(77, 212, 212, 1);
+        }
+
+        .nav-btn.active {
+            background: rgba(59, 190, 190, 0.3);
+            border-color: #3bbebe;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 270px;
+            height: 100vh;
+            background: rgba(13, 61, 77, 0.95);
+            backdrop-filter: blur(12px);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 5px 0 20px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            padding-top: 25px;
+            transform: translateX(-100%);
+            transition: transform 0.4s ease;
+            z-index: 2000;
+        }
+
+        .sidebar.active {
+            transform: translateX(0);
+        }
+
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            padding: 0 25px 30px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-avatar {
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3bbebe, #2a8a8a);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: white;
+            box-shadow: 0 0 12px rgba(59, 190, 190, 0.4);
+        }
+
+        .user-info h3 {
+            font-size: 1rem;
+            color: white;
+            margin-bottom: 3px;
+        }
+
+        .user-info p {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.7);
+            cursor: pointer;
+        }
+
+        .sidebar-nav {
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            gap: 12px;
+        }
+
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 12px 18px;
+            color: rgba(255, 255, 255, 0.85);
+            text-decoration: none;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+            cursor: pointer;
+        }
+
+        .sidebar-link:hover {
+            background: rgba(255, 255, 255, 0.12);
+            color: #4dd4d4;
+            transform: translateX(4px);
+        }
+
+        .sidebar-link svg {
+            stroke: #B5C9CF;
+            transition: stroke 0.3s ease;
+        }
+
+        .sidebar-link:hover svg {
+            stroke: #4dd4d4;
+        }
+
+        .sidebar-link.active {
+            background: rgba(59, 190, 190, 0.25);
+            color: #4dd4d4;
+            border-left: 3px solid #4dd4d4;
+        }
+
+        /* Overlay */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 20, 25, 0.7);
+            backdrop-filter: blur(3px);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 1500;
+        }
+
+        .overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px;
+        }
+
+        .content-wrapper {
+            animation: fadeIn 0.6s ease;
+        }
+
+        /* Perfil Header */
+        .perfil-header {
+            background: linear-gradient(135deg, rgba(102, 124, 133, 0.5) 0%, rgba(122, 144, 153, 0.4) 100%);
+            border-radius: 20px;
+            padding: 50px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .perfil-avatar-section {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 25px;
+        }
+
+        .perfil-avatar {
+            width: 150px;
+            height: 150px;
+            border-radius: 20px;
+            background: linear-gradient(135deg, rgba(13, 61, 77, 0.8) 0%, rgba(26, 79, 95, 0.6) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+            border: 4px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            color: rgba(255, 255, 255, 0.8);
+            overflow: hidden;
+        }
+
+        .btn-change-photo {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #4a9eff 0%, #2d7dd2 100%);
+            border: 3px solid white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(74, 158, 255, 0.4);
+        }
+
+        .btn-change-photo:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(74, 158, 255, 0.6);
+        }
+
+        .btn-change-photo svg {
+            stroke: white;
+        }
+
+        .perfil-info {
+            margin-bottom: 30px;
+        }
+
+        .perfil-nome {
+            font-size: 2.5rem;
+            color: white;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .perfil-badge {
+            display: inline-block;
+            background: rgba(181, 201, 207, 0.9);
+            padding: 8px 24px;
+            border-radius: 20px;
+            font-size: 0.95rem;
+            color: #0a2832;
+            font-weight: 600;
+        }
+
+        /* Perfil Actions */
+        .perfil-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-logout,
+        .btn-delete {
+            padding: 14px 28px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .btn-logout {
+            background: linear-gradient(135deg, #4a9eff 0%, #2d7dd2 100%);
+            color: white;
+        }
+
+        .btn-logout:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(74, 158, 255, 0.4);
+        }
+
+        .btn-delete {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+            color: white;
+        }
+
+        .btn-delete:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(220, 53, 69, 0.4);
+        }
+
+        /* Tabs */
+        .perfil-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 8px;
+            border-radius: 12px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 16px 20px;
+            background: transparent;
+            border: none;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 1.05rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-radius: 8px;
+            font-family: inherit;
+        }
+
+        .tab-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .tab-btn.active {
+            background: rgba(74, 158, 255, 0.3);
+            color: white;
+            box-shadow: 0 4px 15px rgba(74, 158, 255, 0.2);
+        }
+
+        /* Tab Content */
+        .tab-content {
+            display: none;
+            background: linear-gradient(135deg, rgba(13, 61, 77, 0.4) 0%, rgba(26, 79, 95, 0.3) 100%);
+            border-radius: 20px;
+            padding: 40px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            min-height: 400px;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Info Grid */
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .info-card {
+            background: rgba(13, 61, 77, 0.6);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .info-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            border-color: rgba(74, 158, 255, 0.3);
+        }
+
+        .info-card label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .info-card p {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: white;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-action {
+            padding: 14px 28px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .btn-edit {
+            background: linear-gradient(135deg, #4a9eff 0%, #2d7dd2 100%);
+            color: white;
+        }
+
+        .btn-edit:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(74, 158, 255, 0.4);
+        }
+
+        .btn-add {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+        }
+
+        .btn-add:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(40, 167, 69, 0.4);
+        }
+
+        /* Histórico */
+        .historico-container {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .historico-item {
+            background: rgba(13, 61, 77, 0.6);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+            transition: all 0.3s ease;
+        }
+
+        .historico-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+            border-color: rgba(74, 158, 255, 0.3);
+        }
+
+        .historico-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .historico-icon.success {
+            background: rgba(40, 167, 69, 0.2);
+            color: #28a745;
+        }
+
+        .historico-icon.info {
+            background: rgba(23, 162, 184, 0.2);
+            color: #17a2b8;
+        }
+
+        .historico-info h4 {
+            font-size: 1.1rem;
+            color: white;
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+
+        .historico-info p {
+            font-size: 0.95rem;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 6px;
+        }
+
+        .historico-data {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.5);
+            font-style: italic;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Notificação Toast */
+        .notificacao-toast {
+            position: fixed;
+            bottom: 40px;
+            right: 40px;
+            padding: 20px 30px;
+            border-radius: 15px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+            font-weight: 600;
+            z-index: 3000;
+            color: white;
+            font-size: 1.05rem;
+            min-width: 300px;
+            animation: slideInRight 0.4s ease;
+        }
+
+        .notificacao-toast.success {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        }
+
+        .notificacao-toast.info {
+            background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+        }
+
+        .notificacao-toast.error {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(100px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .info-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 20px;
+                padding: 20px;
+            }
+
+            .header-nav {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .nav-btn span:not(:first-child) {
+                display: none;
+            }
+
+            .sidebar {
+                width: 250px;
+            }
+
+            .container {
+                padding: 20px;
+            }
+
+            .perfil-header {
+                padding: 40px 30px;
+            }
+
+            .perfil-actions {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .btn-logout,
+            .btn-delete {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .tab-content {
+                padding: 25px;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .btn-action {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Overlay -->
+    <div class="overlay" id="overlay"></div>
+
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="user-profile">
+                <div class="user-avatar">SA</div>
+                <div class="user-info">
+                    <h3>Sérgio Andrade</h3>
+                    <p>Ver perfil</p>
+                </div>
+            </div>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="../Home/index.html" class="sidebar-link active">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect>
+                    <rect x="9" y="9" width="6" height="6"></rect>
+                    <line x1="9" y1="1" x2="9" y2="4"></line>
+                    <line x1="15" y1="1" x2="15" y2="4"></line>
+                </svg>
+                <span>Início</span>
+            </a>
+            <a href="../Agendamentos/index.html" class="sidebar-link">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                </svg>
+                <span>Agendamentos</span>
+            </a>
+            <a href="../Avisos/index.html" class="sidebar-link">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect>
+                    <rect x="9" y="9" width="6" height="6"></rect>
+                    <line x1="9" y1="1" x2="9" y2="4"></line>
+                    <line x1="15" y1="1" x2="15" y2="4"></line>
+                </svg>
+                <span>Avisos</span>
+            </a>
+            <a href="../Agendamentos/index.html" class="sidebar-link">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                    <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                </svg>
+                <span>Agendar Entrega</span>
+            </a>
+            <a href="../Home/index.html" class="sidebar-link">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+                </svg>
+                <span>Empresas Salvas</span>
+            </a>
+            <a href="../PerfilMotorista/index.html" class="sidebar-link">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+                </svg>
+                <span>Perfil</span>
+            </a>
+        </nav>
+    </aside>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo-section">
+                <div class="company-logo">SW</div>
+                <div class="company-info">
+                    <h1>SecureWay</h1>
+                    <span class="company-badge">Perfil do Motorista</span>
+                </div>
+            </div>
+            <nav class="header-nav">
+                <button class="nav-btn" id="menuBtn">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="3" y1="12" x2="21" y2="12"></line>
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <line x1="3" y1="18" x2="21" y2="18"></line>
+                    </svg>
+                </button>
+                <a href="../Home/index.html" class="nav-btn" id="btnHome">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                        <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                    </svg>
+                    <span>Início</span>
+                </a>
+                <a href="../PerfilMotorista/index.html" class="nav-btn active">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                    <span>Perfil</span>
+                </a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="container">
+        <div class="content-wrapper">
+            <!-- Seção de Perfil -->
+            <div class="perfil-header">
+                <div class="perfil-avatar-section">
+                    <div class="perfil-avatar" id="avatarImg">
+                        <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                    </div>
+                    <button class="btn-change-photo" id="btnChangePhoto" title="Alterar Foto">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                            <circle cx="12" cy="13" r="4"></circle>
+                        </svg>
+                    </button>
+                </div>
+                
+                <div class="perfil-info">
+                    <h2 class="perfil-nome" id="perfilNome">Sérgio Andrade</h2>
+                    <span class="perfil-badge">Motorista</span>
+                </div>
+
+                <div class="perfil-actions">
+                    <a href="../PerfilMotorista/index.html" class="btn-logout" id="btnLogout">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                            <polyline points="16 17 21 12 16 7"></polyline>
+                            <line x1="21" y1="12" x2="9" y2="12"></line>
+                        </svg>
+                        Deslogar
+                    </a>
+                    <a href="../PerfilMotorista/index.html" class="btn-delete" id="btnDeleteAccount">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="3 6 5 6 21 6"></polyline>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                            <line x1="10" y1="11" x2="10" y2="17"></line>
+                            <line x1="14" y1="11" x2="14" y2="17"></line>
+                        </svg>
+                        Excluir Conta
+                    </a>
+                </div>
+            </div>
+
+            <!-- Tabs de Navegação -->
+            <div class="perfil-tabs">
+                <button class="tab-btn active" data-tab="caminhoes">Caminhões</button>
+                <button class="tab-btn" data-tab="historico">Histórico</button>
+            </div>
+
+            <!-- Tab Caminhões -->
+            <div class="tab-content active" id="tab-caminhoes">
+                <div class="info-grid">
+                    <div class="info-card">
+                        <label>Marca</label>
+                        <p id="marca">Scania</p>
+                    </div>
+                    <div class="info-card">
+                        <label>Placa</label>
+                        <p id="placa">ABC-1234</p>
+                    </div>
+                    <div class="info-card">
+                        <label>Modelo</label>
+                        <p id="modelo">R450</p>
+                    </div>
+                    <div class="info-card">
+                        <label>Etiqueta Autodestrutiva</label>
+                        <p id="etiqueta">ETQ-2024-001</p>
+                    </div>
+                    <div class="info-card">
+                        <label>Cor</label>
+                        <p id="cor">Branco</p>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <a href="../PerfilMotorista/index.html" class="btn-action btn-edit" id="btnEdit">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                        </svg>
+                        Editar Informações
+                    </a>
+                    <a href="../PerfilMotorista/index.html" class="btn-action btn-add" id="btnAddVeiculo">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg>
+                        Adicionar Veículo
+                    </a>
+                </div>
+            </div>
+
+            <!-- Tab Histórico -->
+            <div class="tab-content" id="tab-historico">
+                <div class="historico-container">
+                    <div class="historico-item">
+                        <div class="historico-icon success">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                        </div>
+                        <div class="historico-info">
+                            <h4>Entrega realizada</h4>
+                            <p>São Paulo - SP</p>
+                            <span class="historico-data">15/03/2024 às 14:30</span>
+                        </div>
+                    </div>
+
+                    <div class="historico-item">
+                        <div class="historico-icon info">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <line x1="12" y1="16" x2="12" y2="12"></line>
+                                <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                            </svg>
+                        </div>
+                        <div class="historico-info">
+                            <h4>Veículo cadastrado</h4>
+                            <p>Placa: ABC-1234</p>
+                            <span class="historico-data">10/03/2024 às 09:15</span>
+                        </div>
+                    </div>
+
+                    <div class="historico-item">
+                        <div class="historico-icon success">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                        </div>
+                        <div class="historico-info">
+                            <h4>Entrega realizada</h4>
+                            <p>Rio de Janeiro - RJ</p>
+                            <span class="historico-data">05/03/2024 às 16:45</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!--<script>
+        // ===== CONTROLE DO MENU LATERAL =====
+        const menuBtn = document.getElementById('menuBtn');
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('overlay');
+
+        function toggleMenu(e) {
+            if (e) e.preventDefault();
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+        }
+
+        // Abrir/fechar menu - APENAS o botão do menu precisa preventDefault
+        menuBtn.addEventListener('click', toggleMenu);
+        overlay.addEventListener('click', () => {
+            sidebar.classList.remove('active');
+            overlay.classList.remove('active');
+        });
+
+        // Fechar menu com ESC
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && sidebar.classList.contains('active')) {
+                sidebar.classList.remove('active');
+                overlay.classList.remove('active');
+            }
+        });
+
+        // ===== CONTROLE DAS TABS =====
+        const tabBtns = document.querySelectorAll('.tab-btn');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        tabBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const tabName = btn.getAttribute('data-tab');
+                
+                // Remove active de todos
+                tabBtns.forEach(b => b.classList.remove('active'));
+                tabContents.forEach(c => c.classList.remove('active'));
+                
+                // Adiciona active no clicado
+                btn.classList.add('active');
+                document.getElementById(`tab-${tabName}`).classList.add('active');
+            });
+        });
+
+        // ===== FUNÇÃO PARA MOSTRAR NOTIFICAÇÕES =====
+        function mostrarNotificacao(mensagem, tipo = 'success') {
+            const toast = document.createElement('div');
+            toast.className = `notificacao-toast ${tipo}`;
+            toast.textContent = mensagem;
+            document.body.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.animation = 'slideOutRight 0.4s ease';
+                setTimeout(() => toast.remove(), 400);
+            }, 2000);
+        }
+
+        // ===== BOTÃO ALTERAR FOTO =====
+        document.getElementById('btnChangePhoto').addEventListener('click', () => {
+            mostrarNotificacao('Função de alteração de foto em desenvolvimento!', 'info');
+        });
+
+        // ===== TODOS OS OUTROS LINKS NAVEGAM NORMALMENTE =====
+        // Removidos os event listeners que bloqueavam a navegação
+        // Os links <a href="..."> agora funcionam naturalmente
+
+        // ===== ANIMAÇÃO DE ENTRADA =====
+        window.addEventListener('load', () => {
+            const cards = document.querySelectorAll('.info-card');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                setTimeout(() => {
+                    card.style.transition = 'all 0.5s ease';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+        });
+
+        console.log('✅ SecureWay - Perfil do Motorista carregado com sucesso!');
+        console.log('📊 Sistema 100% funcional');
+        console.log('🚛 Dados do veículo carregados');
+        console.log('📜 Histórico disponível');
+    </script>-->
+    <!-- Scripts de integração API -->
+    <script src="../js/auth-service.js"></script>
+    <script src="../js/user-service.js"></script>
+    <script src="../js/perfil-motorista-integration.js"></script>
+    <script src="../js/verificacao-acesso-integration.js"></script>
+</body>
+</html>

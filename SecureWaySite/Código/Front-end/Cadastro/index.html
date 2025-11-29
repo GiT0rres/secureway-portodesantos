@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SecureWay - Cadastro</title>
+    <script src="../js/api-config.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/user.js"></script>
+    <script src="../js/enterprise.js"></script>
+    <script src="../js/esp.js"></script>
+    <script src="../js/scheduling.js"></script>
+    <script src="../js/read.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #0a1f28 0%, #0d3d4d 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        /* Header */
+        .header {
+            background: rgba(13, 61, 77, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 15px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #3bbebe, #2a8a8a);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.2rem;
+            letter-spacing: 1px;
+            color: white;
+        }
+
+        .logo-text h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: white;
+            margin-bottom: 2px;
+        }
+
+        .logo-text p {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.7);
+            font-weight: 400;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .nav-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: rgba(255, 255, 255, 0.8);
+            cursor: pointer;
+            transition: all 0.3s ease-in-out;
+            font-size: 0.95rem;
+            font-weight: 500;
+            text-decoration: none;
+        }
+
+        .nav-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+            transform: translateY(-2px);
+            border: 1px solid rgba(77, 212, 212, 1);
+        }
+
+        .nav-btn.active {
+            background: rgba(59, 190, 190, 0.3);
+            border: 1px solid #3bbebe;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 270px;
+            height: 100vh;
+            background: rgba(13, 61, 77, 0.95);
+            backdrop-filter: blur(12px);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 5px 0 20px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            padding-top: 25px;
+            transform: translateX(-100%);
+            transition: transform 0.4s ease;
+            z-index: 2000;
+        }
+
+        .sidebar.active {
+            transform: translateX(0);
+        }
+
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            padding: 0 25px 30px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-avatar {
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3bbebe, #2a8a8a);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: white;
+            box-shadow: 0 0 12px rgba(59, 190, 190, 0.4);
+        }
+
+        .user-info h3 {
+            font-size: 1rem;
+            color: white;
+            margin-bottom: 3px;
+        }
+
+        .user-info p {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.7);
+            cursor: pointer;
+        }
+
+        .sidebar-nav {
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            gap: 12px;
+        }
+
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 12px 18px;
+            color: rgba(255, 255, 255, 0.85);
+            text-decoration: none;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+        }
+
+        .sidebar-link:hover {
+            background: rgba(255, 255, 255, 0.12);
+            color: #4dd4d4;
+            transform: translateX(4px);
+        }
+
+        .sidebar-link.active {
+            background: rgba(59, 190, 190, 0.25);
+            color: #4dd4d4;
+            border-left: 3px solid #4dd4d4;
+        }
+
+        /* Overlay */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 20, 25, 0.7);
+            backdrop-filter: blur(3px);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 1500;
+        }
+
+        .overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Container Principal */
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .content-wrapper {
+            animation: fadeIn 0.6s ease;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            color: white;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .page-subtitle {
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* Formulário */
+        .form-container {
+            background: linear-gradient(135deg, rgba(13, 61, 77, 0.6) 0%, rgba(26, 79, 95, 0.4) 100%);
+            border-radius: 20px;
+            padding: 40px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .form-cadastro {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-group label {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.9);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-group input {
+            padding: 14px 18px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            background: rgba(13, 61, 77, 0.4);
+            color: white;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        .form-group input::placeholder {
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #4a9eff;
+            box-shadow: 0 0 0 3px rgba(74, 158, 255, 0.2);
+            background: rgba(13, 61, 77, 0.6);
+        }
+
+        /* Botões do Formulário */
+        .form-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .btn-primary,
+        .btn-secondary {
+            flex: 1;
+            padding: 16px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #4a9eff 0%, #2d7dd2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(74, 158, 255, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-3px);
+        }
+
+        /* Footer Links */
+        .footer-links {
+            margin-top: 30px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .footer-links p {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.95rem;
+        }
+
+        .footer-links a {
+            color: #4a9eff;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: #6bb3ff;
+            text-decoration: underline;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 20, 25, 0.85);
+            backdrop-filter: blur(5px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 3000;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, rgba(13, 61, 77, 0.95) 0%, rgba(26, 79, 95, 0.9) 100%);
+            border-radius: 20px;
+            padding: 50px;
+            text-align: center;
+            max-width: 500px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            animation: slideUp 0.4s ease;
+        }
+
+        .modal-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: white;
+            margin: 0 auto 25px;
+            box-shadow: 0 10px 30px rgba(40, 167, 69, 0.3);
+        }
+
+        .modal-title {
+            font-size: 1.8rem;
+            color: white;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .modal-text {
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 30px;
+        }
+
+        .modal-btn {
+            padding: 16px 40px;
+            background: linear-gradient(135deg, #4a9eff 0%, #2d7dd2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        .modal-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(74, 158, 255, 0.4);
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header {
+                padding: 15px 20px;
+            }
+
+            .nav-btn span {
+                display: none;
+            }
+
+            .nav-btn {
+                padding: 12px;
+            }
+
+            .sidebar {
+                width: 250px;
+            }
+
+            .page-title {
+                font-size: 2rem;
+            }
+
+            .form-container {
+                padding: 30px 20px;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .form-actions {
+                flex-direction: column;
+            }
+
+            .modal-content {
+                margin: 20px;
+                padding: 40px 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Overlay -->
+    <div class="overlay" id="overlay"></div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="logo-container">
+            <div class="logo-icon">SW</div>
+            <div class="logo-text">
+                <h1>SecureWay</h1>
+                <p>Cadastro de Usuário</p>
+            </div>
+        </div>
+
+        <nav class="nav-buttons">
+
+            <a href="../Home/index.html" class="nav-btn active">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                </svg>
+                <span>Início</span>
+            </a>
+
+            <a href="" class="nav-btn">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+                <span>Perfil</span>
+            </a>
+        </nav>
+    </header>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="user-profile">
+                <div class="user-avatar">SA</div>
+                <div class="user-info">
+                    <h3>Sérgio Andrade</h3>
+                    <p>Ver perfil</p>
+                </div>
+            </div>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a href="#" class="sidebar-link active">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                </svg>
+                <span>Agendamentos</span>
+            </a>
+
+            <a href="#" class="sidebar-link">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+                <span>Cadastrar Caminhões</span>
+            </a>
+
+            <a href="#" class="sidebar-link">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+                </svg>
+                <span>Empresas Salvas</span>
+            </a>
+
+            <a href="#" class="sidebar-link">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="7 10 12 15 17 10"></polyline>
+                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                </svg>
+                <span>Status</span>
+            </a>
+        </nav>
+    </aside>
+
+    <!-- Main Container -->
+    <div class="container">
+        <div class="content-wrapper">
+            <div class="page-header">
+                <h2 class="page-title">Cadastro de Usuário</h2>
+                <p class="page-subtitle">Preencha suas informações para criar sua conta no SecureWay</p>
+            </div>
+
+            <div class="form-container">
+                <form class="form-cadastro" id="formCadastro">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="nome">Nome Completo</label>
+                            <input type="text" id="nome" name="nome" placeholder="Ex: João da Silva" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="email">E-mail</label>
+                            <input type="email" id="email" name="email" placeholder="Ex: joao@email.com" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="telefone">Telefone</label>
+                            <input type="tel" id="telefone" name="telefone" placeholder="Ex: (11) 98765-4321" maxlength="15" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="senha">Senha</label>
+                            <input type="password" id="senha" name="senha" placeholder="Mínimo 6 caracteres" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="CPF">CPF</label>
+                            <input type="text" id="CPF" name="CPF" placeholder="Ex: 555.555.555-55" maxlength="14" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="RG">RG</label>
+                            <input type="text" id="RG" name="RG" placeholder="Ex: 12.345.678-9" maxlength="12" required>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="reset" class="btn-secondary">Limpar</button>
+                        <button type="submit" class="btn-primary">Cadastrar</button>
+                    </div>
+                </form>
+
+                <div class="footer-links">
+                    <p>Já possui uma conta? Faça o <a href="../Login/index.html">Login</a>.</p>
+                    <p>Cadastre sua <a href="../CadastroEmpresa/index.html">empresa</a>.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal de Sucesso -->
+    <div class="modal-overlay" id="modalSucesso">
+        <div class="modal-content">
+            <div class="modal-icon">✓</div>
+            <h2 class="modal-title">Cadastro efetuado com sucesso!</h2>
+            <p class="modal-text">Complete o cadastro inserindo as informações necessárias.</p>
+            <button class="modal-btn" id="btnComecar">Começar</button>
+        </div>
+    </div>
+    <!-- Scripts de integração API -->
+    <script src="../js/api-config.js"></script>
+    <script src="../js/auth-service.js"></script>
+    <script src="../js/user-service.js"></script>
+    <script src="../js/cadastro-integration.js"></script>
+
+    <!--<script>
+        // Elementos do DOM
+        const menuBtn = document.getElementById('menuBtn');
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('overlay');
+        const formCadastro = document.getElementById('formCadastro');
+        const modalSucesso = document.getElementById('modalSucesso');
+        const btnComecar = document.getElementById('btnComecar');
+
+        // Função para alternar o menu
+        function toggleMenu() {
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+        }
+
+        // Abrir/fechar menu
+        menuBtn.addEventListener('click', toggleMenu);
+        overlay.addEventListener('click', toggleMenu);
+
+        // Fechar menu com ESC
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && sidebar.classList.contains('active')) {
+                toggleMenu();
+            }
+        });
+
+        // Máscara de telefone
+        document.getElementById('telefone').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length <= 11) {
+                value = value.replace(/^(\d{2})(\d)/g, '($1) $2');
+                value = value.replace(/(\d)(\d{4})$/, '$1-$2');
+            }
+            e.target.value = value;
+        });
+
+        // Máscara de CPF
+        document.getElementById('CPF').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            value = value.replace(/(\d{3})(\d)/, '$1.$2');
+            value = value.replace(/(\d{3})(\d)/, '$1.$2');
+            value = value.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+            e.target.value = value;
+        });
+
+        // Máscara de RG
+        document.getElementById('RG').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            value = value.replace(/(\d{2})(\d)/, '$1.$2');
+            value = value.replace(/(\d{3})(\d)/, '$1.$2');
+            value = value.replace(/(\d{3})(\d{1})$/, '$1-$2');
+            e.target.value = value;
+        });
+
+        // Submit do formulário
+        formCadastro.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Validação básica
+            const senha = document.getElementById('senha').value;
+            if (senha.length < 6) {
+                alert('A senha deve ter no mínimo 6 caracteres!');
+                return;
+            }
+
+            // Exibir modal de sucesso
+            modalSucesso.classList.add('active');
+        });
+
+        // Botão do modal
+        btnComecar.addEventListener('click', function() {
+            modalSucesso.classList.remove('active');
+            formCadastro.reset();
+            console.log('Cadastro finalizado!');
+        });
+
+        console.log('✅ SecureWay inicializado com sucesso!');
+    </script>-->
+</body>
+</html>

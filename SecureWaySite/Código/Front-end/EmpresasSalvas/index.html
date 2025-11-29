@@ -1,0 +1,1419 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SecureWay - Empresas Salvas</title>
+    <!-- API Core -->
+<script src="../js/api-config.js"></script>
+<script src="../js/empresa-login-integration.js"></script>
+
+<!-- Services -->
+<script src="../js/auth.js"></script>
+<script src="../js/user.js"></script>
+<script src="../js/enterprise.js"></script>
+<script src="../js/esp.js"></script>
+<script src="../js/scheduling.js"></script>
+<script src="../js/read.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #0a1f28 0%, #0d3d4d 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        /* Header */
+        .header {
+            background: rgba(13, 61, 77, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 15px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #3bbebe, #2a8a8a);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.2rem;
+            letter-spacing: 1px;
+            color: white;
+        }
+
+        .logo-text h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: white;
+            margin-bottom: 2px;
+        }
+
+        .logo-text p {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.7);
+            font-weight: 400;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .nav-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: rgba(255, 255, 255, 0.8);
+            cursor: pointer;
+            transition: all 0.3s ease-in-out;
+            font-size: 0.95rem;
+            font-weight: 500;
+            text-decoration: none;
+        }
+
+        .nav-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+            transform: translateY(-2px);
+            border: 1px solid rgba(77, 212, 212, 1);
+        }
+
+        .nav-btn.active {
+            background: rgba(59, 190, 190, 0.3);
+            border: 1px solid #3bbebe;
+        }
+
+        .nav-btn svg {
+            flex-shrink: 0;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 270px;
+            height: 100vh;
+            background: rgba(13, 61, 77, 0.95);
+            backdrop-filter: blur(12px);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 5px 0 20px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            padding-top: 25px;
+            transform: translateX(-100%);
+            transition: transform 0.4s ease;
+            z-index: 2000;
+        }
+
+        .sidebar.active {
+            transform: translateX(0);
+        }
+
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            padding: 0 25px 30px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-avatar {
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3bbebe, #2a8a8a);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: white;
+            box-shadow: 0 0 12px rgba(59, 190, 190, 0.4);
+        }
+
+        .user-info h3 {
+            font-size: 1rem;
+            color: white;
+            margin-bottom: 3px;
+        }
+
+        .user-info p {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.7);
+            cursor: pointer;
+        }
+
+        .sidebar-nav {
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            gap: 12px;
+        }
+
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 12px 18px;
+            color: rgba(255, 255, 255, 0.85);
+            text-decoration: none;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+        }
+
+        .sidebar-link:hover {
+            background: rgba(255, 255, 255, 0.12);
+            color: #4dd4d4;
+            transform: translateX(4px);
+        }
+
+        .sidebar-link svg {
+            stroke: #B5C9CF;
+            transition: stroke 0.3s ease;
+        }
+
+        .sidebar-link:hover svg {
+            stroke: #4dd4d4;
+        }
+
+        .sidebar-link.active {
+            background: rgba(59, 190, 190, 0.25);
+            color: #4dd4d4;
+            border-left: 3px solid #4dd4d4;
+        }
+
+        /* Overlay */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 20, 25, 0.7);
+            backdrop-filter: blur(3px);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 1500;
+        }
+
+        .overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px;
+            animation: fadeIn 0.6s ease;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            color: white;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .page-subtitle {
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* Search Section */
+        .search-section {
+            margin-bottom: 30px;
+        }
+
+        .search-bar {
+            background: linear-gradient(135deg, rgba(13, 61, 77, 0.4) 0%, rgba(26, 79, 95, 0.3) 100%);
+            border-radius: 15px;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .search-bar:focus-within {
+            border-color: rgba(59, 190, 190, 0.5);
+            box-shadow: 0 4px 20px rgba(59, 190, 190, 0.2);
+        }
+
+        .search-bar svg {
+            color: rgba(255, 255, 255, 0.6);
+            flex-shrink: 0;
+        }
+
+        .search-bar input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            outline: none;
+            color: white;
+            font-size: 1rem;
+            font-family: inherit;
+        }
+
+        .search-bar input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .clear-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            color: rgba(255, 255, 255, 0.6);
+            cursor: pointer;
+            font-size: 1.3rem;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .clear-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+
+        .clear-btn.active {
+            display: flex;
+        }
+
+        /* Companies List */
+        .companies-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+        }
+
+        .company-card {
+            background: linear-gradient(135deg, rgba(13, 61, 77, 0.4) 0%, rgba(26, 79, 95, 0.3) 100%);
+            border-radius: 16px;
+            padding: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .company-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border-color: rgba(59, 190, 190, 0.3);
+        }
+
+        .company-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+
+        .company-logo {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #3bbebe, #2a8a8a);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.3rem;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .bookmark-btn {
+            background: rgba(255, 193, 7, 0.2);
+            border: 1px solid rgba(255, 193, 7, 0.4);
+            border-radius: 8px;
+            padding: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #ffc107;
+        }
+
+        .bookmark-btn:hover {
+            background: rgba(255, 193, 7, 0.3);
+            transform: scale(1.1);
+        }
+
+        .company-info {
+            margin-bottom: 20px;
+        }
+
+        .company-name {
+            font-size: 1.4rem;
+            color: white;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .company-address {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .company-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .tag {
+            background: rgba(59, 190, 190, 0.2);
+            border: 1px solid rgba(59, 190, 190, 0.3);
+            color: #4dd4d4;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .company-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.3rem;
+            color: white;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.6);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .company-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .action-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-family: inherit;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #3bbebe 0%, #2a8a8a 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(59, 190, 190, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 80px 20px;
+        }
+
+        .empty-state svg {
+            color: rgba(255, 255, 255, 0.3);
+            margin-bottom: 20px;
+        }
+
+        .empty-state h3 {
+            font-size: 1.5rem;
+            color: white;
+            margin-bottom: 10px;
+        }
+
+        .empty-state p {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 1rem;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 31, 40, 0.85);
+            backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 3000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, rgba(13, 61, 77, 0.95) 0%, rgba(26, 79, 95, 0.9) 100%);
+            border-radius: 20px;
+            padding: 0;
+            max-width: 600px;
+            width: 90%;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            transform: scale(0.9) translateY(-20px);
+            transition: all 0.3s ease;
+            overflow: hidden;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: scale(1) translateY(0);
+        }
+
+        .modal-header {
+            background: rgba(59, 190, 190, 0.15);
+            padding: 25px 30px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .modal-logo {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #3bbebe, #2a8a8a);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: white;
+        }
+
+        .modal-title-wrapper h3 {
+            font-size: 1.4rem;
+            color: white;
+            margin-bottom: 5px;
+            font-weight: 700;
+        }
+
+        .modal-close {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            color: rgba(255, 255, 255, 0.8);
+            cursor: pointer;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .modal-close:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+
+        .modal-body {
+            padding: 30px;
+        }
+
+        .detail-section {
+            margin-bottom: 25px;
+        }
+
+        .detail-section h4 {
+            font-size: 1.1rem;
+            color: white;
+            margin-bottom: 15px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .detail-item {
+            background: rgba(13, 61, 77, 0.4);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .detail-item svg {
+            color: #4dd4d4;
+            flex-shrink: 0;
+        }
+
+        .detail-text {
+            flex: 1;
+        }
+
+        .detail-label {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 4px;
+        }
+
+        .detail-value {
+            font-size: 1rem;
+            color: white;
+            font-weight: 600;
+        }
+
+        .rating-display {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .stars {
+            color: #ffc107;
+            display: flex;
+            gap: 4px;
+        }
+
+        .rating-text {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.95rem;
+        }
+
+        .modal-footer {
+            padding: 0 30px 30px;
+            display: flex;
+            gap: 12px;
+        }
+
+        /* Notificação Toast */
+        .notificacao-toast {
+            position: fixed;
+            bottom: 40px;
+            right: 40px;
+            padding: 20px 30px;
+            border-radius: 15px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+            font-weight: 600;
+            z-index: 4000;
+            color: white;
+            font-size: 1.05rem;
+            min-width: 300px;
+            animation: slideInRight 0.4s ease;
+        }
+
+        .notificacao-toast.success {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        }
+
+        .notificacao-toast.warning {
+            background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
+        }
+
+        .notificacao-toast.error {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(100px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes slideOutRight {
+            from {
+                opacity: 1;
+                transform: translateX(0);
+            }
+            to {
+                opacity: 0;
+                transform: translateX(100px);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header {
+                padding: 15px 20px;
+            }
+
+            .nav-btn span {
+                display: none;
+            }
+
+            .nav-btn {
+                padding: 12px;
+            }
+
+            .sidebar {
+                width: 250px;
+            }
+
+            .container {
+                padding: 20px;
+            }
+
+            .page-title {
+                font-size: 2rem;
+            }
+
+            .companies-list {
+                grid-template-columns: 1fr;
+            }
+
+            .modal-content {
+                width: 95%;
+                margin: 20px;
+            }
+
+            .modal-header {
+                padding: 20px;
+            }
+
+            .modal-body {
+                padding: 20px;
+            }
+
+            .modal-footer {
+                flex-direction: column;
+                padding: 0 20px 20px;
+            }
+
+            .notificacao-toast {
+                bottom: 20px;
+                right: 20px;
+                left: 20px;
+                min-width: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Overlay -->
+    <div class="overlay" id="overlay"></div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="logo-container">
+            <div class="logo-icon">SW</div>
+            <div class="logo-text">
+                <h1>SecureWay</h1>
+                <p>Empresas Salvas</p>
+            </div>
+        </div>
+
+        <nav class="nav-buttons">
+            <button class="nav-btn" id="menuBtn">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                </svg>
+            </button>
+
+            <a href="../Home/index.html" class="nav-btn active">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                </svg>
+                <span>Início</span>
+            </a>
+
+            <a href="../PerfilEmpresa/index.html" class="nav-btn">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+                <span>Perfil</span>
+            </a>
+        </nav>
+    </header>
+
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="user-profile">
+                <div class="user-avatar">SA</div>
+                <div class="user-info">
+                    <h3>Sérgio Andrade</h3>
+                    <p>Ver perfil</p>
+                </div>
+            </div>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="../Home/index.html" class="sidebar-link">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect>
+                    <rect x="9" y="9" width="6" height="6"></rect>
+                    <line x1="9" y1="1" x2="9" y2="4"></line>
+                    <line x1="15" y1="1" x2="15" y2="4"></line>
+                </svg>
+                <span>Início</span>
+            </a>
+            <a href="../AgendamentosEmpresa/index.html" class="sidebar-link">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                </svg>
+                <span>Agendamentos</span>
+            </a>
+            <a href="../AvisosEmpresa/index.html" class="sidebar-link">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect>
+                    <rect x="9" y="9" width="6" height="6"></rect>
+                    <line x1="9" y1="1" x2="9" y2="4"></line>
+                    <line x1="15" y1="1" x2="15" y2="4"></line>
+                </svg>
+                <span>Avisos</span>
+            </a>
+            <a href="../Calendário/index.html" class="sidebar-link">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                    <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                </svg>
+                <span>Agendar Entrega</span>
+            </a>
+            <a href="../EmpresasSalvas/index.html" class="sidebar-link  active">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+                </svg>
+                <span>Empresas Salvas</span>
+            </a>
+            <a href="../PerfilMotorista/index.html" class="sidebar-link">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+                </svg>
+                <span>Perfil</span>
+            </a>
+        </nav>
+    </aside>
+
+
+    <!-- Main Container -->
+    <div class="container">
+        <div class="page-header">
+            <h2 class="page-title">Empresas Salvas</h2>
+            <p class="page-subtitle">Suas empresas favoritas em um só lugar</p>
+        </div>
+
+        <!-- Search Bar -->
+        <div class="search-section">
+            <div class="search-bar">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <path d="m21 21-4.35-4.35"></path>
+                </svg>
+                <input type="text" placeholder="Pesquisar empresas salvas..." id="searchInput">
+                <button class="clear-btn" id="clearBtn">&times;</button>
+            </div>
+        </div>
+
+        <!-- Companies List -->
+        <div class="companies-list" id="companiesList">
+            <!-- As empresas serão geradas via JavaScript -->
+        </div>
+
+        <!-- Empty State -->
+        <div class="empty-state" id="emptyState" style="display: none;">
+            <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+            </svg>
+            <h3>Nenhuma empresa encontrada</h3>
+            <p>Tente pesquisar com outros termos</p>
+        </div>
+    </div>
+
+    <!-- Modal de Detalhes -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title-wrapper">
+                    <div class="modal-logo" id="modalLogo">DP</div>
+                    <div>
+                        <h3 id="modalCompanyName">DP World Santos</h3>
+                        <p id="modalCompanyType" style="color: rgba(255, 255, 255, 0.7); font-size: 0.9rem;">Terminal Portuário</p>
+                    </div>
+                </div>
+                <button class="modal-close" id="modalClose">&times;</button>
+            </div>
+
+            <div class="modal-body">
+                <div class="detail-section">
+                    <h4>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                            <circle cx="12" cy="10" r="3"></circle>
+                        </svg>
+                        Informações de Contato
+                    </h4>
+                    <div class="detail-item">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                            <circle cx="12" cy="10" r="3"></circle>
+                        </svg>
+                        <div class="detail-text">
+                            <div class="detail-label">Endereço</div>
+                            <div class="detail-value" id="modalAddress">Av. Caminho da Usina, s/n - Guarujá, SP</div>
+                        </div>
+                    </div>
+                    <div class="detail-item">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                        </svg>
+                        <div class="detail-text">
+                            <div class="detail-label">Telefone</div>
+                            <div class="detail-value" id="modalPhone">(13) 3321-9000</div>
+                        </div>
+                    </div>
+                    <div class="detail-item">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                            <polyline points="22,6 12,13 2,6"></polyline>
+                        </svg>
+                        <div class="detail-text">
+                            <div class="detail-label">E-mail</div>
+                            <div class="detail-value" id="modalEmail">contato@dpworldsantos.com.br</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="detail-section">
+                    <h4>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                        </svg>
+                        Estatísticas
+                    </h4>
+                    <div class="company-stats">
+                        <div class="stat-item">
+                            <div class="stat-value" id="modalDeliveries">450+</div>
+                            <div class="stat-label">Entregas</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="modalRating">4.8</div>
+                            <div class="stat-label">Avaliação</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="modalDrivers">120+</div>
+                            <div class="stat-label">Motoristas</div>
+                        </div>
+                    </div>
+                    <div class="rating-display">
+                        <div class="stars">
+                            <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+                        </div>
+                        <span class="rating-text">Baseado em 450 avaliações</span>
+                    </div>
+                </div>
+
+                <div class="detail-section">
+                    <h4>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                            <line x1="16" y1="13" x2="8" y2="13"></line>
+                            <line x1="16" y1="17" x2="8" y2="17"></line>
+                            <polyline points="10 9 9 9 8 9"></polyline>
+                        </svg>
+                        Serviços Oferecidos
+                    </h4>
+                    <div class="company-tags" id="modalServices">
+                        <span class="tag">Carga Geral</span>
+                        <span class="tag">Containers</span>
+                        <span class="tag">Granéis</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button class="action-btn btn-secondary" id="modalRemoveBtn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="3 6 5 6 21 6"></polyline>
+                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                    </svg>
+                    Remover
+                </button>
+                <button class="action-btn btn-primary" id="modalContactBtn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                    </svg>
+                    Entrar em Contato
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    const companiesListEl = document.getElementById('companiesList');
+const emptyStateEl = document.getElementById('emptyState');
+const searchInput = document.getElementById('searchInput');
+const clearBtn = document.getElementById('clearBtn');
+
+const modalOverlay = document.getElementById('modalOverlay');
+const modalClose = document.getElementById('modalClose');
+const modalLogo = document.getElementById('modalLogo');
+const modalCompanyName = document.getElementById('modalCompanyName');
+const modalCompanyType = document.getElementById('modalCompanyType');
+const modalAddress = document.getElementById('modalAddress');
+const modalPhone = document.getElementById('modalPhone');
+const modalEmail = document.getElementById('modalEmail');
+const modalServices = document.getElementById('modalServices');
+const modalDeliveries = document.getElementById('modalDeliveries');
+const modalRating = document.getElementById('modalRating');
+const modalDrivers = document.getElementById('modalDrivers');
+const modalRemoveBtn = document.getElementById('modalRemoveBtn');
+const modalContactBtn = document.getElementById('modalContactBtn');
+
+let allCompanies = [];
+let displayedCompanies = [];
+let currentCompany = null;
+
+// ==================== DADOS MOCKADOS ====================
+const MOCK_COMPANIES = [
+  {
+    id: 1,
+    name: 'DP World Santos',
+    initials: 'DP',
+    type: 'Terminal Portuário',
+    address: 'Av. Caminho da Usina, s/n - Guarujá, SP',
+    phone: '(13) 3321-9000',
+    email: 'contato@dpworldsantos.com.br',
+    tags: ['Contêineres', 'Carga Geral', 'Granéis'],
+    deliveries: 450,
+    rating: '4.8',
+    drivers: 120
+  },
+  {
+    id: 2,
+    name: 'Santos Brasil',
+    initials: 'SB',
+    type: 'Terminal de Contêineres',
+    address: 'Av. Santos Dumont, s/nº - Guarujá, SP',
+    phone: '(13) 3229-4000',
+    email: 'contato@santosbrasil.com.br',
+    tags: ['Contêineres', 'Logística', 'Armazenagem'],
+    deliveries: 620,
+    rating: '4.7',
+    drivers: 200
+  },
+  {
+    id: 3,
+    name: 'BTP - Brasil Terminal Portuário',
+    initials: 'BT',
+    type: 'Terminal de Granéis',
+    address: 'Av. Candido Gaffrée, 80 - Santos, SP',
+    phone: '(13) 3202-5500',
+    email: 'contato@btp.com.br',
+    tags: ['Granéis', 'Açúcar', 'Fertilizantes'],
+    deliveries: 380,
+    rating: '4.6',
+    drivers: 95
+  },
+  {
+    id: 4,
+    name: 'Tecondi',
+    initials: 'TC',
+    type: 'Terminal de Contêineres',
+    address: 'Ilha Barnabé - Santos, SP',
+    phone: '(13) 3216-3000',
+    email: 'contato@tecondi.com.br',
+    tags: ['Contêineres', 'Carga Geral'],
+    deliveries: 290,
+    rating: '4.5',
+    drivers: 80
+  },
+  {
+    id: 5,
+    name: 'Embraport',
+    initials: 'EM',
+    type: 'Terminal Portuário',
+    address: 'Av. Portuária, s/nº - Santos, SP',
+    phone: '(13) 3033-7000',
+    email: 'contato@embraport.com.br',
+    tags: ['Contêineres', 'Veículos', 'Carga Geral'],
+    deliveries: 510,
+    rating: '4.9',
+    drivers: 160
+  },
+  {
+    id: 6,
+    name: 'Termag',
+    initials: 'TM',
+    type: 'Terminal de Granéis',
+    address: 'Av. Perimetral, 456 - Guarujá, SP',
+    phone: '(13) 3356-8900',
+    email: 'contato@termag.com.br',
+    tags: ['Granéis', 'Soja', 'Milho'],
+    deliveries: 340,
+    rating: '4.4',
+    drivers: 70
+  }
+];
+
+// ==================== CARREGA EMPRESAS ====================
+async function carregarEmpresas() {
+    try {
+        console.log('📡 Carregando empresas salvas...');
+        
+        // OPÇÃO 1: Usar dados mockados (funciona sempre)
+        allCompanies = [...MOCK_COMPANIES];
+        
+        // OPÇÃO 2: Tentar buscar da API (descomente se quiser tentar)
+        /*
+        try {
+            const esps = await ESP.getAll();
+            console.log('✅ ESPs da API:', esps);
+            
+            // Transforma ESPs em empresas
+            allCompanies = esps.map(esp => ({
+                id: esp.id,
+                name: esp.nome || 'Local Sem Nome',
+                initials: gerarIniciais(esp.nome || 'XX'),
+                type: 'Terminal de Acesso',
+                address: esp.local || 'Endereço não informado',
+                phone: 'Não informado',
+                email: 'Não informado',
+                tags: ['Acesso RFID', 'Terminal'],
+                deliveries: Math.floor(Math.random() * 500) + 100,
+                rating: (Math.random() * 2 + 3).toFixed(1),
+                drivers: Math.floor(Math.random() * 200) + 50
+            }));
+        } catch (apiError) {
+            console.warn('⚠️ API indisponível, usando dados mockados');
+            allCompanies = [...MOCK_COMPANIES];
+        }
+        */
+        
+        displayedCompanies = [...allCompanies];
+        renderizarEmpresas();
+        
+        console.log(`✅ ${allCompanies.length} empresas carregadas`);
+        
+    } catch (error) {
+        console.error('❌ Erro ao carregar empresas:', error);
+        mostrarNotificacao('Erro ao carregar empresas', 'error');
+    }
+}
+
+// ==================== RENDERIZA LISTA ====================
+function renderizarEmpresas() {
+    companiesListEl.innerHTML = '';
+    
+    if (displayedCompanies.length === 0) {
+        emptyStateEl.style.display = 'block';
+        return;
+    }
+    
+    emptyStateEl.style.display = 'none';
+    
+    displayedCompanies.forEach(company => {
+        const card = document.createElement('div');
+        card.className = 'company-card';
+        card.innerHTML = `
+            <div class="company-header">
+                <div class="company-logo">${company.initials}</div>
+                <button class="bookmark-btn" onclick="removerEmpresa(${company.id})" title="Remover dos salvos">
+                    ★
+                </button>
+            </div>
+            <div class="company-info">
+                <div class="company-name">${company.name}</div>
+                <div class="company-address">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                        <circle cx="12" cy="10" r="3"></circle>
+                    </svg>
+                    ${company.address}
+                </div>
+                <div class="company-tags">
+                    ${company.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+                </div>
+            </div>
+            <div class="company-stats">
+                <div class="stat-item">
+                    <div class="stat-value">${company.deliveries}+</div>
+                    <div class="stat-label">Entregas</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">${company.rating}</div>
+                    <div class="stat-label">Avaliação</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">${company.drivers}+</div>
+                    <div class="stat-label">Motoristas</div>
+                </div>
+            </div>
+            <div class="company-actions">
+                <button class="action-btn btn-secondary" onclick="removerEmpresa(${company.id})">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+                    </svg>
+                    Remover
+                </button>
+                <button class="action-btn btn-primary" onclick="abrirModal(${company.id})">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                    Ver Detalhes
+                </button>
+            </div>
+        `;
+        
+        companiesListEl.appendChild(card);
+    });
+}
+
+// ==================== MODAL ====================
+window.abrirModal = function(id) {
+    currentCompany = displayedCompanies.find(c => c.id === id);
+    if (!currentCompany) return;
+    
+    modalLogo.textContent = currentCompany.initials;
+    modalCompanyName.textContent = currentCompany.name;
+    modalCompanyType.textContent = currentCompany.type;
+    modalAddress.textContent = currentCompany.address;
+    modalPhone.textContent = currentCompany.phone;
+    modalEmail.textContent = currentCompany.email;
+    modalServices.innerHTML = currentCompany.tags.map(tag => `<span class="tag">${tag}</span>`).join('');
+    modalDeliveries.textContent = currentCompany.deliveries + '+';
+    modalRating.textContent = currentCompany.rating;
+    modalDrivers.textContent = currentCompany.drivers + '+';
+    
+    modalOverlay.classList.add('active');
+    document.body.style.overflow = 'hidden';
+}
+
+function fecharModal() {
+    modalOverlay.classList.remove('active');
+    document.body.style.overflow = '';
+    currentCompany = null;
+}
+
+window.removerEmpresa = function(id) {
+    if (!confirm('Deseja remover esta empresa dos salvos?')) return;
+    
+    displayedCompanies = displayedCompanies.filter(c => c.id !== id);
+    allCompanies = allCompanies.filter(c => c.id !== id);
+    
+    renderizarEmpresas();
+    fecharModal();
+    
+    mostrarNotificacao('Empresa removida dos salvos!', 'success');
+}
+
+// ==================== PESQUISA ====================
+searchInput.addEventListener('input', function() {
+    const termo = this.value.toLowerCase().trim();
+    
+    if (termo === '') {
+        displayedCompanies = [...allCompanies];
+        clearBtn.classList.remove('active');
+    } else {
+        displayedCompanies = allCompanies.filter(company => 
+            company.name.toLowerCase().includes(termo) ||
+            company.address.toLowerCase().includes(termo) ||
+            company.type.toLowerCase().includes(termo) ||
+            company.tags.some(tag => tag.toLowerCase().includes(termo))
+        );
+        clearBtn.classList.add('active');
+    }
+    
+    renderizarEmpresas();
+});
+
+clearBtn.addEventListener('click', function() {
+    searchInput.value = '';
+    displayedCompanies = [...allCompanies];
+    clearBtn.classList.remove('active');
+    renderizarEmpresas();
+});
+
+// ==================== EVENTOS MODAL ====================
+modalClose.addEventListener('click', fecharModal);
+modalOverlay.addEventListener('click', (e) => {
+    if (e.target === modalOverlay) fecharModal();
+});
+modalRemoveBtn.addEventListener('click', () => {
+    if (currentCompany) removerEmpresa(currentCompany.id);
+});
+modalContactBtn.addEventListener('click', () => {
+    if (currentCompany) {
+        window.location.href = `mailto:${currentCompany.email}`;
+    }
+});
+
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modalOverlay.classList.contains('active')) {
+        fecharModal();
+    }
+});
+
+// ==================== SIDEBAR ====================
+const menuBtn = document.getElementById('menuBtn');
+const sidebar = document.getElementById('sidebar');
+const overlay = document.getElementById('overlay');
+
+if (menuBtn && sidebar && overlay) {
+    menuBtn.addEventListener('click', () => {
+        sidebar.classList.toggle('active');
+        overlay.classList.toggle('active');
+    });
+    
+    overlay.addEventListener('click', () => {
+        sidebar.classList.remove('active');
+        overlay.classList.remove('active');
+    });
+    
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && sidebar.classList.contains('active')) {
+            sidebar.classList.remove('active');
+            overlay.classList.remove('active');
+        }
+    });
+}
+
+// ==================== HELPERS ====================
+function gerarIniciais(nome) {
+    if (!nome) return '??';
+    const palavras = nome.trim().split(' ').filter(p => p.length > 0);
+    if (palavras.length >= 2) {
+        return (palavras[0][0] + palavras[palavras.length - 1][0]).toUpperCase();
+    }
+    return nome.substring(0, 2).toUpperCase();
+}
+
+function mostrarNotificacao(mensagem, tipo = 'success') {
+    const toast = document.createElement('div');
+    toast.className = `notificacao-toast ${tipo}`;
+    toast.textContent = mensagem;
+    
+    document.body.appendChild(toast);
+    
+    setTimeout(() => {
+        toast.style.animation = 'slideOutRight 0.4s ease';
+        setTimeout(() => toast.remove(), 400);
+    }, 3000);
+}
+
+// ==================== INICIALIZAÇÃO ====================
+document.addEventListener('DOMContentLoaded', () => {
+    console.log('🚀 Página de Empresas Salvas carregada');
+    carregarEmpresas();
+});
+
+console.log('✅ Script de Empresas Salvas carregado');
+    </script>
+</body>
+</html>

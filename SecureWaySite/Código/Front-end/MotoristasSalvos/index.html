@@ -1,0 +1,1027 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SecureWay - Motoristas Salvos</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #0a1f28 0%, #0d3d4d 100%);
+            min-height: 100vh;
+            color: white;
+            padding-top: 0;
+        }
+
+        /* Header */
+        .header {
+            background: rgba(13, 61, 77, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .company-logo {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #3bbebe, #2a8a8a);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+            font-weight: bold;
+        }
+
+        .company-info h1 {
+            font-size: 1.8rem;
+            color: white;
+            margin-bottom: 4px;
+        }
+
+        .company-badge {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 4px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            color: #0a2832;
+            font-weight: 500;
+        }
+
+        .header-nav {
+            display: flex;
+            gap: 10px;
+        }
+
+        .nav-btn {
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            text-decoration: none;
+            font-family: inherit;
+        }
+
+        .nav-btn:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: translateY(-2px);
+            border-color: rgba(77, 212, 212, 1);
+        }
+
+        .nav-btn.active {
+            background: rgba(59, 190, 190, 0.3);
+            border-color: #3bbebe;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 270px;
+            height: 100vh;
+            background: rgba(13, 61, 77, 0.95);
+            backdrop-filter: blur(12px);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 5px 0 20px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            padding-top: 25px;
+            transform: translateX(-100%);
+            transition: transform 0.4s ease;
+            z-index: 2000;
+        }
+
+        .sidebar.active {
+            transform: translateX(0);
+        }
+
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 25px 30px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .close-sidebar {
+            background: transparent;
+            border: none;
+            color: white;
+            cursor: pointer;
+            padding: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .close-sidebar:hover {
+            color: #4dd4d4;
+            transform: rotate(90deg);
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-avatar {
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3bbebe, #2a8a8a);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: white;
+            box-shadow: 0 0 12px rgba(59, 190, 190, 0.4);
+        }
+
+        .user-info h3 {
+            font-size: 1rem;
+            color: white;
+            margin-bottom: 3px;
+        }
+
+        .user-info p {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .sidebar-nav {
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            gap: 12px;
+        }
+
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 12px 18px;
+            color: rgba(255, 255, 255, 0.85);
+            text-decoration: none;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+            cursor: pointer;
+        }
+
+        .sidebar-link:hover {
+            background: rgba(255, 255, 255, 0.12);
+            color: #4dd4d4;
+            transform: translateX(4px);
+        }
+
+        .sidebar-link svg {
+            stroke: #B5C9CF;
+            transition: stroke 0.3s ease;
+        }
+
+        .sidebar-link:hover svg {
+            stroke: #4dd4d4;
+        }
+
+        .sidebar-link.active {
+            background: rgba(59, 190, 190, 0.25);
+            color: #4dd4d4;
+            border-left: 3px solid #4dd4d4;
+        }
+
+        /* Overlay */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 20, 25, 0.7);
+            backdrop-filter: blur(3px);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 1500;
+        }
+
+        .overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px;
+        }
+
+        .page-header {
+            margin-bottom: 30px;
+        }
+
+        .page-title {
+            font-size: 2rem;
+            margin-bottom: 8px;
+        }
+
+        .page-subtitle {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 1rem;
+        }
+
+        /* Search and Filters */
+        .filters-section {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 300px;
+            position: relative;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 12px 45px 12px 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            color: white;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+
+        .search-box input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: #3bbebe;
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .search-icon {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .filter-btn {
+            padding: 12px 24px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+            font-family: inherit;
+        }
+
+        .filter-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: #3bbebe;
+        }
+
+        /* Driver Cards */
+        .drivers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 24px;
+        }
+
+        .driver-card {
+            background: rgba(13, 61, 77, 0.6);
+            border-radius: 15px;
+            padding: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .driver-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            border-color: rgba(59, 190, 190, 0.5);
+        }
+
+        .driver-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+            background: linear-gradient(180deg, #3bbebe, #2a8a8a);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .driver-card:hover::before {
+            opacity: 1;
+        }
+
+        .driver-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .driver-avatar {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3bbebe, #2a8a8a);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: white;
+            box-shadow: 0 4px 15px rgba(59, 190, 190, 0.3);
+        }
+
+        .driver-info h3 {
+            font-size: 1.3rem;
+            color: white;
+            margin-bottom: 5px;
+        }
+
+        .driver-status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .status-available {
+            background: rgba(34, 197, 94, 0.2);
+            color: #4ade80;
+            border: 1px solid rgba(34, 197, 94, 0.3);
+        }
+
+        .status-busy {
+            background: rgba(251, 146, 60, 0.2);
+            color: #fb923c;
+            border: 1px solid rgba(251, 146, 60, 0.3);
+        }
+
+        .status-offline {
+            background: rgba(148, 163, 184, 0.2);
+            color: #94a3b8;
+            border: 1px solid rgba(148, 163, 184, 0.3);
+        }
+
+        .driver-details {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .detail-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.95rem;
+        }
+
+        .detail-row svg {
+            color: #3bbebe;
+            flex-shrink: 0;
+        }
+
+        .detail-row strong {
+            color: white;
+        }
+
+        .driver-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .action-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            font-family: inherit;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #3bbebe, #2a8a8a);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(59, 190, 190, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Chat Button */
+        .chat-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3bbebe, #2a8a8a);
+            border: none;
+            color: white;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(59, 190, 190, 0.4);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .chat-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 25px rgba(59, 190, 190, 0.6);
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 20px;
+                padding: 20px;
+            }
+
+            .header-nav {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .nav-btn span {
+                display: none;
+            }
+
+            .sidebar {
+                width: 250px;
+            }
+
+            .container {
+                padding: 20px;
+            }
+
+            .drivers-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .filters-section {
+                flex-direction: column;
+            }
+
+            .search-box {
+                min-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Overlay -->
+    <div class="overlay" id="overlay"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="user-profile">
+                <div class="user-avatar">EM</div>
+                <div class="user-info">
+                    <h3>Empresa Admin</h3>
+                    <p>Administrador</p>
+                </div>
+            </div>
+            <button class="close-sidebar" id="closeSidebar">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a href="../Agendamentos/index.html" class="sidebar-link">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                </svg>
+                <span>Agendamentos</span>
+            </a>
+
+            <a href="../MotoristasSalvos/index.html" class="sidebar-link active">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="9" cy="7" r="4"></circle>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                </svg>
+                <span>Motoristas Salvos</span>
+            </a>
+
+            <a href="../VizualizarMotorista/index.html" class="sidebar-link">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                    <circle cx="12" cy="13" r="4"></circle>
+                </svg>
+                <span>Rastreamento</span>
+            </a>
+
+            <a href="../Home/index.html" class="sidebar-link">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+                <span>Empresas</span>
+            </a>
+
+            <a href="../AvisosEmpresa/index.html" class="sidebar-link">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="7 10 12 15 17 10"></polyline>
+                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                </svg>
+                <span>Relatórios</span>
+            </a>
+        </nav>
+    </aside>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo-section">
+                <div class="company-logo">SW</div>
+                <div class="company-info">
+                    <h1>SecureWay</h1>
+                    <span class="company-badge">Empresa</span>
+                </div>
+            </div>
+            <nav class="header-nav">
+                <button class="nav-btn" id="menuBtn">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="3" y1="12" x2="21" y2="12"></line>
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <line x1="3" y1="18" x2="21" y2="18"></line>
+                    </svg>
+                </button>
+                <a href="../Home/index.html" class="nav-btn">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                        <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                    </svg>
+                    <span>Início</span>
+                </a>
+                <a href="../PerfilEmpresa/index.html" class="nav-btn">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                    <span>Perfil</span>
+                </a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Page Header -->
+        <div class="page-header">
+            <h2 class="page-title">Motoristas Cadastrados</h2>
+            <p class="page-subtitle">Gerencie os motoristas da sua frota</p>
+        </div>
+
+        <!-- Filters -->
+        <div class="filters-section">
+            <div class="search-box">
+                <input type="text" placeholder="Buscar motorista por nome, CPF ou CNH..." id="searchInput">
+                <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+            </div>
+            <select class="filter-btn" id="statusFilter">
+                <option value="all">Todos os Status</option>
+                <option value="available">Disponível</option>
+                <option value="busy">Em Viagem</option>
+                <option value="offline">Offline</option>
+            </select>
+        </div>
+
+        <!-- Drivers Grid -->
+        <div class="drivers-grid" id="driversGrid">
+            <!-- Driver 1 -->
+            <div class="driver-card" data-status="available">
+                <div class="driver-header">
+                    <div class="driver-avatar">JM</div>
+                    <div class="driver-info">
+                        <h3>João Mendes</h3>
+                        <span class="driver-status status-available">Disponível</span>
+                    </div>
+                </div>
+                <div class="driver-details">
+                    <div class="detail-row">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"></path>
+                            <circle cx="12" cy="10" r="3"></circle>
+                        </svg>
+                        <span><strong>CNH:</strong> 12345678900</span>
+                    </div>
+                    <div class="detail-row">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+                            <line x1="1" y1="10" x2="23" y2="10"></line>
+                        </svg>
+                        <span><strong>CPF:</strong> 987.654.321-00</span>
+                    </div>
+                    <div class="detail-row">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                        </svg>
+                        <span>(21) 99876-5432</span>
+                    </div>
+                    <div class="detail-row">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
+                        </svg>
+                        <span><strong>Viagens:</strong> 189 completas</span>
+                    </div>
+                </div>
+                <div class="driver-actions">
+                    <button class="action-btn btn-primary">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 16 14"></polyline>
+                        </svg>
+                        Agendar
+                    </button>
+                    <button class="action-btn btn-secondary">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                            <circle cx="12" cy="12" r="3"></circle>
+                        </svg>
+                        Perfil
+                    </button>
+                </div>
+            </div>
+
+            <!-- Driver 3 -->
+            <div class="driver-card" data-status="available">
+                <div class="driver-header">
+                    <div class="driver-avatar">PC</div>
+                    <div class="driver-info">
+                        <h3>Pedro Costa</h3>
+                        <span class="driver-status status-available">Disponível</span>
+                    </div>
+                </div>
+                <div class="driver-details">
+                    <div class="detail-row">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"></path>
+                            <circle cx="12" cy="10" r="3"></circle>
+                        </svg>
+                        <span><strong>CNH:</strong> 45678912300</span>
+                    </div>
+                    <div class="detail-row">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+                            <line x1="1" y1="10" x2="23" y2="10"></line>
+                        </svg>
+                        <span><strong>CPF:</strong> 456.789.123-00</span>
+                    </div>
+                    <div class="detail-row">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                        </svg>
+                        <span>(31) 97654-3210</span>
+                    </div>
+                    <div class="detail-row">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
+                        </svg>
+                        <span><strong>Viagens:</strong> 312 completas</span>
+                    </div>
+                </div>
+                <div class="driver-actions">
+                    <button class="action-btn btn-primary">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 16 14"></polyline>
+                        </svg>
+                        Agendar
+                    </button>
+                    <button class="action-btn btn-secondary">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                            <circle cx="12" cy="12" r="3"></circle>
+                        </svg>
+                        Perfil
+                    </button>
+                </div>
+            </div>
+
+            <!-- Driver 4 -->
+            <div class="driver-card" data-status="offline">
+                <div class="driver-header">
+                    <div class="driver-avatar">AL</div>
+                    <div class="driver-info">
+                        <h3>Ana Lima</h3>
+                        <span class="driver-status status-offline">Offline</span>
+                    </div>
+                </div>
+                <div class="driver-details">
+                    <div class="detail-row">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"></path>
+                            <circle cx="12" cy="10" r="3"></circle>
+                        </svg>
+                        <span><strong>CNH:</strong> 78912345600</span>
+                    </div>
+                    <div class="detail-row">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+                            <line x1="1" y1="10" x2="23" y2="10"></line>
+                        </svg>
+                        <span><strong>CPF:</strong> 789.123.456-00</span>
+                    </div>
+                    <div class="detail-row">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                        </svg>
+                        <span>(11) 96543-2109</span>
+                    </div>
+                    <div class="detail-row">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
+                        </svg>
+                        <span><strong>Viagens:</strong> 156 completas</span>
+                    </div>
+                </div>
+                <div class="driver-actions">
+                    <button class="action-btn btn-primary">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 16 14"></polyline>
+                        </svg>
+                        Agendar
+                    </button>
+                    <button class="action-btn btn-secondary">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                            <circle cx="12" cy="12" r="3"></circle>
+                        </svg>
+                        Perfil
+                    </button>
+                </div>
+            </div>
+
+            <!-- Driver 5 -->
+            <div class="driver-card" data-status="available">
+                <div class="driver-header">
+                    <div class="driver-avatar">RS</div>
+                    <div class="driver-info">
+                        <h3>Roberto Santos</h3>
+                        <span class="driver-status status-available">Disponível</span>
+                    </div>
+                </div>
+                <div class="driver-details">
+                    <div class="detail-row">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"></path>
+                            <circle cx="12" cy="10" r="3"></circle>
+                        </svg>
+                        <span><strong>CNH:</strong> 32165498700</span>
+                    </div>
+                    <div class="detail-row">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+                            <line x1="1" y1="10" x2="23" y2="10"></line>
+                        </svg>
+                        <span><strong>CPF:</strong> 321.654.987-00</span>
+                    </div>
+                    <div class="detail-row">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                        </svg>
+                        <span>(21) 95432-1098</span>
+                    </div>
+                    <div class="detail-row">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
+                        </svg>
+                        <span><strong>Viagens:</strong> 278 completas</span>
+                    </div>
+                </div>
+                <div class="driver-actions">
+                    <button class="action-btn btn-primary">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 16 14"></polyline>
+                        </svg>
+                        Agendar
+                    </button>
+                    <button class="action-btn btn-secondary">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                            <circle cx="12" cy="12" r="3"></circle>
+                        </svg>
+                        Perfil
+                    </button>
+                </div>
+            </div>
+
+            <!-- Driver 6 -->
+            <div class="driver-card" data-status="busy">
+                <div class="driver-header">
+                    <div class="driver-avatar">CF</div>
+                    <div class="driver-info">
+                        <h3>Carla Ferreira</h3>
+                        <span class="driver-status status-busy">Em Viagem</span>
+                    </div>
+                </div>
+                <div class="driver-details">
+                    <div class="detail-row">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"></path>
+                            <circle cx="12" cy="10" r="3"></circle>
+                        </svg>
+                        <span><strong>CNH:</strong> 65498732100</span>
+                    </div>
+                    <div class="detail-row">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+                            <line x1="1" y1="10" x2="23" y2="10"></line>
+                        </svg>
+                        <span><strong>CPF:</strong> 654.987.321-00</span>
+                    </div>
+                    <div class="detail-row">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                        </svg>
+                        <span>(31) 94321-0987</span>
+                    </div>
+                    <div class="detail-row">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
+                        </svg>
+                        <span><strong>Viagens:</strong> 201 completas</span>
+                    </div>
+                </div>
+                <div class="driver-actions">
+                    <button class="action-btn btn-primary">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 16 14"></polyline>
+                        </svg>
+                        Agendar
+                    </button>
+                    <button class="action-btn btn-secondary">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                            <circle cx="12" cy="12" r="3"></circle>
+                        </svg>
+                        Perfil
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chat Button -->
+    <button class="chat-btn" id="chatBtn">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+        </svg>
+    </button>
+
+    <script>
+        // ===== CONTROLE DO MENU LATERAL =====
+        const menuBtn = document.getElementById('menuBtn');
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('overlay');
+        const closeSidebar = document.getElementById('closeSidebar');
+
+        function toggleMenu() {
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+        }
+
+        menuBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            toggleMenu();
+        });
+        
+        closeSidebar.addEventListener('click', toggleMenu);
+        overlay.addEventListener('click', toggleMenu);
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && sidebar.classList.contains('active')) {
+                toggleMenu();
+            }
+        });
+
+        // ===== BUSCA DE MOTORISTAS =====
+        const searchInput = document.getElementById('searchInput');
+        const statusFilter = document.getElementById('statusFilter');
+        const driverCards = document.querySelectorAll('.driver-card');
+
+        function filterDrivers() {
+            const searchTerm = searchInput.value.toLowerCase();
+            const selectedStatus = statusFilter.value;
+
+            driverCards.forEach(card => {
+                const name = card.querySelector('h3').textContent.toLowerCase();
+                const cardStatus = card.getAttribute('data-status');
+                const detailsText = card.querySelector('.driver-details').textContent.toLowerCase();
+
+                const matchesSearch = name.includes(searchTerm) || detailsText.includes(searchTerm);
+                const matchesStatus = selectedStatus === 'all' || cardStatus === selectedStatus;
+
+                if (matchesSearch && matchesStatus) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        searchInput.addEventListener('input', filterDrivers);
+        statusFilter.addEventListener('change', filterDrivers);
+
+        console.log('✅ SecureWay - Motoristas Salvos carregado com sucesso!');
+    </script>
+</body>
+</html>

@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SecureWay - Login</title>
+    <script src="../js/api-config.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/user.js"></script>
+    <script src="../js/enterprise.js"></script>
+    <script src="../js/esp.js"></script>
+    <script src="../js/scheduling.js"></script>
+    <script src="../js/read.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #0a1f28 0%, #0d3d4d 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        /* Header */
+        .header {
+            background: rgba(13, 61, 77, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 15px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #3bbebe, #2a8a8a);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: white;
+        }
+
+        .logo-text h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: white;
+            margin-bottom: 2px;
+        }
+
+        .logo-text p {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .nav-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: rgba(255, 255, 255, 0.8);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+            font-weight: 500;
+            text-decoration: none;
+        }
+
+        .nav-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+            transform: translateY(-2px);
+            border: 1px solid #4dd4d4;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 270px;
+            height: 100vh;
+            background: rgba(13, 61, 77, 0.95);
+            backdrop-filter: blur(12px);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 5px 0 20px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            padding-top: 25px;
+            transform: translateX(-100%);
+            transition: transform 0.4s ease;
+            z-index: 2000;
+        }
+
+        .sidebar.active {
+            transform: translateX(0);
+        }
+
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            padding: 0 25px 30px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-avatar {
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3bbebe, #2a8a8a);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: white;
+            box-shadow: 0 0 12px rgba(59, 190, 190, 0.4);
+        }
+
+        .user-info h3 {
+            font-size: 1rem;
+            color: white;
+            margin-bottom: 3px;
+        }
+
+        .user-info p {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.7);
+            cursor: pointer;
+        }
+
+        .sidebar-nav {
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            gap: 12px;
+        }
+
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 12px 18px;
+            color: rgba(255, 255, 255, 0.85);
+            text-decoration: none;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+        }
+
+        .sidebar-link:hover {
+            background: rgba(255, 255, 255, 0.12);
+            color: #4dd4d4;
+            transform: translateX(4px);
+        }
+
+        .sidebar-link.active {
+            background: rgba(59, 190, 190, 0.25);
+            color: #4dd4d4;
+            border-left: 3px solid #4dd4d4;
+        }
+
+        /* Overlay */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 20, 25, 0.7);
+            backdrop-filter: blur(3px);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 1500;
+        }
+
+        .overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Container de Login */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: calc(100vh - 80px);
+        }
+
+        .login-wrapper {
+            width: 100%;
+            max-width: 500px;
+            animation: fadeIn 0.6s ease;
+        }
+
+        .login-container {
+            background: linear-gradient(135deg, rgba(13, 61, 77, 0.4) 0%, rgba(26, 79, 95, 0.3) 100%);
+            border-radius: 20px;
+            padding: 50px 40px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .login-title {
+            font-size: 2.5rem;
+            color: white;
+            font-weight: 700;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        /* Formulário */
+        .login-form {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .form-group label {
+            font-size: 1rem;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.9);
+            margin-left: 5px;
+        }
+
+        .form-group input {
+            padding: 16px 20px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        .form-group input::placeholder {
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #3bbebe;
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 0 0 3px rgba(59, 190, 190, 0.1);
+        }
+
+        .login-footer {
+            text-align: center;
+            margin: 10px 0;
+        }
+
+        .cadastro-text {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.95rem;
+        }
+
+        .link-cadastro {
+            color: #3bbebe;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .link-cadastro:hover {
+            color: #4dd4d4;
+            text-decoration: underline;
+        }
+
+        .btn-login {
+            padding: 16px 32px;
+            border: none;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #3bbebe 0%, #2a8a8a 100%);
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: inherit;
+            margin-top: 10px;
+        }
+
+        .btn-login:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(59, 190, 190, 0.4);
+        }
+
+        .btn-login:active {
+            transform: translateY(-1px);
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header {
+                padding: 15px 20px;
+            }
+
+            .nav-btn span {
+                display: none;
+            }
+
+            .nav-btn {
+                padding: 12px;
+            }
+
+            .container {
+                padding: 20px;
+            }
+
+            .login-container {
+                padding: 40px 30px;
+            }
+
+            .login-title {
+                font-size: 2rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .login-container {
+                padding: 30px 20px;
+            }
+
+            .login-title {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="overlay" id="overlay"></div>
+
+    <header class="header">
+        <div class="logo-container">
+            <div class="logo-icon">SW</div>
+            <div class="logo-text">
+                <h1>SecureWay</h1>
+                <p>Login</p>
+            </div>
+        </div>
+
+        <nav class="nav-buttons">
+            <button class="nav-btn" id="menuBtn">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                </svg>
+            </button>
+
+            <a href="../Home/index.html" class="nav-btn">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                </svg>
+                <span>Início</span>
+            </a>
+
+            <a href="#" class="nav-btn">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+                <span>Perfil</span>
+            </a>
+        </nav>
+    </header>
+
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="user-profile">
+                <div class="user-avatar">SA</div>
+                <div class="user-info">
+                    <h3>Sérgio Andrade</h3>
+                    <p>Ver perfil</p>
+                </div>
+            </div>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a href="#" class="sidebar-link">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                </svg>
+                <span>Agendamentos</span>
+            </a>
+
+            <a href="#" class="sidebar-link">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect>
+                    <rect x="9" y="9" width="6" height="6"></rect>
+                </svg>
+                <span>Cadastrar Caminhões</span>
+            </a>
+
+            <a href="#" class="sidebar-link">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                    <circle cx="12" cy="13" r="4"></circle>
+                </svg>
+                <span>Leitor de QR Code</span>
+            </a>
+
+            <a href="#" class="sidebar-link">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+                </svg>
+                <span>Empresas Salvas</span>
+            </a>
+
+            <a href="#" class="sidebar-link">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="7 10 12 15 17 10"></polyline>
+                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                </svg>
+                <span>Status</span>
+            </a>
+        </nav>
+    </aside>
+
+    <div class="container">
+        <div class="login-wrapper">
+            <div class="login-container">
+                <h2 class="login-title">Login</h2>
+
+                <form class="login-form" id="loginForm">
+                    <div class="form-group">
+                        <label for="email">E-mail</label>
+                        <input 
+                            type="email" 
+                            id="email" 
+                            name="email" 
+                            placeholder="seu@email.com"
+                            required
+                            autocomplete="email"
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="senha">Senha</label>
+                        <input 
+                            type="password" 
+                            id="senha" 
+                            name="senha" 
+                            placeholder="••••••••"
+                            required
+                            autocomplete="current-password"
+                        >
+                    </div>
+
+                    <div class="login-footer">
+                        <p class="cadastro-text">
+                            Ainda não possui uma conta? 
+                            <a href="../cadastro/index.html" class="link-cadastro">Cadastre-se</a>
+                        </p>
+                    </div>
+
+                    <button type="submit" class="btn-login">Entrar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!-- Scripts de integração API -->
+    <script src="../js/api-config.js"></script>
+    <script src="../js/auth-service.js"></script>
+    <script src="../js/user-service.js"></script>
+    <script src="../js/login-integration.js"></script>
+
+    <!--<script>
+        // Menu
+        const menuBtn = document.getElementById('menuBtn');
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('overlay');
+        
+        function toggleMenu() {
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+        }
+        
+        menuBtn.addEventListener('click', toggleMenu);
+        overlay.addEventListener('click', toggleMenu);
+        
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && sidebar.classList.contains('active')) {
+                toggleMenu();
+            }
+        });
+
+        // Login Form
+        const loginForm = document.getElementById('loginForm');
+        
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const senha = document.getElementById('senha').value;
+            
+            console.log('Login:', { email, senha });
+            
+            // Aqui você adiciona a lógica de autenticação
+            alert('Login em desenvolvimento!\n\nEmail: ' + email);
+        });
+
+        console.log('✅ SecureWay Login inicializado!');
+    </script>-->
+</body>
+</html>
