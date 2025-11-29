@@ -604,21 +604,15 @@
             <p class="page-subtitle">Gerencie suas entregas e coletas programadas</p>
         </div>
 
-        <div class="action-bar">
-            <button class="btn-novo-agendamento" id="btnNovoAgendamento">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                    <line x1="12" y1="5" x2="12" y2="19"></line>
-                    <line x1="5" y1="12" x2="19" y2="12"></line>
-                </svg>
-                Novo Agendamento
-            </button>
-            <div class="filtros">
-                <button class="btn-filtro active" data-status="todos">Todos</button>
-                <button class="btn-filtro" data-status="pendente">Pendentes</button>
-                <button class="btn-filtro" data-status="confirmado">Confirmados</button>
-                <button class="btn-filtro" data-status="concluido">Concluídos</button>
-            </div>
-        </div>
+        <button class="btn-novo-agendamento" id="btnNovoAgendamento">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <line x1="12" y1="5" x2="12" y2="19"></line>
+        <line x1="5" y1="12" x2="19" y2="12"></line>
+    </svg>
+    Novo Agendamento
+</button>
+
+
 
         <div class="agendamentos-container" id="agendamentosContainer">
             <!-- Card 1 -->
@@ -931,7 +925,11 @@
     <div class="toast" id="toast"></div>
 
     <script>
-        const menuBtn = document.getElementById('menuBtn');
+      document.getElementById("btnNovoAgendamento").addEventListener("click", function () {
+    window.location.href = "../Calendário/index.html"; // coloque a URL desejada
+});
+
+      const menuBtn = document.getElementById('menuBtn');
         const sidebar = document.getElementById('sidebar');
         const overlay = document.getElementById('overlay');
         const btnNovoAgendamento = document.getElementById('btnNovoAgendamento');
